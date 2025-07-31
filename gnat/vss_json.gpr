@@ -25,18 +25,8 @@ project VSS_JSON is
 
    package Compiler is
       for Switches ("Ada") use VSS_Extras_Common.Ada_Compiler_Switches;
-
-      --  XXX GNAT 20240411 workaround
-      for Switches ("vss-json-implementation-numbers-tables.ads")
-        use VSS_Extras_Common.Ada_Compiler_Switches & ("-gnaty-t");
-      --  XXX GNAT 20240411 workaround
    end Compiler;
 
    package Linker renames VSS_Extras_Common.Linker;
-
-   package Naming is
-      for Implementation ("VSS.JSON.Implementation.Arithmetic_64")
-        use "vss-json-implementation-arithmetic_64__" & Vss_Extras_Config.Max_Supported_Integer_Size & ".adb";
-   end Naming;
 
 end VSS_JSON;

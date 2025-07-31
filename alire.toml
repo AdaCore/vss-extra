@@ -35,9 +35,6 @@ project-files = ["gnat/vss_os.gpr", "gnat/vss_json.gpr"]
 generate_ada = false
 generate_c = false
 
-[configuration.variables]
-Max_Supported_Integer_Size = {type = "Enum", values = ["128", "64"], default = "128"}
-
 [build-switches]
 "*".ada_version = "Ada2022"
 

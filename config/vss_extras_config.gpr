@@ -106,10 +106,6 @@ abstract project Vss_Extras_Config is
            ,"-gnat2012" -- Ada 2012 Mode, see comment.
           );
 
-   type Max_Supported_Integer_Size_Kind is ("128", "64");
-   Max_Supported_Integer_Size : Max_Supported_Integer_Size_Kind :=
-     external ("VSS_MAX_SUPPORTED_INTEGER_SIZE", "128");
-
    type Build_Profile_Kind is ("release", "validation", "development");
    Build_Profile : Build_Profile_Kind :=
      external ("VSS_BUILD_PROFILE", external ("BUILD_PROFILE", "development"));
