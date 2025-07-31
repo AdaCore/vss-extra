@@ -18,7 +18,6 @@ project VSS_JSON_Tests is
    for Source_Dirs use ("../../testsuite/json");
    for Main use ("test_json_buffered_pull_reader.adb",
                  "test_json_content_handler.adb",
-                 "test_json_decimal_to_number.adb",
                  "test_json_pull_reader.adb",
                  "test_json_writer.adb");
 

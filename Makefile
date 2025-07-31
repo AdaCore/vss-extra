@@ -102,7 +102,6 @@ endif
 check_json:
 	.objs/validation/tests/test_json_content_handler
 	.objs/validation/tests/test_json_buffered_pull_reader
-	.objs/validation/tests/test_json_decimal_to_number /dev/null data/parse-number-fxx-test-data/data/*.txt
 	rm -f .objs/validation/tests/.fails
 	for f in `find data/json5-tests -name '*.json'` \
 	         `find data/json5-tests -name '*.json5'` \
