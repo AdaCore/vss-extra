@@ -865,7 +865,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
 
       else
          Self.Buffer.Clear;
-         VSS.JSON.Implementation.Numbers.Reset (Self.Number_State);
+         VSS.Implementation.Numbers.Reset (Self.Number_State);
 
          case Self.C is
             when Plus_Sign =>
@@ -881,7 +881,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
             when Decimal_Point =>
                State := Decimal_Fraction_Digits;
                Self.Store_Character;
-               VSS.JSON.Implementation.Numbers.Decimal_Point
+               VSS.Implementation.Numbers.Decimal_Point
                  (Self.Number_State);
 
             when Digit_Zero =>
@@ -891,7 +891,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
             when Digit_One .. Digit_Nine =>
                State := Decimal_Integral_Digits_Opt;
                Self.Store_Character;
-               VSS.JSON.Implementation.Numbers.Int_Digit
+               VSS.Implementation.Numbers.Int_Digit
                  (Self.Number_State, Self.C);
 
             when Latin_Capital_Letter_I =>
@@ -910,13 +910,28 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
       loop
          case State is
             when Report_Decimal_Value =>
-               VSS.JSON.Implementation.Numbers.To_JSON_Number
-                 (Self.Number_State,
-                  Self.String_Value,
-                  Self.Number);
-               Self.Event := VSS.JSON.Streams.Number_Value;
+               declare
+                  Aux : VSS.Implementation.Numbers.JSON_Number;
 
-               return False;
+               begin
+                  VSS.Implementation.Numbers.To_JSON_Number
+                    (Self.Number_State,
+                     Self.String_Value,
+                     Aux);
+
+                  Self.Number :=
+                    (case Aux.Kind is
+                       when VSS.Implementation.Numbers.None => (Kind => None),
+                       when VSS.Implementation.Numbers.JSON_Integer =>
+                         (JSON_Integer, Aux.String_Value, Aux.Integer_Value),
+                       when VSS.Implementation.Numbers.JSON_Float   =>
+                         (JSON_Float, Aux.String_Value, Aux.Float_Value),
+                       when VSS.Implementation.Numbers.Out_Of_Range =>
+                         (Out_Of_Range, Aux.String_Value));
+                  Self.Event := VSS.JSON.Streams.Number_Value;
+
+                  return False;
+               end;
 
             when Report_Hex_Value =>
                if (Self.Unsigned and 16#8000_0000_0000_0000#) = 0 then
@@ -963,7 +978,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                   when Decimal_Point =>
                      State := Decimal_Fraction_Digits;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Decimal_Point
+                     VSS.Implementation.Numbers.Decimal_Point
                        (Self.Number_State);
 
                   when Digit_Zero =>
@@ -973,7 +988,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                   when Digit_One .. Digit_Nine =>
                      State := Decimal_Integral_Digits_Opt;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Int_Digit
+                     VSS.Implementation.Numbers.Int_Digit
                        (Self.Number_State, Self.C);
 
                   when Latin_Capital_Letter_I =>
@@ -995,7 +1010,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                   when Decimal_Point =>
                      State := Decimal_Fraction_Digits_Opt;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Decimal_Point
+                     VSS.Implementation.Numbers.Decimal_Point
                        (Self.Number_State);
 
                   when Digit_Zero .. Digit_Nine =>
@@ -1018,13 +1033,13 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                case Self.C is
                   when Digit_Zero .. Digit_Nine =>
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Int_Digit
+                     VSS.Implementation.Numbers.Int_Digit
                        (Self.Number_State, Self.C);
 
                   when Decimal_Point =>
                      State := Decimal_Fraction_Digits_Opt;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Decimal_Point
+                     VSS.Implementation.Numbers.Decimal_Point
                        (Self.Number_State);
 
                   when Latin_Capital_Letter_E | Latin_Small_Letter_E =>
@@ -1040,7 +1055,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                   when Digit_Zero .. Digit_Nine =>
                      State := Decimal_Fraction_Digits_Opt;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Frac_Digit
+                     VSS.Implementation.Numbers.Frac_Digit
                        (Self.Number_State, Self.C);
 
                   when others =>
@@ -1051,7 +1066,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                case Self.C is
                   when Digit_Zero .. Digit_Nine =>
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Frac_Digit
+                     VSS.Implementation.Numbers.Frac_Digit
                        (Self.Number_State, Self.C);
 
                   when Latin_Capital_Letter_E | Latin_Small_Letter_E =>
@@ -1067,7 +1082,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                   when Digit_Zero .. Digit_Nine =>
                      State := Decimal_Exponent_Digits_Opt;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Exp_Digit
+                     VSS.Implementation.Numbers.Exp_Digit
                        (Self.Number_State, Self.C);
 
                   when Hyphen_Minus =>
@@ -1088,7 +1103,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                   when Digit_Zero .. Digit_Nine =>
                      State := Decimal_Exponent_Digits_Opt;
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Exp_Digit
+                     VSS.Implementation.Numbers.Exp_Digit
                        (Self.Number_State, Self.C);
 
                   when others =>
@@ -1099,7 +1114,7 @@ package body VSS.JSON.Implementation.Parsers.JSON5 is
                case Self.C is
                   when Digit_Zero .. Digit_Nine =>
                      Self.Store_Character;
-                     VSS.JSON.Implementation.Numbers.Exp_Digit
+                     VSS.Implementation.Numbers.Exp_Digit
                        (Self.Number_State, Self.C);
 
                   when others =>
