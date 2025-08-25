@@ -1,7 +1,6 @@
 # VSS-Extra
 
 [![Build](https://github.com/AdaCore/vss-extra/actions/workflows/main.yml/badge.svg)](https://github.com/AdaCore/vss-extra/actions/workflows/main.yml)
-[![codecov](https://codecov.io/gh/AdaCore/vss-extra/branch/master/graph/badge.svg)](https://codecov.io/gh/AdaCore/vss-extra)
 [![alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/vss_extra.json)](https://alire.ada.dev/crates/vss_extra.html)
 
 A high level string and text processing library.
