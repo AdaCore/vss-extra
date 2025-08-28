@@ -1,10 +1,26 @@
-# VSS
+# VSS-Extra
 
-[![Build](https://github.com/AdaCore/VSS/actions/workflows/main.yml/badge.svg)](https://github.com/AdaCore/VSS/actions/workflows/main.yml)
-[![codecov](https://codecov.io/gh/AdaCore/VSS/branch/master/graph/badge.svg)](https://codecov.io/gh/AdaCore/VSS)
-[![alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/vss.json)](https://alire.ada.dev/crates/vss.html)
+[![Build](https://github.com/AdaCore/vss-extra/actions/workflows/main.yml/badge.svg)](https://github.com/AdaCore/vss-extra/actions/workflows/main.yml)
+[![alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/vss_extra.json)](https://alire.ada.dev/crates/vss_extra.html)
 
 A high level string and text processing library.
+
+## Warning - Work in Progress
+
+This project is based on [`VSS`](https://github.com/AdaCore/VSS) (Virtual
+String System). VSS has been split into two projects:
+
+* [`vss-text`](https://github.com/AdaCore/vss-text): a library for Unicode text
+  processing.
+* [`vss-extra`](https://github.com/AdaCore/vss-extra) (this project): libraries
+  for handling JSON, Regexp, XML and other features based on `vss-text`.
+
+Significant API changes are planned in `vss-text` which will likely have an
+impact on this project.
+
+Moreover, `vss-extra` is planned to be further split into more focused
+projects (e.g. JSON, Regexp, XML, etc.) and might ultimately disappear once all
+features find a new home.
 
 ## The objectives
 
@@ -34,20 +50,18 @@ that supports them.
 ## Install
 
 ### Build from sources
+
 Prefered way to install is to download sources and run
 
     make all install PREFIX=/path/to/install
 
-### Using `alire`
-Or you can use [alire](https://alire.ada.dev/) library manager:
+### Using `Alire`
 
-    alr get --build vss
+Or you can use [Alire](https://alire.ada.dev/) library manager:
+
+    alr get --build vss_extra
 
 Then you can use it as dependency in the project file:
-
-    with "vss_text.gpr";
-
-For use JSON streaming API:
 
     with "vss_json.gpr";
 
@@ -63,7 +77,7 @@ For use JSON streaming API:
 ## Contribute
 
 Feel free to dive in!
-[Open an issue](https://github.com/AdaCore/VSS/issues/new)
+[Open an issue](https://github.com/AdaCore/vss-extra/issues/new)
 or submit PRs.
 
 ## License
