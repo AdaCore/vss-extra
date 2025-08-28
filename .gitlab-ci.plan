@@ -1,28 +1,28 @@
 
 def build_stable():
-    anod_build("vss")
+    anod_build("vss-extra")
 
 def test_stable():
-    anod_install("vss")
-    anod_test("vss")
+    anod_install("vss-extra")
+    anod_test("vss-extra")
 
 def build_edge():
     with defaults(qualifier="edge"):
-        anod_build("vss")
+        anod_build("vss-extra")
 
 def test_edge():
     with defaults(qualifier="edge"):
-        anod_install("vss")
-        anod_test("vss")
+        anod_install("vss-extra")
+        anod_test("vss-extra")
 
 def build_edge_prettier_ada():
     with defaults(qualifier="edge"):
-        anod_install("vss")
+        anod_install("vss-extra")
     anod_build("prettier-ada")
 
 def install_common_dependencies():
     with defaults(qualifier="edge"):
-        anod_install("vss")
+        anod_install("vss-extra")
     # Explicitly install LAL & dependencies
     anod_install("prettier-ada")
     anod_install("langkit")
@@ -31,7 +31,7 @@ def install_common_dependencies():
 
 def build_edge_gnatdoc():
     with defaults(qualifier="edge"):
-        anod_install("vss")
+        anod_install("vss-extra")
         anod_build("gnatdoc4")
 
     # Explicitly build LAL & dependencies
@@ -53,7 +53,7 @@ def build_edge_gs():
 
 def test_edge_prettier_ada():
     with defaults(qualifier="edge"):
-        anod_install("vss")
+        anod_install("vss-extra")
     anod_install("prettier-ada")
     anod_test("prettier-ada")
 
