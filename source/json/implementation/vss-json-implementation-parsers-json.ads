@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2020-2023, AdaCore
+--  Copyright (C) 2020-2025, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -9,7 +9,7 @@
 --  This parser supports normal parsing model as well as incremental parsing.
 --  It use Input_Text_Stream interface as data source.
 
-private with VSS.JSON.Implementation.Numbers;
+private with VSS.Implementation.Numbers;
 private with VSS.Unicode;
 
 package VSS.JSON.Implementation.Parsers.JSON is
@@ -24,7 +24,7 @@ private
    type JSON_Parser is limited new JSON_Parser_Base with record
       Code_Unit_1  : VSS.Unicode.UTF16_Code_Unit;
       Code_Unit_2  : VSS.Unicode.UTF16_Code_Unit;
-      Number_State : VSS.JSON.Implementation.Numbers.Parsing_State;
+      Number_State : VSS.Implementation.Numbers.Parsing_State;
    end record;
 
 end VSS.JSON.Implementation.Parsers.JSON;
