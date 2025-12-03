@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2022, AdaCore
+--  Copyright (C) 2022-2025, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -18,6 +18,8 @@ package VSS.IRIs is
 
    function To_Virtual_String
      (Self : IRI'Class) return VSS.Strings.Virtual_String;
+
+   function Is_Empty (Self : IRI) return Boolean;
 
 private
 
