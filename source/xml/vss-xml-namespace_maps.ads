@@ -15,6 +15,7 @@ with VSS.IRIs;
 private with VSS.IRIs.Hash;
 with VSS.Strings;
 private with VSS.Strings.Hash;
+with VSS.XML.Attributes.Containers;
 
 package VSS.XML.Namespace_Maps is
 
@@ -28,6 +29,11 @@ package VSS.XML.Namespace_Maps is
    --  Start_Element.
 
    procedure Start_Element (Self : in out XML_Namespace_Map'Class);
+   --  Push state to activate mappings of element.
+
+   procedure Start_Element
+     (Self       : in out XML_Namespace_Map'Class;
+      Attributes : in out VSS.XML.Attributes.Containers.Attributes'Class);
    --  Push state to activate mappings of element.
 
    procedure End_Element (Self : in out XML_Namespace_Map'Class);

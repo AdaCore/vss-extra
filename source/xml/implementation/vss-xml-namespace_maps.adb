@@ -77,6 +77,36 @@ package body VSS.XML.Namespace_Maps is
       end if;
    end Start_Element;
 
+   -------------------
+   -- Start_Element --
+   -------------------
+
+   procedure Start_Element
+     (Self       : in out XML_Namespace_Map'Class;
+      Attributes : in out VSS.XML.Attributes.Containers.Attributes'Class) is
+   begin
+      if Self.Mappings.Is_Empty then
+         Self.Active.Depth := @ + 1;
+
+      else
+         Self.Stack.Append (Self.Active);
+
+         Self.Active.Depth := 1;
+
+         for Mapping of Self.Mappings loop
+            Self.Active.To_Prefix.Include (Mapping.URI, Mapping.Prefix);
+            Self.Active.To_URI.Include (Mapping.Prefix, Mapping.URI);
+
+            Attributes.Insert
+              (VSS.XML.Namespaces.XMLNS_Namespace,
+               Mapping.Prefix,
+               Mapping.URI.To_Virtual_String);
+         end loop;
+
+         Self.Mappings.Clear;
+      end if;
+   end Start_Element;
+
    --------------------------
    -- Start_Prefix_Mapping --
    --------------------------

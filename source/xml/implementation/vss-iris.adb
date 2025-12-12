@@ -1,10 +1,19 @@
 --
---  Copyright (C) 2022, AdaCore
+--  Copyright (C) 2022-2025, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
 package body VSS.IRIs is
+
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (Self : IRI) return Boolean is
+   begin
+      return VSS.Strings.Virtual_String (Self).Is_Empty;
+   end Is_Empty;
 
    ------------
    -- To_IRI --
