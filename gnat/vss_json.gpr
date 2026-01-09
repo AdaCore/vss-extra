@@ -1,13 +1,12 @@
 --
---  Copyright (C) 2020-2025, AdaCore
+--  Copyright (C) 2020-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0
 --
 
 --  VSS: JSON processing subproject
 
-with "../config/vss_extras_config.gpr";
-with "vss_extras_common.gpr";
+with "vss_extra_common.gpr";
 with "vss_text.gpr";
 
 project VSS_JSON is
@@ -15,18 +14,18 @@ project VSS_JSON is
    for Languages use ("Ada");
 
    for Library_Name use "vss-json";
-   for Library_Kind use VSS_Extras_Common.Library_Kind;
+   for Library_Kind use VSS_Extra_Common.Library_Kind;
 
-   for Object_Dir use VSS_Extras_Common.Object_Dir;
-   for Library_Dir use VSS_Extras_Common.Library_Dir;
+   for Object_Dir use VSS_Extra_Common.Object_Dir;
+   for Library_Dir use VSS_Extra_Common.Library_Dir;
    for Source_Dirs use
      ("../source/json",
       "../source/json/implementation");
 
    package Compiler is
-      for Switches ("Ada") use VSS_Extras_Common.Ada_Compiler_Switches;
+      for Switches ("Ada") use VSS_Extra_Common.Ada_Compiler_Switches;
    end Compiler;
 
-   package Linker renames VSS_Extras_Common.Linker;
+   package Linker renames VSS_Extra_Common.Linker;
 
 end VSS_JSON;

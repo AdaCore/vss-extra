@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2020-2025, AdaCore
+--  Copyright (C) 2020-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0
 --
@@ -15,7 +15,7 @@
 --  are explicitly marked by "pragma Ada_2022;". Alire defaults to Ada2022 and
 --  override this setting.
 
-abstract project Vss_Extras_Config is
+abstract project Vss_Extra_Config is
    Crate_Version := "wavefront";
    Crate_Name := "vss";
 
@@ -120,4 +120,4 @@ abstract project Vss_Extras_Config is
         Ada_Compiler_Switches := External_Ada_Compiler_Switches & Development_Ada_Compiler_Switches;
    end case;
 
-end Vss_Extras_Config;
+end Vss_Extra_Config;
