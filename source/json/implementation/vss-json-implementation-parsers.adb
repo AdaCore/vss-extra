@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2023, AdaCore
+--  Copyright (C) 2023-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -136,7 +136,7 @@ package body VSS.JSON.Implementation.Parsers is
       State : Interfaces.Unsigned_32) return Boolean
    is
       Success   : Boolean := True;
-      Character : VSS.Characters.Virtual_Character;
+      Character : VSS.Characters.Virtual_Character'Base;
 
    begin
       Self.Stream.Get (Character, Success);
