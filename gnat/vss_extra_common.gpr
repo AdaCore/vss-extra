@@ -1,14 +1,14 @@
 --
---  Copyright (C) 2020-2025, AdaCore
+--  Copyright (C) 2020-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0
 --
 
 --  Configuration project for all subprojects of the VSS.
 
-with "../config/vss_extras_config.gpr";
+with "../config/vss_extra_config.gpr";
 
-abstract project VSS_Extras_Common is
+abstract project VSS_Extra_Common is
 
    type OS_API_Kind is ("unix", "osx", "Windows_NT");
    OS_API : OS_API_Kind :=
@@ -29,10 +29,10 @@ abstract project VSS_Extras_Common is
    Ada_Coverage_Switches := ();
    Linker_Options := ();
 
-   Library_Dir      := "../.libs/" & VSS_Extras_Config.Build_Profile & "/" & Library_Kind;
-   Object_Dir       := "../.objs/" & VSS_Extras_Config.Build_Profile & "/" & Library_Kind;
-   Tests_Object_Dir := "../../.objs/" & VSS_Extras_Config.Build_Profile & "/tests";
-   Tools_Object_Dir := "../../.objs/" & VSS_Extras_Config.Build_Profile & "/tools";
+   Library_Dir      := "../.libs/" & VSS_Extra_Config.Build_Profile & "/" & Library_Kind;
+   Object_Dir       := "../.objs/" & VSS_Extra_Config.Build_Profile & "/" & Library_Kind;
+   Tests_Object_Dir := "../../.objs/" & VSS_Extra_Config.Build_Profile & "/tests";
+   Tools_Object_Dir := "../../.objs/" & VSS_Extra_Config.Build_Profile & "/tools";
 
    Common_Ada_Compiler_Switches :=
      ("-gnatW8");   --  Wide character encoding method UTF-8
@@ -40,7 +40,7 @@ abstract project VSS_Extras_Common is
    --  Build Profile
 
    VSS_Ada_Compiler_Switches := ();
-   case VSS_Extras_Config.Build_Profile is
+   case VSS_Extra_Config.Build_Profile is
       when "release" =>
          VSS_Ada_Compiler_Switches := ("-g");
 
@@ -90,7 +90,7 @@ abstract project VSS_Extras_Common is
    --  Common set of switches
 
    Ada_Compiler_Switches :=
-     VSS_Extras_Config.Ada_Compiler_Switches
+     VSS_Extra_Config.Ada_Compiler_Switches
        & Common_Ada_Compiler_Switches
        & VSS_Ada_Compiler_Switches
        & Coverage_Ada_Compiler_Switches
@@ -109,4 +109,4 @@ abstract project VSS_Extras_Common is
       for Linker_Options use Coverage_Linker_Options;
    end Linker;
 
-end VSS_Extras_Common;
+end VSS_Extra_Common;
