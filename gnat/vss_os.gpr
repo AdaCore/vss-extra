@@ -16,6 +16,7 @@ project VSS_OS is
 
    for Library_Name use "vss-os";
    for Library_Kind use VSS_Extra_Common.Library_Kind;
+   for Run_Path_Option use ();
 
    for Object_Dir use VSS_Extra_Common.Object_Dir;
    for Library_Dir use VSS_Extra_Common.Library_Dir;
