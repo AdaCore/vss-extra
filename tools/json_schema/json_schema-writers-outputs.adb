@@ -675,7 +675,8 @@ package body JSON_Schema.Writers.Outputs is
          Put ("end if;");
          New_Line;
       elsif not Required and
-         (Property.Schema.Kind.Last_Index = 7 or
+         (Type_Name = "Any_Object" or
+           Property.Schema.Kind.Last_Index = 7 or
            Property.Schema.Additional_Properties /= null)
       then
          Put ("if not Value.");

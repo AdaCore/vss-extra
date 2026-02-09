@@ -41,12 +41,40 @@ package body JSON_Schema.Writers is
       Schema : Schema_Access;
       Action : access procedure (Property : JSON_Schema.Property)) is
    begin
+      --  Check direct properties for anonymous objects
+      for Property of Schema.Properties loop
+         if Property.Schema.Kind.Last_Index = 1 then
+            case Property.Schema.Kind (1) is
+               when Definitions.An_Object =>
+                  --  Skip objects with additionalProperties (use Any_Object)
+                  --  Skip objects without properties (use Any_Object)
+                  if not (Property.Schema.Additional_Properties /= null
+                    and then not
+                      Property.Schema.Additional_Properties.Is_False)
+                    and then not Property.Schema.Properties.Is_Empty
+                  then
+                     Action (Property);
+                  end if;
+               when others =>
+                  null;
+            end case;
+         end if;
+      end loop;
+
       for Used of Schema.All_Of loop
          for Property of Used.Properties loop
             if Property.Schema.Kind.Last_Index = 1 then
                case Property.Schema.Kind (1) is
                   when Definitions.An_Object =>
-                     Action (Property);
+                     --  Skip objects with additionalProperties
+                     --  Skip objects without properties (use Any_Object)
+                     if not (Property.Schema.Additional_Properties /= null
+                       and then not
+                         Property.Schema.Additional_Properties.Is_False)
+                       and then not Property.Schema.Properties.Is_Empty
+                     then
+                        Action (Property);
+                     end if;
                   when others =>
                      null;
                end case;
@@ -571,7 +599,12 @@ package body JSON_Schema.Writers is
                end;
 
             when Definitions.An_Object =>
-               Result.Append (Fallback);
+               --  If object has no properties, use Any_Object
+               if Schema.Properties.Is_Empty then
+                  Result := "Any_Object";
+               else
+                  Result.Append (Fallback);
+               end if;
          end case;
       else
          Result.Append ("YYY");

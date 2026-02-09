@@ -1042,6 +1042,27 @@ package body JSON_Schema.Writers.Types is
 
       Type_Name : constant VSS.Strings.Virtual_String :=
         Ref_To_Type_Name (Name);
+
+      procedure On_Anonymous_Schema (Property : JSON_Schema.Property);
+      --  Generate anonymous type for given property
+
+      -------------------------
+      -- On_Anonymous_Schema --
+      -------------------------
+
+      procedure On_Anonymous_Schema (Property : JSON_Schema.Property) is
+      begin
+         Write_Anonymous_Type
+           (Name,
+            Property,
+            Map,
+            Optional_Types,
+            Keep_Extra,
+            Done,
+            Schema.Required.Contains (Property.Name),
+            Root_Package, Enum_Package, Holders);
+      end On_Anonymous_Schema;
+
    begin
       --  Write dependencies
       for Property of Schema.Properties loop
@@ -1061,6 +1082,8 @@ package body JSON_Schema.Writers.Types is
             end if;
          end if;
       end loop;
+
+      Each_Anonymous_Schema (Map, Schema, On_Anonymous_Schema'Access);
 
       Put ("type ");
       Put (Type_Name);
