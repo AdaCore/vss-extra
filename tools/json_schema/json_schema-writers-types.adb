@@ -64,6 +64,7 @@ package body JSON_Schema.Writers.Types is
      (Name         : Schema_Name;
       Map          : JSON_Schema.Readers.Schema_Map;
       Root_Package : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
       Property     : JSON_Schema.Property;
       Required     : Boolean;
       Is_Holder    : Boolean);
@@ -168,10 +169,12 @@ package body JSON_Schema.Writers.Types is
    --  Write package specification with type declarations
 
    function Field_Type
-     (Map      : JSON_Schema.Readers.Schema_Map;
-      Schema   : Schema_Access;
-      Required : Boolean;
-      Fallback : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String)
+      return VSS.Strings.Virtual_String;
    --  Return an Ada type name for given Schema. Fallback if a type name for
    --  properties with nested schema declaration.
    --  Return an empty string for string properties with just one enumeration
@@ -182,16 +185,19 @@ package body JSON_Schema.Writers.Types is
    ----------------
 
    function Field_Type
-     (Map      : JSON_Schema.Readers.Schema_Map;
-      Schema   : Schema_Access;
-      Required : Boolean;
-      Fallback : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String)
+      return VSS.Strings.Virtual_String
    is
       Name : VSS.Strings.Virtual_String;
       Prefix : VSS.Strings.Virtual_String;
 
    begin
-      Get_Field_Type (Map, Schema, Required, Fallback, Name, Prefix);
+      Get_Field_Type (Map, Schema, Required, Fallback, Enum_Package,
+                      Name, Prefix);
       Prefix.Append (Name);
 
       return Prefix;
@@ -385,6 +391,7 @@ package body JSON_Schema.Writers.Types is
            (Enclosing_Type,
             Map,
             Root_Package,
+            Enum_Package,
             Item,
             Property.Schema.Required.Contains (Item.Name),
             False);
@@ -489,7 +496,8 @@ package body JSON_Schema.Writers.Types is
          Required  : Boolean) is
       begin
          Write_Record_Component
-           (Enclosing, Map, Root_Package, Property, Required, False);
+           (Enclosing, Map, Root_Package, Enum_Package,
+            Property, Required, False);
       end On_Property;
 
       Schema : constant Schema_Access := Map (Name);
@@ -951,6 +959,7 @@ package body JSON_Schema.Writers.Types is
      (Name         : Schema_Name;
       Map          : JSON_Schema.Readers.Schema_Map;
       Root_Package : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
       Property     : JSON_Schema.Property;
       Required     : Boolean;
       Is_Holder    : Boolean)
@@ -989,7 +998,8 @@ package body JSON_Schema.Writers.Types is
         Escape_Keywords (Property.Name);
 
       Field_Type : VSS.Strings.Virtual_String :=
-        Writers.Types.Field_Type (Map, Property.Schema, Required, Fallback);
+        Writers.Types.Field_Type (Map, Property.Schema, Required, Fallback,
+                                  Enum_Package);
 
       Default  : constant VSS.Strings.Virtual_String :=
         Get_Default_Value (Field_Type);
@@ -1096,6 +1106,7 @@ package body JSON_Schema.Writers.Types is
            (Name,
             Map,
             Root_Package,
+            Enum_Package,
             Property,
             Schema.Required.Contains (Property.Name),
             Is_Holder_Field (Name, Property.Name, Holders));
@@ -1397,7 +1408,8 @@ package body JSON_Schema.Writers.Types is
             Put (" =>");
             New_Line;
             Write_Record_Component
-              (Name, Map, Root_Package, Property, True, False);
+              (Name, Map, Root_Package, Enum_Package,
+               Property, True, False);
          end;
       end loop;
       Put ("end case;");

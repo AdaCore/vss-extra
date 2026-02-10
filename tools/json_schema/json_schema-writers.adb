@@ -444,13 +444,20 @@ package body JSON_Schema.Writers is
    ----------------------
 
    procedure Get_Element_Type
-     (Name      : Schema_Name;
-      Map       : JSON_Schema.Readers.Schema_Map;
-      Prop      : Property;
-      Type_Name : out VSS.Strings.Virtual_String;
-      Prefix    : out VSS.Strings.Virtual_String)
+     (Name         : Schema_Name;
+      Map          : JSON_Schema.Readers.Schema_Map;
+      Prop         : Property;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Type_Name    : out VSS.Strings.Virtual_String;
+      Prefix       : out VSS.Strings.Virtual_String)
    is
+      use VSS.Strings;
+
       Schema : constant Schema_Access := Prop.Schema;
+
+      Enum_Prefix : constant VSS.Strings.Virtual_String :=
+        (if Enum_Package.Is_Empty then Empty_Virtual_String
+         else Enum_Package & To_Virtual_String ("."));
    begin
       if Schema.Kind.Last_Index = 1 then
          case Schema.Kind (1) is
@@ -460,12 +467,12 @@ package body JSON_Schema.Writers is
                   Type_Name := Ref_To_Type_Name (Name);
                   Type_Name.Append ("_");
                   Type_Name.Append (Prop.Name);
-                  Prefix := "Enum.";
+                  Prefix := Enum_Prefix;
 
                else
                   Get_Field_Type
                     (Map, Schema.Items.First_Element,
-                     True, "", Type_Name, Prefix);
+                     True, "", Enum_Package, Type_Name, Prefix);
 
                   if Type_Name.Is_Empty then
                      Type_Name := "Virtual_String";
@@ -483,24 +490,30 @@ package body JSON_Schema.Writers is
    --------------------
 
    procedure Get_Field_Type
-     (Map       : JSON_Schema.Readers.Schema_Map;
-      Schema    : Schema_Access;
-      Required  : Boolean;
-      Fallback  : VSS.Strings.Virtual_String;
-      Type_Name : out VSS.Strings.Virtual_String;
-      Prefix    : out VSS.Strings.Virtual_String)
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Type_Name    : out VSS.Strings.Virtual_String;
+      Prefix       : out VSS.Strings.Virtual_String)
    is
       use type JSON_Schema.Simple_Type_Vectors.Vector;
+      use VSS.Strings;
 
       Result : VSS.Strings.Virtual_String :=
-        (if Required then VSS.Strings.Empty_Virtual_String
+        (if Required then Empty_Virtual_String
          else "Optional_");
+
+      Enum_Prefix : constant VSS.Strings.Virtual_String :=
+        (if Enum_Package.Is_Empty then Empty_Virtual_String
+         else Enum_Package & To_Virtual_String ("."));
    begin
       if not Schema.Ref.Is_Empty then
          Result.Append (Ref_To_Type_Name (Schema.Ref));
 
          if Is_Enum (Map (Schema.Ref)) then
-            Prefix := "Enum.";
+            Prefix := Enum_Prefix;
          end if;
 
       elsif Is_Enum (Schema) then
@@ -510,7 +523,7 @@ package body JSON_Schema.Writers is
 
          else
             Result.Append (Fallback);
-            Prefix := "Enum.";
+            Prefix := Enum_Prefix;
          end if;
 
       elsif Schema.Additional_Properties /= null and then not
@@ -552,7 +565,7 @@ package body JSON_Schema.Writers is
                   --  then skip this property by returning an empty type name.
                   Result := VSS.Strings.Empty_Virtual_String;
                elsif Is_Enum (Schema) then
-                  Prefix := "Enum.";
+                  Prefix := Enum_Prefix;
                   Result.Append (Fallback);
                else
                   --  Instead of Optional_String use just Virtual_String,
