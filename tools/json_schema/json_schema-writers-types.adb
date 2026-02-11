@@ -968,7 +968,9 @@ package body JSON_Schema.Writers.Types is
    is
       use type VSS.Strings.Virtual_String;
 
-      function Get_Default_Value (Field_Type : VSS.Strings.Virtual_String)
+      function Get_Default_Value
+        (Schema     : Schema_Access;
+         Field_Type : VSS.Strings.Virtual_String)
         return VSS.Strings.Virtual_String;
       --  Return default value for the record component
 
@@ -976,13 +978,17 @@ package body JSON_Schema.Writers.Types is
       -- Get_Default_Value --
       -----------------------
 
-      function Get_Default_Value (Field_Type : VSS.Strings.Virtual_String)
+      function Get_Default_Value
+        (Schema     : Schema_Access;
+         Field_Type : VSS.Strings.Virtual_String)
         return VSS.Strings.Virtual_String is
       begin
          if Required then
             return VSS.Strings.Empty_Virtual_String;
          elsif Field_Type = "Boolean" then
-            return Field_Type & "'First";
+            return
+              (if Schema.Default = True
+               then Field_Type & "'Last" else Field_Type & "'First");
          elsif Field_Type = "Integer" then
             return "0";
          elsif Field_Type = "Float" then
@@ -1004,7 +1010,7 @@ package body JSON_Schema.Writers.Types is
                                   Enum_Package);
 
       Default  : constant VSS.Strings.Virtual_String :=
-        Get_Default_Value (Field_Type);
+        Get_Default_Value (Property.Schema, Field_Type);
 
    begin
       if Field_Type.Is_Empty then

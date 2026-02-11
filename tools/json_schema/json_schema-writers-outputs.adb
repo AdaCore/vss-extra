@@ -675,7 +675,11 @@ package body JSON_Schema.Writers.Outputs is
          Put ("end if;");
          New_Line;
       elsif not Required and Type_Name = "Boolean" then
-         Put ("if Value.");
+         Put ("if ");
+         if Property.Schema.Default = True then
+            Put ("not ");
+         end if;
+         Put ("Value.");
          Put (Field_Name);
          Put (" then");
          New_Line;

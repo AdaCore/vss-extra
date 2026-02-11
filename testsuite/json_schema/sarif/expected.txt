@@ -1078,7 +1078,7 @@ properties : Optional_propertyBag;
 end record;
 
 type reportingConfiguration is record
-enabled : Boolean := Boolean'First;
+enabled : Boolean := Boolean'Last;
       --  Specifies whether the report may be produced during the scan.
 level : Enum.Optional_reportingConfiguration_level;
       --  Specifies the failure level for the report.
@@ -7992,7 +7992,7 @@ procedure Output_reportingConfiguration
 Value : reportingConfiguration) is
 begin
 Handler.Start_Object;
-if Value.enabled then
+if not Value.enabled then
 Handler.Key_Name ("enabled");
 Handler.Boolean_Value (Value.enabled);
 end if;
