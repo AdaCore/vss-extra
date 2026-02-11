@@ -20,7 +20,8 @@
 --
 --  DON'T EDIT THIS FILE! It was generated from JSON Schema.
 
-pragma Style_Checks ("M99");  --  suppress style warning unitl gnatpp is fixed
+pragma Ada_2022;
+pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Finalization;
 with VSS.JSON.Streams;
@@ -64,115 +65,143 @@ end case; end record;
 
 type Thread_Vector is tagged private
 with Variable_Indexing => Get_Thread_Variable_Reference,
-Constant_Indexing => Get_Thread_Constant_Reference;
+Constant_Indexing => Get_Thread_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Checksum_Vector is tagged private
 with Variable_Indexing => Get_Checksum_Variable_Reference,
-Constant_Indexing => Get_Checksum_Constant_Reference;
+Constant_Indexing => Get_Checksum_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Breakpoint_Vector is tagged private
 with Variable_Indexing => Get_Breakpoint_Variable_Reference,
-Constant_Indexing => Get_Breakpoint_Constant_Reference;
+Constant_Indexing => Get_Breakpoint_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type StepInTarget_Vector is tagged private
 with Variable_Indexing => Get_StepInTarget_Variable_Reference,
-Constant_Indexing => Get_StepInTarget_Constant_Reference;
+Constant_Indexing => Get_StepInTarget_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type FunctionBreakpoint_Vector is tagged private
 with Variable_Indexing => Get_FunctionBreakpoint_Variable_Reference,
-Constant_Indexing => Get_FunctionBreakpoint_Constant_Reference;
+Constant_Indexing => Get_FunctionBreakpoint_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type DataBreakpoint_Vector is tagged private
 with Variable_Indexing => Get_DataBreakpoint_Variable_Reference,
-Constant_Indexing => Get_DataBreakpoint_Constant_Reference;
+Constant_Indexing => Get_DataBreakpoint_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ExceptionOptions_Vector is tagged private
 with Variable_Indexing => Get_ExceptionOptions_Variable_Reference,
-Constant_Indexing => Get_ExceptionOptions_Constant_Reference;
+Constant_Indexing => Get_ExceptionOptions_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Integer_Vector is tagged private
 with Variable_Indexing => Get_Integer_Variable_Reference,
-Constant_Indexing => Get_Integer_Constant_Reference;
+Constant_Indexing => Get_Integer_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type GotoTarget_Vector is tagged private
 with Variable_Indexing => Get_GotoTarget_Variable_Reference,
-Constant_Indexing => Get_GotoTarget_Constant_Reference;
+Constant_Indexing => Get_GotoTarget_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type InvalidatedAreas_Vector is tagged private
 with Variable_Indexing => Get_InvalidatedAreas_Variable_Reference,
-Constant_Indexing => Get_InvalidatedAreas_Constant_Reference;
+Constant_Indexing => Get_InvalidatedAreas_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type BreakpointLocation_Vector is tagged private
 with Variable_Indexing => Get_BreakpointLocation_Variable_Reference,
-Constant_Indexing => Get_BreakpointLocation_Constant_Reference;
+Constant_Indexing => Get_BreakpointLocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type InstructionBreakpoint_Vector is tagged private
 with Variable_Indexing => Get_InstructionBreakpoint_Variable_Reference,
-Constant_Indexing => Get_InstructionBreakpoint_Constant_Reference;
+Constant_Indexing => Get_InstructionBreakpoint_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type StackFrame_Vector is tagged private
 with Variable_Indexing => Get_StackFrame_Variable_Reference,
-Constant_Indexing => Get_StackFrame_Constant_Reference;
+Constant_Indexing => Get_StackFrame_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Scope_Vector is tagged private
 with Variable_Indexing => Get_Scope_Variable_Reference,
-Constant_Indexing => Get_Scope_Constant_Reference;
+Constant_Indexing => Get_Scope_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Variable_Vector is tagged private
 with Variable_Indexing => Get_Variable_Variable_Reference,
-Constant_Indexing => Get_Variable_Constant_Reference;
+Constant_Indexing => Get_Variable_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Source_Vector is tagged private
 with Variable_Indexing => Get_Source_Variable_Reference,
-Constant_Indexing => Get_Source_Constant_Reference;
+Constant_Indexing => Get_Source_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type VariablePresentationHint_attributes_Vector is tagged private
 with Variable_Indexing => Get_VariablePresentationHint_attributes_Variable_Reference,
-Constant_Indexing => Get_VariablePresentationHint_attributes_Constant_Reference;
+Constant_Indexing => Get_VariablePresentationHint_attributes_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type SourceBreakpoint_Vector is tagged private
 with Variable_Indexing => Get_SourceBreakpoint_Variable_Reference,
-Constant_Indexing => Get_SourceBreakpoint_Constant_Reference;
+Constant_Indexing => Get_SourceBreakpoint_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ChecksumAlgorithm_Vector is tagged private
 with Variable_Indexing => Get_ChecksumAlgorithm_Variable_Reference,
-Constant_Indexing => Get_ChecksumAlgorithm_Constant_Reference;
+Constant_Indexing => Get_ChecksumAlgorithm_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ExceptionBreakpointsFilter_Vector is tagged private
 with Variable_Indexing => Get_ExceptionBreakpointsFilter_Variable_Reference,
-Constant_Indexing => Get_ExceptionBreakpointsFilter_Constant_Reference;
+Constant_Indexing => Get_ExceptionBreakpointsFilter_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type CompletionItem_Vector is tagged private
 with Variable_Indexing => Get_CompletionItem_Variable_Reference,
-Constant_Indexing => Get_CompletionItem_Constant_Reference;
+Constant_Indexing => Get_CompletionItem_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ExceptionPathSegment_Vector is tagged private
 with Variable_Indexing => Get_ExceptionPathSegment_Variable_Reference,
-Constant_Indexing => Get_ExceptionPathSegment_Constant_Reference;
+Constant_Indexing => Get_ExceptionPathSegment_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type DataBreakpointAccessType_Vector is tagged private
 with Variable_Indexing => Get_DataBreakpointAccessType_Variable_Reference,
-Constant_Indexing => Get_DataBreakpointAccessType_Constant_Reference;
+Constant_Indexing => Get_DataBreakpointAccessType_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type DisassembledInstruction_Vector is tagged private
 with Variable_Indexing => Get_DisassembledInstruction_Variable_Reference,
-Constant_Indexing => Get_DisassembledInstruction_Constant_Reference;
+Constant_Indexing => Get_DisassembledInstruction_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Module_Vector is tagged private
 with Variable_Indexing => Get_Module_Variable_Reference,
-Constant_Indexing => Get_Module_Constant_Reference;
+Constant_Indexing => Get_Module_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ExceptionFilterOptions_Vector is tagged private
 with Variable_Indexing => Get_ExceptionFilterOptions_Variable_Reference,
-Constant_Indexing => Get_ExceptionFilterOptions_Constant_Reference;
+Constant_Indexing => Get_ExceptionFilterOptions_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ColumnDescriptor_Vector is tagged private
 with Variable_Indexing => Get_ColumnDescriptor_Variable_Reference,
-Constant_Indexing => Get_ColumnDescriptor_Constant_Reference;
+Constant_Indexing => Get_ColumnDescriptor_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type ExceptionDetails_Vector is tagged private
 with Variable_Indexing => Get_ExceptionDetails_Variable_Reference,
-Constant_Indexing => Get_ExceptionDetails_Constant_Reference;
+Constant_Indexing => Get_ExceptionDetails_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 
 package Enum is
@@ -3543,6 +3572,8 @@ a_body : Any_Value;
       --  Contains request result if success is true and error details if success is false.
 end record;
 
+function Empty return Thread_Vector;
+
 function Is_Null (Self : Thread_Vector) return Boolean;
 
 function Length (Self : Thread_Vector) return Natural;
@@ -3572,6 +3603,8 @@ not overriding function Get_Thread_Constant_Reference
 Index : Positive)
 return Thread_Constant_Reference
 with Inline;
+
+function Empty return Checksum_Vector;
 
 function Is_Null (Self : Checksum_Vector) return Boolean;
 
@@ -3603,6 +3636,8 @@ Index : Positive)
 return Checksum_Constant_Reference
 with Inline;
 
+function Empty return Breakpoint_Vector;
+
 function Is_Null (Self : Breakpoint_Vector) return Boolean;
 
 function Length (Self : Breakpoint_Vector) return Natural;
@@ -3632,6 +3667,8 @@ not overriding function Get_Breakpoint_Constant_Reference
 Index : Positive)
 return Breakpoint_Constant_Reference
 with Inline;
+
+function Empty return StepInTarget_Vector;
 
 function Is_Null (Self : StepInTarget_Vector) return Boolean;
 
@@ -3663,6 +3700,8 @@ Index : Positive)
 return StepInTarget_Constant_Reference
 with Inline;
 
+function Empty return FunctionBreakpoint_Vector;
+
 function Is_Null (Self : FunctionBreakpoint_Vector) return Boolean;
 
 function Length (Self : FunctionBreakpoint_Vector) return Natural;
@@ -3692,6 +3731,8 @@ not overriding function Get_FunctionBreakpoint_Constant_Reference
 Index : Positive)
 return FunctionBreakpoint_Constant_Reference
 with Inline;
+
+function Empty return DataBreakpoint_Vector;
 
 function Is_Null (Self : DataBreakpoint_Vector) return Boolean;
 
@@ -3723,6 +3764,8 @@ Index : Positive)
 return DataBreakpoint_Constant_Reference
 with Inline;
 
+function Empty return ExceptionOptions_Vector;
+
 function Is_Null (Self : ExceptionOptions_Vector) return Boolean;
 
 function Length (Self : ExceptionOptions_Vector) return Natural;
@@ -3752,6 +3795,8 @@ not overriding function Get_ExceptionOptions_Constant_Reference
 Index : Positive)
 return ExceptionOptions_Constant_Reference
 with Inline;
+
+function Empty return Integer_Vector;
 
 function Is_Null (Self : Integer_Vector) return Boolean;
 
@@ -3783,6 +3828,8 @@ Index : Positive)
 return Integer_Constant_Reference
 with Inline;
 
+function Empty return GotoTarget_Vector;
+
 function Is_Null (Self : GotoTarget_Vector) return Boolean;
 
 function Length (Self : GotoTarget_Vector) return Natural;
@@ -3812,6 +3859,8 @@ not overriding function Get_GotoTarget_Constant_Reference
 Index : Positive)
 return GotoTarget_Constant_Reference
 with Inline;
+
+function Empty return InvalidatedAreas_Vector;
 
 function Is_Null (Self : InvalidatedAreas_Vector) return Boolean;
 
@@ -3843,6 +3892,8 @@ Index : Positive)
 return InvalidatedAreas_Constant_Reference
 with Inline;
 
+function Empty return BreakpointLocation_Vector;
+
 function Is_Null (Self : BreakpointLocation_Vector) return Boolean;
 
 function Length (Self : BreakpointLocation_Vector) return Natural;
@@ -3872,6 +3923,8 @@ not overriding function Get_BreakpointLocation_Constant_Reference
 Index : Positive)
 return BreakpointLocation_Constant_Reference
 with Inline;
+
+function Empty return InstructionBreakpoint_Vector;
 
 function Is_Null (Self : InstructionBreakpoint_Vector) return Boolean;
 
@@ -3903,6 +3956,8 @@ Index : Positive)
 return InstructionBreakpoint_Constant_Reference
 with Inline;
 
+function Empty return StackFrame_Vector;
+
 function Is_Null (Self : StackFrame_Vector) return Boolean;
 
 function Length (Self : StackFrame_Vector) return Natural;
@@ -3932,6 +3987,8 @@ not overriding function Get_StackFrame_Constant_Reference
 Index : Positive)
 return StackFrame_Constant_Reference
 with Inline;
+
+function Empty return Scope_Vector;
 
 function Is_Null (Self : Scope_Vector) return Boolean;
 
@@ -3963,6 +4020,8 @@ Index : Positive)
 return Scope_Constant_Reference
 with Inline;
 
+function Empty return Variable_Vector;
+
 function Is_Null (Self : Variable_Vector) return Boolean;
 
 function Length (Self : Variable_Vector) return Natural;
@@ -3992,6 +4051,8 @@ not overriding function Get_Variable_Constant_Reference
 Index : Positive)
 return Variable_Constant_Reference
 with Inline;
+
+function Empty return Source_Vector;
 
 function Is_Null (Self : Source_Vector) return Boolean;
 
@@ -4023,6 +4084,8 @@ Index : Positive)
 return Source_Constant_Reference
 with Inline;
 
+function Empty return VariablePresentationHint_attributes_Vector;
+
 function Is_Null (Self : VariablePresentationHint_attributes_Vector) return Boolean;
 
 function Length (Self : VariablePresentationHint_attributes_Vector) return Natural;
@@ -4052,6 +4115,8 @@ not overriding function Get_VariablePresentationHint_attributes_Constant_Referen
 Index : Positive)
 return VariablePresentationHint_attributes_Constant_Reference
 with Inline;
+
+function Empty return SourceBreakpoint_Vector;
 
 function Is_Null (Self : SourceBreakpoint_Vector) return Boolean;
 
@@ -4083,6 +4148,8 @@ Index : Positive)
 return SourceBreakpoint_Constant_Reference
 with Inline;
 
+function Empty return ChecksumAlgorithm_Vector;
+
 function Is_Null (Self : ChecksumAlgorithm_Vector) return Boolean;
 
 function Length (Self : ChecksumAlgorithm_Vector) return Natural;
@@ -4112,6 +4179,8 @@ not overriding function Get_ChecksumAlgorithm_Constant_Reference
 Index : Positive)
 return ChecksumAlgorithm_Constant_Reference
 with Inline;
+
+function Empty return ExceptionBreakpointsFilter_Vector;
 
 function Is_Null (Self : ExceptionBreakpointsFilter_Vector) return Boolean;
 
@@ -4143,6 +4212,8 @@ Index : Positive)
 return ExceptionBreakpointsFilter_Constant_Reference
 with Inline;
 
+function Empty return CompletionItem_Vector;
+
 function Is_Null (Self : CompletionItem_Vector) return Boolean;
 
 function Length (Self : CompletionItem_Vector) return Natural;
@@ -4172,6 +4243,8 @@ not overriding function Get_CompletionItem_Constant_Reference
 Index : Positive)
 return CompletionItem_Constant_Reference
 with Inline;
+
+function Empty return ExceptionPathSegment_Vector;
 
 function Is_Null (Self : ExceptionPathSegment_Vector) return Boolean;
 
@@ -4203,6 +4276,8 @@ Index : Positive)
 return ExceptionPathSegment_Constant_Reference
 with Inline;
 
+function Empty return DataBreakpointAccessType_Vector;
+
 function Is_Null (Self : DataBreakpointAccessType_Vector) return Boolean;
 
 function Length (Self : DataBreakpointAccessType_Vector) return Natural;
@@ -4232,6 +4307,8 @@ not overriding function Get_DataBreakpointAccessType_Constant_Reference
 Index : Positive)
 return DataBreakpointAccessType_Constant_Reference
 with Inline;
+
+function Empty return DisassembledInstruction_Vector;
 
 function Is_Null (Self : DisassembledInstruction_Vector) return Boolean;
 
@@ -4263,6 +4340,8 @@ Index : Positive)
 return DisassembledInstruction_Constant_Reference
 with Inline;
 
+function Empty return Module_Vector;
+
 function Is_Null (Self : Module_Vector) return Boolean;
 
 function Length (Self : Module_Vector) return Natural;
@@ -4292,6 +4371,8 @@ not overriding function Get_Module_Constant_Reference
 Index : Positive)
 return Module_Constant_Reference
 with Inline;
+
+function Empty return ExceptionFilterOptions_Vector;
 
 function Is_Null (Self : ExceptionFilterOptions_Vector) return Boolean;
 
@@ -4323,6 +4404,8 @@ Index : Positive)
 return ExceptionFilterOptions_Constant_Reference
 with Inline;
 
+function Empty return ColumnDescriptor_Vector;
+
 function Is_Null (Self : ColumnDescriptor_Vector) return Boolean;
 
 function Length (Self : ColumnDescriptor_Vector) return Natural;
@@ -4352,6 +4435,8 @@ not overriding function Get_ColumnDescriptor_Constant_Reference
 Index : Positive)
 return ColumnDescriptor_Constant_Reference
 with Inline;
+
+function Empty return ExceptionDetails_Vector;
 
 function Is_Null (Self : ExceptionDetails_Vector) return Boolean;
 
@@ -4764,6 +4849,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Thread_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Thread_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Thread_Vector) return Natural is (Self.Length);
@@ -4822,6 +4909,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Checksum_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Checksum_Vector) return Boolean is (Self.Is_Null);
 
@@ -4882,6 +4971,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Breakpoint_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Breakpoint_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Breakpoint_Vector) return Natural is (Self.Length);
@@ -4940,6 +5031,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return StepInTarget_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : StepInTarget_Vector) return Boolean is (Self.Is_Null);
 
@@ -5000,6 +5093,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return FunctionBreakpoint_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : FunctionBreakpoint_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : FunctionBreakpoint_Vector) return Natural is (Self.Length);
@@ -5058,6 +5153,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return DataBreakpoint_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : DataBreakpoint_Vector) return Boolean is (Self.Is_Null);
 
@@ -5118,6 +5215,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return ExceptionOptions_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : ExceptionOptions_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : ExceptionOptions_Vector) return Natural is (Self.Length);
@@ -5176,6 +5275,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Integer_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Integer_Vector) return Boolean is (Self.Is_Null);
 
@@ -5236,6 +5337,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return GotoTarget_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : GotoTarget_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : GotoTarget_Vector) return Natural is (Self.Length);
@@ -5294,6 +5397,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return InvalidatedAreas_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : InvalidatedAreas_Vector) return Boolean is (Self.Is_Null);
 
@@ -5354,6 +5459,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return BreakpointLocation_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : BreakpointLocation_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : BreakpointLocation_Vector) return Natural is (Self.Length);
@@ -5412,6 +5519,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return InstructionBreakpoint_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : InstructionBreakpoint_Vector) return Boolean is (Self.Is_Null);
 
@@ -5472,6 +5581,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return StackFrame_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : StackFrame_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : StackFrame_Vector) return Natural is (Self.Length);
@@ -5530,6 +5641,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Scope_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Scope_Vector) return Boolean is (Self.Is_Null);
 
@@ -5590,6 +5703,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Variable_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Variable_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Variable_Vector) return Natural is (Self.Length);
@@ -5648,6 +5763,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Source_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Source_Vector) return Boolean is (Self.Is_Null);
 
@@ -5708,6 +5825,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return VariablePresentationHint_attributes_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : VariablePresentationHint_attributes_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : VariablePresentationHint_attributes_Vector) return Natural is (Self.Length);
@@ -5766,6 +5885,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return SourceBreakpoint_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : SourceBreakpoint_Vector) return Boolean is (Self.Is_Null);
 
@@ -5826,6 +5947,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return ChecksumAlgorithm_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : ChecksumAlgorithm_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : ChecksumAlgorithm_Vector) return Natural is (Self.Length);
@@ -5884,6 +6007,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return ExceptionBreakpointsFilter_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : ExceptionBreakpointsFilter_Vector) return Boolean is (Self.Is_Null);
 
@@ -5944,6 +6069,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return CompletionItem_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : CompletionItem_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : CompletionItem_Vector) return Natural is (Self.Length);
@@ -6002,6 +6129,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return ExceptionPathSegment_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : ExceptionPathSegment_Vector) return Boolean is (Self.Is_Null);
 
@@ -6062,6 +6191,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return DataBreakpointAccessType_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : DataBreakpointAccessType_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : DataBreakpointAccessType_Vector) return Natural is (Self.Length);
@@ -6120,6 +6251,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return DisassembledInstruction_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : DisassembledInstruction_Vector) return Boolean is (Self.Is_Null);
 
@@ -6180,6 +6313,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Module_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Module_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Module_Vector) return Natural is (Self.Length);
@@ -6238,6 +6373,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return ExceptionFilterOptions_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : ExceptionFilterOptions_Vector) return Boolean is (Self.Is_Null);
 
@@ -6298,6 +6435,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return ColumnDescriptor_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : ColumnDescriptor_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : ColumnDescriptor_Vector) return Natural is (Self.Length);
@@ -6356,6 +6495,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return ExceptionDetails_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : ExceptionDetails_Vector) return Boolean is (Self.Is_Null);
 

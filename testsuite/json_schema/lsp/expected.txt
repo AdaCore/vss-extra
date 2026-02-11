@@ -20,7 +20,8 @@
 --
 --  DON'T EDIT THIS FILE! It was generated from metaModel.schema.json.
 
-pragma Style_Checks ("M99");  --  suppress style warning unitl gnatpp is fixed
+pragma Ada_2022;
+pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Finalization;
 with VSS.JSON.Streams;
@@ -64,39 +65,48 @@ end case; end record;
 
 type Property_Vector is tagged private
 with Variable_Indexing => Get_Property_Variable_Reference,
-Constant_Indexing => Get_Property_Constant_Reference;
+Constant_Indexing => Get_Property_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Request_Vector is tagged private
 with Variable_Indexing => Get_Request_Variable_Reference,
-Constant_Indexing => Get_Request_Constant_Reference;
+Constant_Indexing => Get_Request_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Integer_Vector is tagged private
 with Variable_Indexing => Get_Integer_Variable_Reference,
-Constant_Indexing => Get_Integer_Constant_Reference;
+Constant_Indexing => Get_Integer_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type TypeAlias_Vector is tagged private
 with Variable_Indexing => Get_TypeAlias_Variable_Reference,
-Constant_Indexing => Get_TypeAlias_Constant_Reference;
+Constant_Indexing => Get_TypeAlias_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Structure_Vector is tagged private
 with Variable_Indexing => Get_Structure_Variable_Reference,
-Constant_Indexing => Get_Structure_Constant_Reference;
+Constant_Indexing => Get_Structure_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Notification_Vector is tagged private
 with Variable_Indexing => Get_Notification_Variable_Reference,
-Constant_Indexing => Get_Notification_Constant_Reference;
+Constant_Indexing => Get_Notification_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type EnumerationEntry_Vector is tagged private
 with Variable_Indexing => Get_EnumerationEntry_Variable_Reference,
-Constant_Indexing => Get_EnumerationEntry_Constant_Reference;
+Constant_Indexing => Get_EnumerationEntry_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Enumeration_Vector is tagged private
 with Variable_Indexing => Get_Enumeration_Variable_Reference,
-Constant_Indexing => Get_Enumeration_Constant_Reference;
+Constant_Indexing => Get_Enumeration_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type AType_Vector is tagged private
 with Variable_Indexing => Get_AType_Variable_Reference,
-Constant_Indexing => Get_AType_Constant_Reference;
+Constant_Indexing => Get_AType_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type AType_Holder is tagged private;
 
@@ -361,6 +371,8 @@ since : VSS.Strings.Virtual_String;
       --  Since when (release number) this request is available. Is undefined if not known.
 end record;
 
+function Empty return Property_Vector;
+
 function Is_Null (Self : Property_Vector) return Boolean;
 
 function Length (Self : Property_Vector) return Natural;
@@ -390,6 +402,8 @@ not overriding function Get_Property_Constant_Reference
 Index : Positive)
 return Property_Constant_Reference
 with Inline;
+
+function Empty return Request_Vector;
 
 function Is_Null (Self : Request_Vector) return Boolean;
 
@@ -421,6 +435,8 @@ Index : Positive)
 return Request_Constant_Reference
 with Inline;
 
+function Empty return Integer_Vector;
+
 function Is_Null (Self : Integer_Vector) return Boolean;
 
 function Length (Self : Integer_Vector) return Natural;
@@ -450,6 +466,8 @@ not overriding function Get_Integer_Constant_Reference
 Index : Positive)
 return Integer_Constant_Reference
 with Inline;
+
+function Empty return TypeAlias_Vector;
 
 function Is_Null (Self : TypeAlias_Vector) return Boolean;
 
@@ -481,6 +499,8 @@ Index : Positive)
 return TypeAlias_Constant_Reference
 with Inline;
 
+function Empty return Structure_Vector;
+
 function Is_Null (Self : Structure_Vector) return Boolean;
 
 function Length (Self : Structure_Vector) return Natural;
@@ -510,6 +530,8 @@ not overriding function Get_Structure_Constant_Reference
 Index : Positive)
 return Structure_Constant_Reference
 with Inline;
+
+function Empty return Notification_Vector;
 
 function Is_Null (Self : Notification_Vector) return Boolean;
 
@@ -541,6 +563,8 @@ Index : Positive)
 return Notification_Constant_Reference
 with Inline;
 
+function Empty return EnumerationEntry_Vector;
+
 function Is_Null (Self : EnumerationEntry_Vector) return Boolean;
 
 function Length (Self : EnumerationEntry_Vector) return Natural;
@@ -571,6 +595,8 @@ Index : Positive)
 return EnumerationEntry_Constant_Reference
 with Inline;
 
+function Empty return Enumeration_Vector;
+
 function Is_Null (Self : Enumeration_Vector) return Boolean;
 
 function Length (Self : Enumeration_Vector) return Natural;
@@ -600,6 +626,8 @@ not overriding function Get_Enumeration_Constant_Reference
 Index : Positive)
 return Enumeration_Constant_Reference
 with Inline;
+
+function Empty return AType_Vector;
 
 function Is_Null (Self : AType_Vector) return Boolean;
 
@@ -794,6 +822,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Property_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Property_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Property_Vector) return Natural is (Self.Length);
@@ -852,6 +882,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Request_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Request_Vector) return Boolean is (Self.Is_Null);
 
@@ -912,6 +944,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Integer_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Integer_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Integer_Vector) return Natural is (Self.Length);
@@ -970,6 +1004,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return TypeAlias_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : TypeAlias_Vector) return Boolean is (Self.Is_Null);
 
@@ -1030,6 +1066,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Structure_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Structure_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Structure_Vector) return Natural is (Self.Length);
@@ -1088,6 +1126,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Notification_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Notification_Vector) return Boolean is (Self.Is_Null);
 
@@ -1148,6 +1188,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return EnumerationEntry_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : EnumerationEntry_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : EnumerationEntry_Vector) return Natural is (Self.Length);
@@ -1207,6 +1249,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Enumeration_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : Enumeration_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : Enumeration_Vector) return Natural is (Self.Length);
@@ -1265,6 +1309,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return AType_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : AType_Vector) return Boolean is (Self.Is_Null);
 

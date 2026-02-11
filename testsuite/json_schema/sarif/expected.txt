@@ -4,7 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
-pragma Style_Checks ("M99");  --  suppress style warning unitl gnatpp is fixed
+pragma Ada_2022;
+pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Finalization;
 with VSS.JSON.Streams;
@@ -48,179 +49,223 @@ end case; end record;
 
 type configurationOverride_Vector is tagged private
 with Variable_Indexing => Get_configurationOverride_Variable_Reference,
-Constant_Indexing => Get_configurationOverride_Constant_Reference;
+Constant_Indexing => Get_configurationOverride_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type locationRelationship_Vector is tagged private
 with Variable_Indexing => Get_locationRelationship_Variable_Reference,
-Constant_Indexing => Get_locationRelationship_Constant_Reference;
+Constant_Indexing => Get_locationRelationship_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type threadFlowLocation_Vector is tagged private
 with Variable_Indexing => Get_threadFlowLocation_Variable_Reference,
-Constant_Indexing => Get_threadFlowLocation_Constant_Reference;
+Constant_Indexing => Get_threadFlowLocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type result_Vector is tagged private
 with Variable_Indexing => Get_result_Variable_Reference,
-Constant_Indexing => Get_result_Constant_Reference;
+Constant_Indexing => Get_result_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type runAutomationDetails_Vector is tagged private
 with Variable_Indexing => Get_runAutomationDetails_Variable_Reference,
-Constant_Indexing => Get_runAutomationDetails_Constant_Reference;
+Constant_Indexing => Get_runAutomationDetails_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type replacement_Vector is tagged private
 with Variable_Indexing => Get_replacement_Variable_Reference,
-Constant_Indexing => Get_replacement_Constant_Reference;
+Constant_Indexing => Get_replacement_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type webResponse_Vector is tagged private
 with Variable_Indexing => Get_webResponse_Variable_Reference,
-Constant_Indexing => Get_webResponse_Constant_Reference;
+Constant_Indexing => Get_webResponse_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type address_Vector is tagged private
 with Variable_Indexing => Get_address_Variable_Reference,
-Constant_Indexing => Get_address_Constant_Reference;
+Constant_Indexing => Get_address_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type physicalLocation_Vector is tagged private
 with Variable_Indexing => Get_physicalLocation_Variable_Reference,
-Constant_Indexing => Get_physicalLocation_Constant_Reference;
+Constant_Indexing => Get_physicalLocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type stackFrame_Vector is tagged private
 with Variable_Indexing => Get_stackFrame_Variable_Reference,
-Constant_Indexing => Get_stackFrame_Constant_Reference;
+Constant_Indexing => Get_stackFrame_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type toolComponent_Vector is tagged private
 with Variable_Indexing => Get_toolComponent_Variable_Reference,
-Constant_Indexing => Get_toolComponent_Constant_Reference;
+Constant_Indexing => Get_toolComponent_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type externalPropertyFileReference_Vector is tagged private
 with Variable_Indexing => Get_externalPropertyFileReference_Variable_Reference,
-Constant_Indexing => Get_externalPropertyFileReference_Constant_Reference;
+Constant_Indexing => Get_externalPropertyFileReference_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type stack_Vector is tagged private
 with Variable_Indexing => Get_stack_Variable_Reference,
-Constant_Indexing => Get_stack_Constant_Reference;
+Constant_Indexing => Get_stack_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Integer_Vector is tagged private
 with Variable_Indexing => Get_Integer_Variable_Reference,
-Constant_Indexing => Get_Integer_Constant_Reference;
+Constant_Indexing => Get_Integer_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type notification_Vector is tagged private
 with Variable_Indexing => Get_notification_Variable_Reference,
-Constant_Indexing => Get_notification_Constant_Reference;
+Constant_Indexing => Get_notification_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type attachment_Vector is tagged private
 with Variable_Indexing => Get_attachment_Variable_Reference,
-Constant_Indexing => Get_attachment_Constant_Reference;
+Constant_Indexing => Get_attachment_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type suppression_Vector is tagged private
 with Variable_Indexing => Get_suppression_Variable_Reference,
-Constant_Indexing => Get_suppression_Constant_Reference;
+Constant_Indexing => Get_suppression_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type edgeTraversal_Vector is tagged private
 with Variable_Indexing => Get_edgeTraversal_Variable_Reference,
-Constant_Indexing => Get_edgeTraversal_Constant_Reference;
+Constant_Indexing => Get_edgeTraversal_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type graphTraversal_Vector is tagged private
 with Variable_Indexing => Get_graphTraversal_Variable_Reference,
-Constant_Indexing => Get_graphTraversal_Constant_Reference;
+Constant_Indexing => Get_graphTraversal_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type location_Vector is tagged private
 with Variable_Indexing => Get_location_Variable_Reference,
-Constant_Indexing => Get_location_Constant_Reference;
+Constant_Indexing => Get_location_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type graph_Vector is tagged private
 with Variable_Indexing => Get_graph_Variable_Reference,
-Constant_Indexing => Get_graph_Constant_Reference;
+Constant_Indexing => Get_graph_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type reportingDescriptorReference_Vector is tagged private
 with Variable_Indexing => Get_reportingDescriptorReference_Variable_Reference,
-Constant_Indexing => Get_reportingDescriptorReference_Constant_Reference;
+Constant_Indexing => Get_reportingDescriptorReference_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type reportingDescriptorRelationship_Vector is tagged private
 with Variable_Indexing => Get_reportingDescriptorRelationship_Variable_Reference,
-Constant_Indexing => Get_reportingDescriptorRelationship_Constant_Reference;
+Constant_Indexing => Get_reportingDescriptorRelationship_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type region_Vector is tagged private
 with Variable_Indexing => Get_region_Variable_Reference,
-Constant_Indexing => Get_region_Constant_Reference;
+Constant_Indexing => Get_region_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type versionControlDetails_Vector is tagged private
 with Variable_Indexing => Get_versionControlDetails_Variable_Reference,
-Constant_Indexing => Get_versionControlDetails_Constant_Reference;
+Constant_Indexing => Get_versionControlDetails_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type rectangle_Vector is tagged private
 with Variable_Indexing => Get_rectangle_Variable_Reference,
-Constant_Indexing => Get_rectangle_Constant_Reference;
+Constant_Indexing => Get_rectangle_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type codeFlow_Vector is tagged private
 with Variable_Indexing => Get_codeFlow_Variable_Reference,
-Constant_Indexing => Get_codeFlow_Constant_Reference;
+Constant_Indexing => Get_codeFlow_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type toolComponentReference_Vector is tagged private
 with Variable_Indexing => Get_toolComponentReference_Variable_Reference,
-Constant_Indexing => Get_toolComponentReference_Constant_Reference;
+Constant_Indexing => Get_toolComponentReference_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type edge_Vector is tagged private
 with Variable_Indexing => Get_edge_Variable_Reference,
-Constant_Indexing => Get_edge_Constant_Reference;
+Constant_Indexing => Get_edge_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type toolComponent_contents_Vector is tagged private
 with Variable_Indexing => Get_toolComponent_contents_Variable_Reference,
-Constant_Indexing => Get_toolComponent_contents_Constant_Reference;
+Constant_Indexing => Get_toolComponent_contents_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type node_Vector is tagged private
 with Variable_Indexing => Get_node_Variable_Reference,
-Constant_Indexing => Get_node_Constant_Reference;
+Constant_Indexing => Get_node_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type threadFlow_Vector is tagged private
 with Variable_Indexing => Get_threadFlow_Variable_Reference,
-Constant_Indexing => Get_threadFlow_Constant_Reference;
+Constant_Indexing => Get_threadFlow_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type fix_Vector is tagged private
 with Variable_Indexing => Get_fix_Variable_Reference,
-Constant_Indexing => Get_fix_Constant_Reference;
+Constant_Indexing => Get_fix_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type invocation_Vector is tagged private
 with Variable_Indexing => Get_invocation_Variable_Reference,
-Constant_Indexing => Get_invocation_Constant_Reference;
+Constant_Indexing => Get_invocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type artifactChange_Vector is tagged private
 with Variable_Indexing => Get_artifactChange_Variable_Reference,
-Constant_Indexing => Get_artifactChange_Constant_Reference;
+Constant_Indexing => Get_artifactChange_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type artifact_roles_Vector is tagged private
 with Variable_Indexing => Get_artifact_roles_Variable_Reference,
-Constant_Indexing => Get_artifact_roles_Constant_Reference;
+Constant_Indexing => Get_artifact_roles_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type artifact_Vector is tagged private
 with Variable_Indexing => Get_artifact_Variable_Reference,
-Constant_Indexing => Get_artifact_Constant_Reference;
+Constant_Indexing => Get_artifact_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type logicalLocation_Vector is tagged private
 with Variable_Indexing => Get_logicalLocation_Variable_Reference,
-Constant_Indexing => Get_logicalLocation_Constant_Reference;
+Constant_Indexing => Get_logicalLocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type webRequest_Vector is tagged private
 with Variable_Indexing => Get_webRequest_Variable_Reference,
-Constant_Indexing => Get_webRequest_Constant_Reference;
+Constant_Indexing => Get_webRequest_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type externalProperties_Vector is tagged private
 with Variable_Indexing => Get_externalProperties_Variable_Reference,
-Constant_Indexing => Get_externalProperties_Constant_Reference;
+Constant_Indexing => Get_externalProperties_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type run_Vector is tagged private
 with Variable_Indexing => Get_run_Variable_Reference,
-Constant_Indexing => Get_run_Constant_Reference;
+Constant_Indexing => Get_run_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type a_exception_Vector is tagged private
 with Variable_Indexing => Get_a_exception_Variable_Reference,
-Constant_Indexing => Get_a_exception_Constant_Reference;
+Constant_Indexing => Get_a_exception_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type reportingDescriptor_Vector is tagged private
 with Variable_Indexing => Get_reportingDescriptor_Variable_Reference,
-Constant_Indexing => Get_reportingDescriptor_Constant_Reference;
+Constant_Indexing => Get_reportingDescriptor_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type artifactLocation_Vector is tagged private
 with Variable_Indexing => Get_artifactLocation_Variable_Reference,
-Constant_Indexing => Get_artifactLocation_Constant_Reference;
+Constant_Indexing => Get_artifactLocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 
 package Enum is
@@ -1442,6 +1487,8 @@ properties : Optional_propertyBag;
       --  Key/value pairs that provide additional information about the configuration override.
 end record;
 
+function Empty return configurationOverride_Vector;
+
 function Is_Null (Self : configurationOverride_Vector) return Boolean;
 
 function Length (Self : configurationOverride_Vector) return Natural;
@@ -1471,6 +1518,8 @@ not overriding function Get_configurationOverride_Constant_Reference
 Index : Positive)
 return configurationOverride_Constant_Reference
 with Inline;
+
+function Empty return locationRelationship_Vector;
 
 function Is_Null (Self : locationRelationship_Vector) return Boolean;
 
@@ -1502,6 +1551,8 @@ Index : Positive)
 return locationRelationship_Constant_Reference
 with Inline;
 
+function Empty return threadFlowLocation_Vector;
+
 function Is_Null (Self : threadFlowLocation_Vector) return Boolean;
 
 function Length (Self : threadFlowLocation_Vector) return Natural;
@@ -1531,6 +1582,8 @@ not overriding function Get_threadFlowLocation_Constant_Reference
 Index : Positive)
 return threadFlowLocation_Constant_Reference
 with Inline;
+
+function Empty return result_Vector;
 
 function Is_Null (Self : result_Vector) return Boolean;
 
@@ -1562,6 +1615,8 @@ Index : Positive)
 return result_Constant_Reference
 with Inline;
 
+function Empty return runAutomationDetails_Vector;
+
 function Is_Null (Self : runAutomationDetails_Vector) return Boolean;
 
 function Length (Self : runAutomationDetails_Vector) return Natural;
@@ -1591,6 +1646,8 @@ not overriding function Get_runAutomationDetails_Constant_Reference
 Index : Positive)
 return runAutomationDetails_Constant_Reference
 with Inline;
+
+function Empty return replacement_Vector;
 
 function Is_Null (Self : replacement_Vector) return Boolean;
 
@@ -1622,6 +1679,8 @@ Index : Positive)
 return replacement_Constant_Reference
 with Inline;
 
+function Empty return webResponse_Vector;
+
 function Is_Null (Self : webResponse_Vector) return Boolean;
 
 function Length (Self : webResponse_Vector) return Natural;
@@ -1651,6 +1710,8 @@ not overriding function Get_webResponse_Constant_Reference
 Index : Positive)
 return webResponse_Constant_Reference
 with Inline;
+
+function Empty return address_Vector;
 
 function Is_Null (Self : address_Vector) return Boolean;
 
@@ -1682,6 +1743,8 @@ Index : Positive)
 return address_Constant_Reference
 with Inline;
 
+function Empty return physicalLocation_Vector;
+
 function Is_Null (Self : physicalLocation_Vector) return Boolean;
 
 function Length (Self : physicalLocation_Vector) return Natural;
@@ -1711,6 +1774,8 @@ not overriding function Get_physicalLocation_Constant_Reference
 Index : Positive)
 return physicalLocation_Constant_Reference
 with Inline;
+
+function Empty return stackFrame_Vector;
 
 function Is_Null (Self : stackFrame_Vector) return Boolean;
 
@@ -1742,6 +1807,8 @@ Index : Positive)
 return stackFrame_Constant_Reference
 with Inline;
 
+function Empty return toolComponent_Vector;
+
 function Is_Null (Self : toolComponent_Vector) return Boolean;
 
 function Length (Self : toolComponent_Vector) return Natural;
@@ -1771,6 +1838,8 @@ not overriding function Get_toolComponent_Constant_Reference
 Index : Positive)
 return toolComponent_Constant_Reference
 with Inline;
+
+function Empty return externalPropertyFileReference_Vector;
 
 function Is_Null (Self : externalPropertyFileReference_Vector) return Boolean;
 
@@ -1802,6 +1871,8 @@ Index : Positive)
 return externalPropertyFileReference_Constant_Reference
 with Inline;
 
+function Empty return stack_Vector;
+
 function Is_Null (Self : stack_Vector) return Boolean;
 
 function Length (Self : stack_Vector) return Natural;
@@ -1831,6 +1902,8 @@ not overriding function Get_stack_Constant_Reference
 Index : Positive)
 return stack_Constant_Reference
 with Inline;
+
+function Empty return Integer_Vector;
 
 function Is_Null (Self : Integer_Vector) return Boolean;
 
@@ -1862,6 +1935,8 @@ Index : Positive)
 return Integer_Constant_Reference
 with Inline;
 
+function Empty return notification_Vector;
+
 function Is_Null (Self : notification_Vector) return Boolean;
 
 function Length (Self : notification_Vector) return Natural;
@@ -1891,6 +1966,8 @@ not overriding function Get_notification_Constant_Reference
 Index : Positive)
 return notification_Constant_Reference
 with Inline;
+
+function Empty return attachment_Vector;
 
 function Is_Null (Self : attachment_Vector) return Boolean;
 
@@ -1922,6 +1999,8 @@ Index : Positive)
 return attachment_Constant_Reference
 with Inline;
 
+function Empty return suppression_Vector;
+
 function Is_Null (Self : suppression_Vector) return Boolean;
 
 function Length (Self : suppression_Vector) return Natural;
@@ -1951,6 +2030,8 @@ not overriding function Get_suppression_Constant_Reference
 Index : Positive)
 return suppression_Constant_Reference
 with Inline;
+
+function Empty return edgeTraversal_Vector;
 
 function Is_Null (Self : edgeTraversal_Vector) return Boolean;
 
@@ -1982,6 +2063,8 @@ Index : Positive)
 return edgeTraversal_Constant_Reference
 with Inline;
 
+function Empty return graphTraversal_Vector;
+
 function Is_Null (Self : graphTraversal_Vector) return Boolean;
 
 function Length (Self : graphTraversal_Vector) return Natural;
@@ -2011,6 +2094,8 @@ not overriding function Get_graphTraversal_Constant_Reference
 Index : Positive)
 return graphTraversal_Constant_Reference
 with Inline;
+
+function Empty return location_Vector;
 
 function Is_Null (Self : location_Vector) return Boolean;
 
@@ -2042,6 +2127,8 @@ Index : Positive)
 return location_Constant_Reference
 with Inline;
 
+function Empty return graph_Vector;
+
 function Is_Null (Self : graph_Vector) return Boolean;
 
 function Length (Self : graph_Vector) return Natural;
@@ -2071,6 +2158,8 @@ not overriding function Get_graph_Constant_Reference
 Index : Positive)
 return graph_Constant_Reference
 with Inline;
+
+function Empty return reportingDescriptorReference_Vector;
 
 function Is_Null (Self : reportingDescriptorReference_Vector) return Boolean;
 
@@ -2102,6 +2191,8 @@ Index : Positive)
 return reportingDescriptorReference_Constant_Reference
 with Inline;
 
+function Empty return reportingDescriptorRelationship_Vector;
+
 function Is_Null (Self : reportingDescriptorRelationship_Vector) return Boolean;
 
 function Length (Self : reportingDescriptorRelationship_Vector) return Natural;
@@ -2131,6 +2222,8 @@ not overriding function Get_reportingDescriptorRelationship_Constant_Reference
 Index : Positive)
 return reportingDescriptorRelationship_Constant_Reference
 with Inline;
+
+function Empty return region_Vector;
 
 function Is_Null (Self : region_Vector) return Boolean;
 
@@ -2162,6 +2255,8 @@ Index : Positive)
 return region_Constant_Reference
 with Inline;
 
+function Empty return versionControlDetails_Vector;
+
 function Is_Null (Self : versionControlDetails_Vector) return Boolean;
 
 function Length (Self : versionControlDetails_Vector) return Natural;
@@ -2191,6 +2286,8 @@ not overriding function Get_versionControlDetails_Constant_Reference
 Index : Positive)
 return versionControlDetails_Constant_Reference
 with Inline;
+
+function Empty return rectangle_Vector;
 
 function Is_Null (Self : rectangle_Vector) return Boolean;
 
@@ -2222,6 +2319,8 @@ Index : Positive)
 return rectangle_Constant_Reference
 with Inline;
 
+function Empty return codeFlow_Vector;
+
 function Is_Null (Self : codeFlow_Vector) return Boolean;
 
 function Length (Self : codeFlow_Vector) return Natural;
@@ -2251,6 +2350,8 @@ not overriding function Get_codeFlow_Constant_Reference
 Index : Positive)
 return codeFlow_Constant_Reference
 with Inline;
+
+function Empty return toolComponentReference_Vector;
 
 function Is_Null (Self : toolComponentReference_Vector) return Boolean;
 
@@ -2282,6 +2383,8 @@ Index : Positive)
 return toolComponentReference_Constant_Reference
 with Inline;
 
+function Empty return edge_Vector;
+
 function Is_Null (Self : edge_Vector) return Boolean;
 
 function Length (Self : edge_Vector) return Natural;
@@ -2311,6 +2414,8 @@ not overriding function Get_edge_Constant_Reference
 Index : Positive)
 return edge_Constant_Reference
 with Inline;
+
+function Empty return toolComponent_contents_Vector;
 
 function Is_Null (Self : toolComponent_contents_Vector) return Boolean;
 
@@ -2342,6 +2447,8 @@ Index : Positive)
 return toolComponent_contents_Constant_Reference
 with Inline;
 
+function Empty return node_Vector;
+
 function Is_Null (Self : node_Vector) return Boolean;
 
 function Length (Self : node_Vector) return Natural;
@@ -2371,6 +2478,8 @@ not overriding function Get_node_Constant_Reference
 Index : Positive)
 return node_Constant_Reference
 with Inline;
+
+function Empty return threadFlow_Vector;
 
 function Is_Null (Self : threadFlow_Vector) return Boolean;
 
@@ -2402,6 +2511,8 @@ Index : Positive)
 return threadFlow_Constant_Reference
 with Inline;
 
+function Empty return fix_Vector;
+
 function Is_Null (Self : fix_Vector) return Boolean;
 
 function Length (Self : fix_Vector) return Natural;
@@ -2431,6 +2542,8 @@ not overriding function Get_fix_Constant_Reference
 Index : Positive)
 return fix_Constant_Reference
 with Inline;
+
+function Empty return invocation_Vector;
 
 function Is_Null (Self : invocation_Vector) return Boolean;
 
@@ -2462,6 +2575,8 @@ Index : Positive)
 return invocation_Constant_Reference
 with Inline;
 
+function Empty return artifactChange_Vector;
+
 function Is_Null (Self : artifactChange_Vector) return Boolean;
 
 function Length (Self : artifactChange_Vector) return Natural;
@@ -2491,6 +2606,8 @@ not overriding function Get_artifactChange_Constant_Reference
 Index : Positive)
 return artifactChange_Constant_Reference
 with Inline;
+
+function Empty return artifact_roles_Vector;
 
 function Is_Null (Self : artifact_roles_Vector) return Boolean;
 
@@ -2522,6 +2639,8 @@ Index : Positive)
 return artifact_roles_Constant_Reference
 with Inline;
 
+function Empty return artifact_Vector;
+
 function Is_Null (Self : artifact_Vector) return Boolean;
 
 function Length (Self : artifact_Vector) return Natural;
@@ -2551,6 +2670,8 @@ not overriding function Get_artifact_Constant_Reference
 Index : Positive)
 return artifact_Constant_Reference
 with Inline;
+
+function Empty return logicalLocation_Vector;
 
 function Is_Null (Self : logicalLocation_Vector) return Boolean;
 
@@ -2582,6 +2703,8 @@ Index : Positive)
 return logicalLocation_Constant_Reference
 with Inline;
 
+function Empty return webRequest_Vector;
+
 function Is_Null (Self : webRequest_Vector) return Boolean;
 
 function Length (Self : webRequest_Vector) return Natural;
@@ -2611,6 +2734,8 @@ not overriding function Get_webRequest_Constant_Reference
 Index : Positive)
 return webRequest_Constant_Reference
 with Inline;
+
+function Empty return externalProperties_Vector;
 
 function Is_Null (Self : externalProperties_Vector) return Boolean;
 
@@ -2642,6 +2767,8 @@ Index : Positive)
 return externalProperties_Constant_Reference
 with Inline;
 
+function Empty return run_Vector;
+
 function Is_Null (Self : run_Vector) return Boolean;
 
 function Length (Self : run_Vector) return Natural;
@@ -2671,6 +2798,8 @@ not overriding function Get_run_Constant_Reference
 Index : Positive)
 return run_Constant_Reference
 with Inline;
+
+function Empty return a_exception_Vector;
 
 function Is_Null (Self : a_exception_Vector) return Boolean;
 
@@ -2702,6 +2831,8 @@ Index : Positive)
 return a_exception_Constant_Reference
 with Inline;
 
+function Empty return reportingDescriptor_Vector;
+
 function Is_Null (Self : reportingDescriptor_Vector) return Boolean;
 
 function Length (Self : reportingDescriptor_Vector) return Natural;
@@ -2731,6 +2862,8 @@ not overriding function Get_reportingDescriptor_Constant_Reference
 Index : Positive)
 return reportingDescriptor_Constant_Reference
 with Inline;
+
+function Empty return artifactLocation_Vector;
 
 function Is_Null (Self : artifactLocation_Vector) return Boolean;
 
@@ -3319,6 +3452,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return configurationOverride_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : configurationOverride_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : configurationOverride_Vector) return Natural is (Self.Length);
@@ -3377,6 +3512,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return locationRelationship_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : locationRelationship_Vector) return Boolean is (Self.Is_Null);
 
@@ -3437,6 +3574,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return threadFlowLocation_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : threadFlowLocation_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : threadFlowLocation_Vector) return Natural is (Self.Length);
@@ -3495,6 +3634,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return result_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : result_Vector) return Boolean is (Self.Is_Null);
 
@@ -3555,6 +3696,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return runAutomationDetails_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : runAutomationDetails_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : runAutomationDetails_Vector) return Natural is (Self.Length);
@@ -3613,6 +3756,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return replacement_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : replacement_Vector) return Boolean is (Self.Is_Null);
 
@@ -3673,6 +3818,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return webResponse_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : webResponse_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : webResponse_Vector) return Natural is (Self.Length);
@@ -3731,6 +3878,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return address_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : address_Vector) return Boolean is (Self.Is_Null);
 
@@ -3791,6 +3940,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return physicalLocation_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : physicalLocation_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : physicalLocation_Vector) return Natural is (Self.Length);
@@ -3849,6 +4000,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return stackFrame_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : stackFrame_Vector) return Boolean is (Self.Is_Null);
 
@@ -3909,6 +4062,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return toolComponent_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : toolComponent_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : toolComponent_Vector) return Natural is (Self.Length);
@@ -3967,6 +4122,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return externalPropertyFileReference_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : externalPropertyFileReference_Vector) return Boolean is (Self.Is_Null);
 
@@ -4027,6 +4184,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return stack_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : stack_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : stack_Vector) return Natural is (Self.Length);
@@ -4085,6 +4244,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return Integer_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : Integer_Vector) return Boolean is (Self.Is_Null);
 
@@ -4145,6 +4306,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return notification_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : notification_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : notification_Vector) return Natural is (Self.Length);
@@ -4203,6 +4366,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return attachment_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : attachment_Vector) return Boolean is (Self.Is_Null);
 
@@ -4263,6 +4428,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return suppression_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : suppression_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : suppression_Vector) return Natural is (Self.Length);
@@ -4321,6 +4488,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return edgeTraversal_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : edgeTraversal_Vector) return Boolean is (Self.Is_Null);
 
@@ -4381,6 +4550,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return graphTraversal_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : graphTraversal_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : graphTraversal_Vector) return Natural is (Self.Length);
@@ -4439,6 +4610,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return location_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : location_Vector) return Boolean is (Self.Is_Null);
 
@@ -4499,6 +4672,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return graph_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : graph_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : graph_Vector) return Natural is (Self.Length);
@@ -4557,6 +4732,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return reportingDescriptorReference_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : reportingDescriptorReference_Vector) return Boolean is (Self.Is_Null);
 
@@ -4617,6 +4794,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return reportingDescriptorRelationship_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : reportingDescriptorRelationship_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : reportingDescriptorRelationship_Vector) return Natural is (Self.Length);
@@ -4675,6 +4854,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return region_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : region_Vector) return Boolean is (Self.Is_Null);
 
@@ -4735,6 +4916,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return versionControlDetails_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : versionControlDetails_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : versionControlDetails_Vector) return Natural is (Self.Length);
@@ -4793,6 +4976,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return rectangle_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : rectangle_Vector) return Boolean is (Self.Is_Null);
 
@@ -4853,6 +5038,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return codeFlow_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : codeFlow_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : codeFlow_Vector) return Natural is (Self.Length);
@@ -4911,6 +5098,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return toolComponentReference_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : toolComponentReference_Vector) return Boolean is (Self.Is_Null);
 
@@ -4971,6 +5160,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return edge_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : edge_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : edge_Vector) return Natural is (Self.Length);
@@ -5029,6 +5220,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return toolComponent_contents_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : toolComponent_contents_Vector) return Boolean is (Self.Is_Null);
 
@@ -5089,6 +5282,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return node_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : node_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : node_Vector) return Natural is (Self.Length);
@@ -5147,6 +5342,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return threadFlow_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : threadFlow_Vector) return Boolean is (Self.Is_Null);
 
@@ -5207,6 +5404,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return fix_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : fix_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : fix_Vector) return Natural is (Self.Length);
@@ -5265,6 +5464,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return invocation_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : invocation_Vector) return Boolean is (Self.Is_Null);
 
@@ -5325,6 +5526,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return artifactChange_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : artifactChange_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : artifactChange_Vector) return Natural is (Self.Length);
@@ -5383,6 +5586,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return artifact_roles_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : artifact_roles_Vector) return Boolean is (Self.Is_Null);
 
@@ -5443,6 +5648,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return artifact_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : artifact_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : artifact_Vector) return Natural is (Self.Length);
@@ -5501,6 +5708,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return logicalLocation_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : logicalLocation_Vector) return Boolean is (Self.Is_Null);
 
@@ -5561,6 +5770,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return webRequest_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : webRequest_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : webRequest_Vector) return Natural is (Self.Length);
@@ -5619,6 +5830,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return externalProperties_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : externalProperties_Vector) return Boolean is (Self.Is_Null);
 
@@ -5679,6 +5892,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return run_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : run_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : run_Vector) return Natural is (Self.Length);
@@ -5737,6 +5952,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return a_exception_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : a_exception_Vector) return Boolean is (Self.Is_Null);
 
@@ -5797,6 +6014,8 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return reportingDescriptor_Vector is (Ada.Finalization.Controlled with others => <>);
+
 function Is_Null (Self : reportingDescriptor_Vector) return Boolean is (Self.Is_Null);
 
 function Length (Self : reportingDescriptor_Vector) return Natural is (Self.Length);
@@ -5855,6 +6074,8 @@ begin
 Free (Self.Data);
 Self.Length := 0;
 end Finalize;
+
+function Empty return artifactLocation_Vector is (Ada.Finalization.Controlled with others => <>);
 
 function Is_Null (Self : artifactLocation_Vector) return Boolean is (Self.Is_Null);
 
