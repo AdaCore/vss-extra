@@ -944,7 +944,9 @@ package body JSON_Schema.Writers.Types is
             New_Line;
             Put ("Constant_Indexing => Get_");
             Put (Item);
-            Put ("_Constant_Reference;");
+            Put ("_Constant_Reference,");
+            New_Line;
+            Put ("Aggregate => (Empty => Empty, Add_Unnamed => Append);");
             New_Line;
             New_Line;
          end;
@@ -1141,7 +1143,9 @@ package body JSON_Schema.Writers.Types is
       Done : String_Sets.Set;
    begin
       Print_Vector (Header);
-      Put ("pragma Style_Checks (""M99"");");
+      Put ("pragma Ada_2022;");
+      New_Line;
+      Put ("pragma Style_Checks (""M999"");");
       Put ("  --  suppress style warning unitl gnatpp is fixed"); New_Line;
       Put ("with Ada.Containers.Doubly_Linked_Lists;");
       New_Line;
@@ -1529,6 +1533,18 @@ package body JSON_Schema.Writers.Types is
                New_Line;
                New_Line;
             end if;
+
+            Put ("function Empty return ");
+            Put (Item);
+            Put ("_Vector");
+
+            if Kind = Implemenetation then
+               Put (" is (Ada.Finalization.Controlled with others => <>)");
+            end if;
+
+            Put (";");
+            New_Line;
+            New_Line;
 
             Put ("function Is_Null (Self : ");
             Put (Item);
