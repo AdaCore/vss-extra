@@ -1635,7 +1635,7 @@ package body JSON_Schema.Writers.Types is
                New_Line;
                Put ("new ");
                Put (Item);
-               Put ("_Array (1 .. 3 * Self.Length / 2);");
+               Put ("_Array (1 .. 3 * Self.Length / 2 + 1);");
                New_Line;
                Put ("Self.Data (1 .. Self.Length) := Self_Data_Saved.all;");
                New_Line;
