@@ -196,7 +196,6 @@ package body JSON_Schema.Writers.Outputs is
       New_Line;
 
       Print_Vector (Header);
-      Put ("with Interfaces;"); New_Line;
       Put ("package body ");
       Put (Root_Package);
       Put (".Outputs is");
@@ -732,17 +731,17 @@ package body JSON_Schema.Writers.Outputs is
          Put (Field);
          Put (");");
          New_Line;
-      elsif Type_Name = "Integer" then
+      elsif Type_Name = "Integer_64" then
          Put ("Handler.Integer_Value");
-         Put ("(Interfaces.Integer_64 (Integer'(Value.");
+         Put ("(Value.");
          Put (Field);
-         Put (")));");
+         Put (");");
          New_Line;
-      elsif Type_Name = "Float" then
+      elsif Type_Name = "Float_64" then
          Put ("Handler.Float_Value");
-         Put ("(Interfaces.IEEE_Float_64 (Value.");
+         Put ("(Value.");
          Put (Field);
-         Put ("));");
+         Put (");");
          New_Line;
       elsif Type_Name = "Boolean" then
          Put ("Handler.Boolean_Value (Value.");
@@ -757,7 +756,7 @@ package body JSON_Schema.Writers.Outputs is
          Write_Value (Field & ".String", "Virtual_String");
          Put ("else");
          New_Line;
-         Write_Value (Field & ".Integer", "Integer");
+         Write_Value (Field & ".Integer", "Integer_64");
          Put ("end if;");
          New_Line;
       else

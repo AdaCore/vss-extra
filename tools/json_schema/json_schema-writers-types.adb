@@ -328,7 +328,7 @@ package body JSON_Schema.Writers.Types is
          end;
       end loop;
 
-      Array_Types.Insert ("Integer", null);
+      Array_Types.Insert ("Integer_64", null);
 
       Write_Type_Package
         (Map, Root_Package, Enum_Package, Header, Holders,
@@ -989,9 +989,9 @@ package body JSON_Schema.Writers.Types is
             return
               (if Schema.Default = True
                then Field_Type & "'Last" else Field_Type & "'First");
-         elsif Field_Type = "Integer" then
+         elsif Field_Type = "Integer_64" then
             return "0";
-         elsif Field_Type = "Float" then
+         elsif Field_Type = "Float_64" then
             return "0.0";
          else
             return VSS.Strings.Empty_Virtual_String;
@@ -1157,6 +1157,8 @@ package body JSON_Schema.Writers.Types is
       New_Line;
       Put ("with Ada.Finalization;");
       New_Line;
+      Put ("with Interfaces;");
+      New_Line;
       Put ("with VSS.JSON.Streams;");
       New_Line;
       Put ("with VSS.Strings;");
@@ -1169,6 +1171,10 @@ package body JSON_Schema.Writers.Types is
       Put (Root_Package);
       Put (" is");
       New_Line;
+      Put ("subtype Integer_64 is Interfaces.Integer_64;");
+      New_Line;
+      Put ("subtype Float_64 is Interfaces.IEEE_Float_64;");
+      New_Line;
       Put
         ("package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists");
       New_Line;
@@ -1180,15 +1186,15 @@ package body JSON_Schema.Writers.Types is
       Put ("type Any_Object is new Any_Value with null record;");
       New_Line;
       New_Line;
-      Write_Optional_Type ("Integer");
-      Write_Optional_Type ("Float");
+      Write_Optional_Type ("Integer_64");
+      Write_Optional_Type ("Float_64");
       Put ("type Integer_Or_String (Is_String : Boolean := False) is record");
       New_Line;
       Put ("case Is_String is");
       New_Line;
       Put ("when False =>");
       New_Line;
-      Put ("Integer : Standard.Integer;");
+      Put ("Integer : Integer_64;");
       New_Line;
       Put ("when True =>");
       New_Line;

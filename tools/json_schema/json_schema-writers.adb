@@ -546,13 +546,13 @@ package body JSON_Schema.Writers is
                Result := "Boolean";
 
             when Definitions.An_Integer =>
-               Result.Append ("Integer");
+               Result.Append ("Integer_64");
 
             when Definitions.A_Null =>
                raise Program_Error;
 
             when Definitions.A_Number =>
-               Result.Append ("Float");
+               Result.Append ("Float_64");
 
             when Definitions.A_String =>
 
@@ -594,7 +594,7 @@ package body JSON_Schema.Writers is
                            Result := "Boolean_Vector";
 
                         when Definitions.An_Integer =>
-                           Result := "Integer_Vector";
+                           Result := "Integer_64_Vector";
 
                         when Definitions.A_Null
                            | Definitions.An_Array
@@ -602,7 +602,7 @@ package body JSON_Schema.Writers is
                            raise Program_Error;
 
                         when Definitions.A_Number =>
-                           Result := "Float_Vector";
+                           Result := "Float_64_Vector";
 
                         when Definitions.A_String =>
                            Result := "Virtual_String_Vector";

@@ -803,28 +803,29 @@ package body JSON_Schema.Writers.Inputs is
             Put ("else"); New_Line;
             Put ("Success := False;"); New_Line;
             Put ("end if;"); New_Line;
-         elsif Type_Name = "Integer" then
+         elsif Type_Name = "Integer_64" then
             Put ("if Reader.Is_Number_Value and then ");
             Put ("Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then");
             New_Line;
 
             Put (Field_Name);
-            Put (" := Integer (Reader.Number_Value.Integer_Value);"); New_Line;
+            Put (" := Reader.Number_Value.Integer_Value;"); New_Line;
             Put ("Reader.Read_Next;"); New_Line;
             Put ("else"); New_Line;
             Put ("Success := False;"); New_Line;
             Put ("end if;"); New_Line;
-         elsif Type_Name = "Float" then
+         elsif Type_Name = "Float_64" then
             Put ("if Reader.Is_Number_Value then"); New_Line;
             Put ("if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then");
             New_Line;
 
             Put (Field_Name);
-            Put (" := Float (Reader.Number_Value.Integer_Value);"); New_Line;
+            Put (" := Float_64 (Reader.Number_Value.Integer_Value);");
+            New_Line;
             Put ("elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then");
             New_Line;
             Put (Field_Name);
-            Put (" := Float (Reader.Number_Value.Float_Value);"); New_Line;
+            Put (" := Reader.Number_Value.Float_Value;"); New_Line;
             Put ("else"); New_Line;
             Put ("Success := False;"); New_Line;
             Put ("end if;"); New_Line;
@@ -885,7 +886,7 @@ package body JSON_Schema.Writers.Inputs is
             Put (" := (True, Reader.String_Value);"); New_Line;
             Put ("Reader.Read_Next;"); New_Line;
             Put ("els");
-            Write_Value (Field_Name & ".Integer", "Integer");
+            Write_Value (Field_Name & ".Integer", "Integer_64");
          else
             Put ("Input_");
             Put (Type_Name);
