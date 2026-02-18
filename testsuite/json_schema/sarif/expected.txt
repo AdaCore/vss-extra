@@ -8,33 +8,36 @@ pragma Ada_2022;
 pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Finalization;
+with Interfaces;
 with VSS.JSON.Streams;
 with VSS.Strings;
 with VSS.String_Vectors;
 
 package SARIF.Types is
+subtype Integer_64 is Interfaces.Integer_64;
+subtype Float_64 is Interfaces.IEEE_Float_64;
 package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists
 (VSS.JSON.Streams.JSON_Stream_Element, VSS.JSON.Streams."=");
 
 type Any_Value is new JSON_Event_Lists.List with null record;
 type Any_Object is new Any_Value with null record;
 
-type Optional_Integer (Is_Set : Boolean := False) is record
+type Optional_Integer_64 (Is_Set : Boolean := False) is record
 case Is_Set is
-when True => Value : Integer;
+when True => Value : Integer_64;
 when False => null;
 end case; end record;
 
-type Optional_Float (Is_Set : Boolean := False) is record
+type Optional_Float_64 (Is_Set : Boolean := False) is record
 case Is_Set is
-when True => Value : Float;
+when True => Value : Float_64;
 when False => null;
 end case; end record;
 
 type Integer_Or_String (Is_String : Boolean := False) is record
 case Is_String is
 when False =>
-Integer : Standard.Integer;
+Integer : Integer_64;
 when True =>
 String : VSS.Strings.Virtual_String;
 end case;
@@ -110,11 +113,6 @@ Aggregate => (Empty => Empty, Add_Unnamed => Append);
 type stack_Vector is tagged private
 with Variable_Indexing => Get_stack_Variable_Reference,
 Constant_Indexing => Get_stack_Constant_Reference,
-Aggregate => (Empty => Empty, Add_Unnamed => Append);
-
-type Integer_Vector is tagged private
-with Variable_Indexing => Get_Integer_Variable_Reference,
-Constant_Indexing => Get_Integer_Constant_Reference,
 Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type notification_Vector is tagged private
@@ -235,6 +233,11 @@ Aggregate => (Empty => Empty, Add_Unnamed => Append);
 type logicalLocation_Vector is tagged private
 with Variable_Indexing => Get_logicalLocation_Variable_Reference,
 Constant_Indexing => Get_logicalLocation_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+type Integer_64_Vector is tagged private
+with Variable_Indexing => Get_Integer_64_Variable_Reference,
+Constant_Indexing => Get_Integer_64_Constant_Reference,
 Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type webRequest_Vector is tagged private
@@ -373,11 +376,11 @@ when False => null;
 end case; end record;
 
 type address is record
-absoluteAddress : Optional_Integer;
+absoluteAddress : Optional_Integer_64;
       --  The address expressed as a byte offset from the start of the addressable region.
-relativeAddress : Optional_Integer;
+relativeAddress : Optional_Integer_64;
       --  The address expressed as a byte offset from the absolute address of the top-most parent object.
-length : Optional_Integer;
+length : Optional_Integer_64;
       --  The number of bytes in this range of addresses.
 kind : VSS.Strings.Virtual_String;
       --  An open-ended string that identifies the address kind. 'data', 'function', 'header','instruction', 'module', 'page', 'section', 'segment', 'stack', 'stackFrame', 'table' are well-known values.
@@ -385,11 +388,11 @@ name : VSS.Strings.Virtual_String;
       --  A name that is associated with the address, e.g., '.text'.
 fullyQualifiedName : VSS.Strings.Virtual_String;
       --  A human-readable fully qualified name that is associated with the address.
-offsetFromParent : Optional_Integer;
+offsetFromParent : Optional_Integer_64;
       --  The byte offset of this address from the absolute or relative address of the parent object.
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index within run.addresses of the cached object for this address.
-parentIndex : Optional_Integer;
+parentIndex : Optional_Integer_64;
       --  The index within run.addresses of the parent object.
 properties : Optional_propertyBag;
       --  Key/value pairs that provide additional information about the address.
@@ -406,7 +409,7 @@ uri : VSS.Strings.Virtual_String;
       --  A string containing a valid relative or absolute URI.
 uriBaseId : VSS.Strings.Virtual_String;
       --  A string which indirectly specifies the absolute URI with respect to which a relative URI in the "uri" property is interpreted.
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index within the run artifacts array of the artifact object associated with the artifact location.
 description : Optional_message;
       --  A short description of the artifact location.
@@ -453,21 +456,21 @@ when False => null;
 end case; end record;
 
 type region is record
-startLine : Optional_Integer;
+startLine : Optional_Integer_64;
       --  The line number of the first character in the region.
-startColumn : Optional_Integer;
+startColumn : Optional_Integer_64;
       --  The column number of the first character in the region.
-endLine : Optional_Integer;
+endLine : Optional_Integer_64;
       --  The line number of the last character in the region.
-endColumn : Optional_Integer;
+endColumn : Optional_Integer_64;
       --  The column number of the character following the end of the region.
-charOffset : Optional_Integer;
+charOffset : Optional_Integer_64;
       --  The zero-based offset from the beginning of the artifact of the first character in the region.
-charLength : Optional_Integer;
+charLength : Optional_Integer_64;
       --  The length of the region in characters.
-byteOffset : Optional_Integer;
+byteOffset : Optional_Integer_64;
       --  The zero-based offset from the beginning of the artifact of the first byte in the region.
-byteLength : Optional_Integer;
+byteLength : Optional_Integer_64;
       --  The length of the region in bytes.
 snippet : Optional_artifactContent;
       --  The portion of the artifact contents within the specified region.
@@ -505,7 +508,7 @@ when False => null;
 end case; end record;
 
 type location is record
-id : Optional_Integer;
+id : Optional_Integer_64;
       --  Value that distinguishes this location from all other locations within a single result object.
 physicalLocation : Optional_physicalLocation;
       --  Identifies the artifact and region.
@@ -547,7 +550,7 @@ message : Optional_message;
       --  A message to display to the user as the edge is traversed.
 finalState : Any_Object;
       --  The values of relevant expressions after the edge has been traversed.
-stepOverEdgeCount : Optional_Integer;
+stepOverEdgeCount : Optional_Integer_64;
       --  The number of edge traversals necessary to return from a nested graph.
 properties : Optional_propertyBag;
       --  Key/value pairs that provide additional information about the edge traversal.
@@ -558,7 +561,7 @@ location : Optional_location;
       --  The location to which this stack frame refers.
 module : VSS.Strings.Virtual_String;
       --  The name of the module that contains the code of this stack frame.
-threadId : Optional_Integer;
+threadId : Optional_Integer_64;
       --  The thread identifier of the stack frame.
 parameters : VSS.String_Vectors.Virtual_String_Vector;
       --  The parameters of the call that is executing.
@@ -569,7 +572,7 @@ end record;
 type toolComponentReference is record
 name : VSS.Strings.Virtual_String;
       --  The 'name' property of the referenced toolComponent.
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  An index into the referenced toolComponent in tool.extensions.
 guid : VSS.Strings.Virtual_String;
       --  The 'guid' property of the referenced toolComponent.
@@ -586,7 +589,7 @@ end case; end record;
 type reportingDescriptorReference is record
 id : VSS.Strings.Virtual_String;
       --  The id of the descriptor.
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index into an array of descriptors in toolComponent.ruleDescriptors, toolComponent.notificationDescriptors, or toolComponent.taxonomyDescriptors, depending on context.
 guid : VSS.Strings.Virtual_String;
       --  A guid that uniquely identifies the descriptor.
@@ -616,13 +619,13 @@ end record;
 type logicalLocation is record
 name : VSS.Strings.Virtual_String;
       --  Identifies the construct in which the result occurred. For example, this property might contain the name of a class or a method.
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index within the logical locations array.
 fullyQualifiedName : VSS.Strings.Virtual_String;
       --  The human-readable fully qualified name of the logical location.
 decoratedName : VSS.Strings.Virtual_String;
       --  The machine-readable name for the logical location, such as a mangled function name provided by a C++ compiler that encodes calling convention, return type and other details along with the function name.
-parentIndex : Optional_Integer;
+parentIndex : Optional_Integer_64;
       --  Identifies the index of the immediate parent of the construct in which the result was detected. For example, this property might point to a logical location that represents the namespace that holds a type.
 kind : VSS.Strings.Virtual_String;
       --  The type of construct this logical location component refers to. Should be one of 'function', 'member', 'module', 'namespace', 'parameter', 'resource', 'returnType', 'type', 'variable', 'object', 'array', 'property', 'value', 'element', 'text', 'attribute', 'comment', 'declaration', 'dtd' or 'processingInstruction', if any of those accurately describe the construct.
@@ -639,7 +642,7 @@ firstDetectionRunGuid : VSS.Strings.Virtual_String;
       --  A GUID-valued string equal to the automationDetails.guid property of the run in which the result was first detected.
 lastDetectionRunGuid : VSS.Strings.Virtual_String;
       --  A GUID-valued string equal to the automationDetails.guid property of the run in which the result was most recently detected.
-invocationIndex : Optional_Integer;
+invocationIndex : Optional_Integer_64;
       --  The index within the run.invocations array of the invocation object which describes the tool invocation that detected the result.
 conversionSources : physicalLocation_Vector;
       --  An array of physicalLocation objects which specify the portions of an analysis tool's output that a converter transformed into the result.
@@ -726,7 +729,7 @@ message : SARIF.Types.message;
       --  A message that describes the condition that was encountered.
 level : Enum.Optional_notification_level;
       --  A value specifying the severity level of the notification.
-threadId : Optional_Integer;
+threadId : Optional_Integer_64;
       --  The thread identifier of the code that generated the notification.
 timeUtc : VSS.Strings.Virtual_String;
       --  The Coordinated Universal Time (UTC) date and time at which the analysis tool generated the notification.
@@ -777,7 +780,7 @@ location : Optional_artifactLocation;
       --  The location of the external property file.
 guid : VSS.Strings.Virtual_String;
       --  A stable, unique identifer for the external property file in the form of a GUID.
-itemCount : Optional_Integer;
+itemCount : Optional_Integer_64;
       --  A non-negative integer specifying the number of items contained in the external property file.
 properties : Optional_propertyBag;
       --  Key/value pairs that provide additional information about the external property file.
@@ -790,7 +793,7 @@ when False => null;
 end case; end record;
 
 type locationRelationship is record
-target : Integer;
+target : Integer_64;
       --  A reference to the related location.
 kinds : VSS.String_Vectors.Virtual_String_Vector;
       --  A set of distinct strings that categorize the relationship. Well-known kinds include 'includes', 'isIncludedBy' and 'relevant'.
@@ -913,7 +916,7 @@ startTimeUtc : VSS.Strings.Virtual_String;
       --  The Coordinated Universal Time (UTC) date and time at which the invocation started. See "Date/time properties" in the SARIF spec for the required format.
 endTimeUtc : VSS.Strings.Virtual_String;
       --  The Coordinated Universal Time (UTC) date and time at which the invocation ended. See "Date/time properties" in the SARIF spec for the required format.
-exitCode : Optional_Integer;
+exitCode : Optional_Integer_64;
       --  The process exit code.
 ruleConfigurationOverrides : configurationOverride_Vector;
       --  An array of configurationOverride objects that describe rules related runtime overrides.
@@ -927,7 +930,7 @@ exitCodeDescription : VSS.Strings.Virtual_String;
       --  The reason for the process exit.
 exitSignalName : VSS.Strings.Virtual_String;
       --  The name of the signal that caused the process to exit.
-exitSignalNumber : Optional_Integer;
+exitSignalNumber : Optional_Integer_64;
       --  The numeric value of the signal that caused the process to exit.
 processStartFailureMessage : VSS.Strings.Virtual_String;
       --  The reason given by the operating system that the process failed to start.
@@ -937,7 +940,7 @@ machine : VSS.Strings.Virtual_String;
       --  The machine on which the invocation occurred.
 account : VSS.Strings.Virtual_String;
       --  The account under which the invocation occurred.
-processId : Optional_Integer;
+processId : Optional_Integer_64;
       --  The id of the process in which the invocation occurred.
 executableLocation : Optional_artifactLocation;
       --  An absolute URI specifying the location of the executable that was invoked.
@@ -1063,13 +1066,13 @@ properties : Optional_propertyBag;
 end record;
 
 type rectangle is record
-top : Optional_Float;
+top : Optional_Float_64;
       --  The Y coordinate of the top edge of the rectangle, measured in the image's natural units.
-left : Optional_Float;
+left : Optional_Float_64;
       --  The X coordinate of the left edge of the rectangle, measured in the image's natural units.
-bottom : Optional_Float;
+bottom : Optional_Float_64;
       --  The Y coordinate of the bottom edge of the rectangle, measured in the image's natural units.
-right : Optional_Float;
+right : Optional_Float_64;
       --  The X coordinate of the right edge of the rectangle, measured in the image's natural units.
 message : Optional_message;
       --  A message relevant to the rectangle.
@@ -1082,7 +1085,7 @@ enabled : Boolean := Boolean'Last;
       --  Specifies whether the report may be produced during the scan.
 level : Enum.Optional_reportingConfiguration_level;
       --  Specifies the failure level for the report.
-rank : Optional_Float;
+rank : Optional_Float_64;
       --  Specifies the relative priority of the report. Used for analysis output only.
 parameters : Optional_propertyBag;
       --  Contains configuration information specific to a report.
@@ -1132,11 +1135,11 @@ description : Optional_message;
       --  A short description of the artifact.
 location : Optional_artifactLocation;
       --  The location of the artifact.
-parentIndex : Optional_Integer;
+parentIndex : Optional_Integer_64;
       --  Identifies the index of the immediate parent of the artifact, if this artifact is nested.
-offset : Optional_Integer;
+offset : Optional_Integer_64;
       --  The offset in bytes of the artifact within its containing artifact.
-length : Optional_Integer;
+length : Optional_Integer_64;
       --  The length of the artifact in bytes.
 roles : artifact_roles_Vector;
       --  The role or roles played by the artifact in the analysis.
@@ -1157,7 +1160,7 @@ properties : Optional_propertyBag;
 end record;
 
 type webRequest is record
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index within the run.webRequests array of the request object associated with this result.
 protocol : VSS.Strings.Virtual_String;
       --  The request protocol. Example: 'http'.
@@ -1193,13 +1196,13 @@ properties : Optional_propertyBag;
 end record;
 
 type webResponse is record
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index within the run.webResponses array of the response object associated with this result.
 protocol : VSS.Strings.Virtual_String;
       --  The response protocol. Example: 'http'.
 version : VSS.Strings.Virtual_String;
       --  The response version. Example: '1.1'.
-statusCode : Optional_Integer;
+statusCode : Optional_Integer_64;
       --  The response status code. Example: 451.
 reasonPhrase : VSS.Strings.Virtual_String;
       --  The response reason. Example: 'Not found'.
@@ -1222,7 +1225,7 @@ end case; end record;
 type result is record
 ruleId : VSS.Strings.Virtual_String;
       --  The stable, unique identifier of the rule, if any, to which this result is relevant.
-ruleIndex : Optional_Integer;
+ruleIndex : Optional_Integer_64;
       --  The index within the tool component rules array of the rule object associated with this result.
 rule : Optional_reportingDescriptorReference;
       --  A reference used to locate the rule descriptor relevant to this result.
@@ -1240,7 +1243,7 @@ guid : VSS.Strings.Virtual_String;
       --  A stable, unique identifer for the result in the form of a GUID.
 correlationGuid : VSS.Strings.Virtual_String;
       --  A stable, unique identifier for the equivalence class of logically identical results to which this result belongs, in the form of a GUID.
-occurrenceCount : Optional_Integer;
+occurrenceCount : Optional_Integer_64;
       --  A positive integer specifying the number of times this logically unique result was observed in this run.
 partialFingerprints : Any_Object;
       --  A set of strings that contribute to the stable, unique identity of the result.
@@ -1260,7 +1263,7 @@ suppressions : suppression_Vector;
       --  A set of suppressions relevant to this result.
 baselineState : Enum.Optional_result_baselineState;
       --  The state of a result relative to a baseline of a previous run.
-rank : Optional_Float;
+rank : Optional_Float_64;
       --  A number representing the priority or importance of the result.
 attachments : attachment_Vector;
       --  A set of artifacts relevant to the result.
@@ -1283,9 +1286,9 @@ properties : Optional_propertyBag;
 end record;
 
 type graphTraversal is record
-runGraphIndex : Optional_Integer;
+runGraphIndex : Optional_Integer_64;
       --  The index within the run.graphs to be associated with the result.
-resultGraphIndex : Optional_Integer;
+resultGraphIndex : Optional_Integer_64;
       --  The index within the result.graphs to be associated with the result.
 description : Optional_message;
       --  A description of this graph traversal.
@@ -1424,7 +1427,7 @@ properties : Optional_propertyBag;
 end record;
 
 type threadFlowLocation is record
-index : Optional_Integer;
+index : Optional_Integer_64;
       --  The index within the run threadFlowLocations array.
 location : Optional_location;
       --  The code location.
@@ -1438,9 +1441,9 @@ module : VSS.Strings.Virtual_String;
       --  The name of the module that contains the code that is executing.
 state : Any_Object;
       --  A dictionary, each of whose keys specifies a variable or expression, the associated value of which represents the variable or expression value. For an annotation of kind 'continuation', for example, this dictionary might hold the current assumed values of a set of global variables.
-nestingLevel : Optional_Integer;
+nestingLevel : Optional_Integer_64;
       --  An integer representing a containment hierarchy within the thread flow.
-executionOrder : Optional_Integer;
+executionOrder : Optional_Integer_64;
       --  An integer representing the temporal order in which execution reached this location.
 executionTimeUtc : VSS.Strings.Virtual_String;
       --  The Coordinated Universal Time (UTC) date and time at which this location was executed.
@@ -1901,38 +1904,6 @@ not overriding function Get_stack_Constant_Reference
 (Self : aliased stack_Vector;
 Index : Positive)
 return stack_Constant_Reference
-with Inline;
-
-function Empty return Integer_Vector;
-
-function Is_Null (Self : Integer_Vector) return Boolean;
-
-function Length (Self : Integer_Vector) return Natural;
-
-procedure Clear (Self : in out Integer_Vector; Is_Null : Boolean := True);
-
-procedure Append
-(Self : in out Integer_Vector;
-Value : Integer);
-
-type Integer_Variable_Reference
-(Element : not null access Integer) is null record
-with Implicit_Dereference => Element;
-
-not overriding function Get_Integer_Variable_Reference
-(Self : aliased in out Integer_Vector;
-Index : Positive)
-return Integer_Variable_Reference
-with Inline;
-
-type Integer_Constant_Reference
-(Element : not null access constant Integer) is null record
-with Implicit_Dereference => Element;
-
-not overriding function Get_Integer_Constant_Reference
-(Self : aliased Integer_Vector;
-Index : Positive)
-return Integer_Constant_Reference
 with Inline;
 
 function Empty return notification_Vector;
@@ -2703,6 +2674,38 @@ Index : Positive)
 return logicalLocation_Constant_Reference
 with Inline;
 
+function Empty return Integer_64_Vector;
+
+function Is_Null (Self : Integer_64_Vector) return Boolean;
+
+function Length (Self : Integer_64_Vector) return Natural;
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64);
+
+type Integer_64_Variable_Reference
+(Element : not null access Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+with Inline;
+
+type Integer_64_Constant_Reference
+(Element : not null access constant Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+with Inline;
+
 function Empty return webRequest_Vector;
 
 function Is_Null (Self : webRequest_Vector) return Boolean;
@@ -3052,18 +3055,6 @@ overriding procedure Adjust (Self : in out stack_Vector);
 
 overriding procedure Finalize (Self : in out stack_Vector);
 
-type Integer_Array is array (Positive range <>) of aliased Integer;
-type Integer_Array_Access is access Integer_Array;
-type Integer_Vector is new Ada.Finalization.Controlled with record
-Data   : Integer_Array_Access;
-Length : Natural := 0;
-Is_Null : Boolean := True;
-end record;
-
-overriding procedure Adjust (Self : in out Integer_Vector);
-
-overriding procedure Finalize (Self : in out Integer_Vector);
-
 type notification_Array is array (Positive range <>) of aliased notification;
 type notification_Array_Access is access notification_Array;
 type notification_Vector is new Ada.Finalization.Controlled with record
@@ -3351,6 +3342,18 @@ end record;
 overriding procedure Adjust (Self : in out logicalLocation_Vector);
 
 overriding procedure Finalize (Self : in out logicalLocation_Vector);
+
+type Integer_64_Array is array (Positive range <>) of aliased Integer_64;
+type Integer_64_Array_Access is access Integer_64_Array;
+type Integer_64_Vector is new Ada.Finalization.Controlled with record
+Data   : Integer_64_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out Integer_64_Vector);
+
+overriding procedure Finalize (Self : in out Integer_64_Vector);
 
 type webRequest_Array is array (Positive range <>) of aliased webRequest;
 type webRequest_Array_Access is access webRequest_Array;
@@ -4226,67 +4229,6 @@ not overriding function Get_stack_Constant_Reference
 (Self : aliased stack_Vector;
 Index : Positive)
 return stack_Constant_Reference
-is (Element => Self.Data (Index)'Access);
-
-procedure Free is new Ada.Unchecked_Deallocation
-(Integer_Array, Integer_Array_Access);
-
-overriding procedure Adjust (Self : in out Integer_Vector) is
-begin
-if Self.Length > 0 then
-Self.Data :=
-new Integer_Array'(Self.Data (1 .. Self.Length));
-end if;
-end Adjust;
-
-overriding procedure Finalize (Self : in out Integer_Vector) is
-begin
-Free (Self.Data);
-Self.Length := 0;
-end Finalize;
-
-function Empty return Integer_Vector is (Ada.Finalization.Controlled with others => <>);
-
-function Is_Null (Self : Integer_Vector) return Boolean is (Self.Is_Null);
-
-function Length (Self : Integer_Vector) return Natural is (Self.Length);
-
-procedure Clear (Self : in out Integer_Vector; Is_Null : Boolean := True) is
-begin
-   Self.Length := 0;
-   Self.Is_Null := Is_Null;
-end Clear;
-
-procedure Append
-(Self : in out Integer_Vector;
-Value : Integer) is
-Init_Length : constant Positive :=
-Positive'Max (2, 256 / Integer'Size);
-Self_Data_Saved : Integer_Array_Access := Self.Data;
-begin
-if Self.Length = 0 then
-Self.Is_Null := False;
-Self.Data := new Integer_Array (1 .. Init_Length);
-elsif Self.Length = Self.Data'Last then
-Self.Data :=
-new Integer_Array (1 .. 3 * Self.Length / 2 + 1);
-Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
-Free (Self_Data_Saved);
-end if;
-Self.Length := Self.Length + 1;
-Self.Data (Self.Length) := Value;
-end Append;
-
-not overriding function Get_Integer_Variable_Reference
-(Self : aliased in out Integer_Vector;
-Index : Positive)
-return Integer_Variable_Reference
-is (Element => Self.Data (Index)'Access);
-
-not overriding function Get_Integer_Constant_Reference
-(Self : aliased Integer_Vector;
-Index : Positive)
-return Integer_Constant_Reference
 is (Element => Self.Data (Index)'Access);
 
 procedure Free is new Ada.Unchecked_Deallocation
@@ -5754,6 +5696,67 @@ return logicalLocation_Constant_Reference
 is (Element => Self.Data (Index)'Access);
 
 procedure Free is new Ada.Unchecked_Deallocation
+(Integer_64_Array, Integer_64_Array_Access);
+
+overriding procedure Adjust (Self : in out Integer_64_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new Integer_64_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out Integer_64_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return Integer_64_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Integer_64_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : Integer_64_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / Integer_64'Size);
+Self_Data_Saved : Integer_64_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new Integer_64_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new Integer_64_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+procedure Free is new Ada.Unchecked_Deallocation
 (webRequest_Array, webRequest_Array_Access);
 
 overriding procedure Adjust (Self : in out webRequest_Vector) is
@@ -6394,7 +6397,6 @@ end SARIF.Types.Outputs;
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
-with Interfaces;
 package body SARIF.Types.Outputs is
 pragma Style_Checks (Off);
 procedure Output_Any_Value
@@ -6684,7 +6686,7 @@ Output_Any_Value (Handler, Value.finalState);
 end if;
 if Value.stepOverEdgeCount.Is_Set then
 Handler.Key_Name ("stepOverEdgeCount");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.stepOverEdgeCount.Value)));
+Handler.Integer_Value(Value.stepOverEdgeCount.Value);
 end if;
 if Value.properties.Is_Set then
 Handler.Key_Name ("properties");
@@ -6708,7 +6710,7 @@ Handler.String_Value (Value.module);
 end if;
 if Value.threadId.Is_Set then
 Handler.Key_Name ("threadId");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.threadId.Value)));
+Handler.Integer_Value(Value.threadId.Value);
 end if;
 if not Value.parameters.Is_Empty then
 Handler.Key_Name ("parameters");
@@ -6778,7 +6780,7 @@ Handler.String_Value (Value.name);
 end if;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if not Value.fullyQualifiedName.Is_Null then
 Handler.Key_Name ("fullyQualifiedName");
@@ -6790,7 +6792,7 @@ Handler.String_Value (Value.decoratedName);
 end if;
 if Value.parentIndex.Is_Set then
 Handler.Key_Name ("parentIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.parentIndex.Value)));
+Handler.Integer_Value(Value.parentIndex.Value);
 end if;
 if not Value.kind.Is_Null then
 Handler.Key_Name ("kind");
@@ -6826,7 +6828,7 @@ Handler.String_Value (Value.lastDetectionRunGuid);
 end if;
 if Value.invocationIndex.Is_Set then
 Handler.Key_Name ("invocationIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.invocationIndex.Value)));
+Handler.Integer_Value(Value.invocationIndex.Value);
 end if;
 if not Value.conversionSources.Is_Null then
 Handler.Key_Name ("conversionSources");
@@ -6902,15 +6904,15 @@ begin
 Handler.Start_Object;
 if Value.absoluteAddress.Is_Set then
 Handler.Key_Name ("absoluteAddress");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.absoluteAddress.Value)));
+Handler.Integer_Value(Value.absoluteAddress.Value);
 end if;
 if Value.relativeAddress.Is_Set then
 Handler.Key_Name ("relativeAddress");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.relativeAddress.Value)));
+Handler.Integer_Value(Value.relativeAddress.Value);
 end if;
 if Value.length.Is_Set then
 Handler.Key_Name ("length");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.length.Value)));
+Handler.Integer_Value(Value.length.Value);
 end if;
 if not Value.kind.Is_Null then
 Handler.Key_Name ("kind");
@@ -6926,15 +6928,15 @@ Handler.String_Value (Value.fullyQualifiedName);
 end if;
 if Value.offsetFromParent.Is_Set then
 Handler.Key_Name ("offsetFromParent");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.offsetFromParent.Value)));
+Handler.Integer_Value(Value.offsetFromParent.Value);
 end if;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if Value.parentIndex.Is_Set then
 Handler.Key_Name ("parentIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.parentIndex.Value)));
+Handler.Integer_Value(Value.parentIndex.Value);
 end if;
 if Value.properties.Is_Set then
 Handler.Key_Name ("properties");
@@ -6954,7 +6956,7 @@ Handler.String_Value (Value.id);
 end if;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if not Value.guid.Is_Null then
 Handler.Key_Name ("guid");
@@ -7026,7 +7028,7 @@ Output_notification_level (Handler, Value.level.Value);
 end if;
 if Value.threadId.Is_Set then
 Handler.Key_Name ("threadId");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.threadId.Value)));
+Handler.Integer_Value(Value.threadId.Value);
 end if;
 if not Value.timeUtc.Is_Null then
 Handler.Key_Name ("timeUtc");
@@ -7120,7 +7122,7 @@ begin
 Handler.Start_Object;
 if Value.id.Is_Set then
 Handler.Key_Name ("id");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.id.Value)));
+Handler.Integer_Value(Value.id.Value);
 end if;
 if Value.physicalLocation.Is_Set then
 Handler.Key_Name ("physicalLocation");
@@ -7206,7 +7208,7 @@ Handler.String_Value (Value.guid);
 end if;
 if Value.itemCount.Is_Set then
 Handler.Key_Name ("itemCount");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.itemCount.Value)));
+Handler.Integer_Value(Value.itemCount.Value);
 end if;
 if Value.properties.Is_Set then
 Handler.Key_Name ("properties");
@@ -7221,7 +7223,7 @@ Value : locationRelationship) is
 begin
 Handler.Start_Object;
 Handler.Key_Name ("target");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.target)));
+Handler.Integer_Value(Value.target);
 if not Value.kinds.Is_Empty then
 Handler.Key_Name ("kinds");
 Handler.Start_Array;
@@ -7487,7 +7489,7 @@ Handler.String_Value (Value.endTimeUtc);
 end if;
 if Value.exitCode.Is_Set then
 Handler.Key_Name ("exitCode");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.exitCode.Value)));
+Handler.Integer_Value(Value.exitCode.Value);
 end if;
 if not Value.ruleConfigurationOverrides.Is_Null then
 Handler.Key_Name ("ruleConfigurationOverrides");
@@ -7531,7 +7533,7 @@ Handler.String_Value (Value.exitSignalName);
 end if;
 if Value.exitSignalNumber.Is_Set then
 Handler.Key_Name ("exitSignalNumber");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.exitSignalNumber.Value)));
+Handler.Integer_Value(Value.exitSignalNumber.Value);
 end if;
 if not Value.processStartFailureMessage.Is_Null then
 Handler.Key_Name ("processStartFailureMessage");
@@ -7549,7 +7551,7 @@ Handler.String_Value (Value.account);
 end if;
 if Value.processId.Is_Set then
 Handler.Key_Name ("processId");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.processId.Value)));
+Handler.Integer_Value(Value.processId.Value);
 end if;
 if Value.executableLocation.Is_Set then
 Handler.Key_Name ("executableLocation");
@@ -7820,19 +7822,19 @@ begin
 Handler.Start_Object;
 if Value.top.Is_Set then
 Handler.Key_Name ("top");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.top.Value));
+Handler.Float_Value(Value.top.Value);
 end if;
 if Value.left.Is_Set then
 Handler.Key_Name ("left");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.left.Value));
+Handler.Float_Value(Value.left.Value);
 end if;
 if Value.bottom.Is_Set then
 Handler.Key_Name ("bottom");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.bottom.Value));
+Handler.Float_Value(Value.bottom.Value);
 end if;
 if Value.right.Is_Set then
 Handler.Key_Name ("right");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.right.Value));
+Handler.Float_Value(Value.right.Value);
 end if;
 if Value.message.Is_Set then
 Handler.Key_Name ("message");
@@ -7938,15 +7940,15 @@ Output_artifactLocation (Handler, Value.location.Value);
 end if;
 if Value.parentIndex.Is_Set then
 Handler.Key_Name ("parentIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.parentIndex.Value)));
+Handler.Integer_Value(Value.parentIndex.Value);
 end if;
 if Value.offset.Is_Set then
 Handler.Key_Name ("offset");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.offset.Value)));
+Handler.Integer_Value(Value.offset.Value);
 end if;
 if Value.length.Is_Set then
 Handler.Key_Name ("length");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.length.Value)));
+Handler.Integer_Value(Value.length.Value);
 end if;
 if not Value.roles.Is_Null then
 Handler.Key_Name ("roles");
@@ -8002,7 +8004,7 @@ Output_reportingConfiguration_level (Handler, Value.level.Value);
 end if;
 if Value.rank.Is_Set then
 Handler.Key_Name ("rank");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.rank.Value));
+Handler.Float_Value(Value.rank.Value);
 end if;
 if Value.parameters.Is_Set then
 Handler.Key_Name ("parameters");
@@ -8026,7 +8028,7 @@ Handler.String_Value (Value.name);
 end if;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if not Value.guid.Is_Null then
 Handler.Key_Name ("guid");
@@ -8068,7 +8070,7 @@ begin
 Handler.Start_Object;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if not Value.protocol.Is_Null then
 Handler.Key_Name ("protocol");
@@ -8138,7 +8140,7 @@ Handler.String_Value (Value.ruleId);
 end if;
 if Value.ruleIndex.Is_Set then
 Handler.Key_Name ("ruleIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.ruleIndex.Value)));
+Handler.Integer_Value(Value.ruleIndex.Value);
 end if;
 if Value.rule.Is_Set then
 Handler.Key_Name ("rule");
@@ -8176,7 +8178,7 @@ Handler.String_Value (Value.correlationGuid);
 end if;
 if Value.occurrenceCount.Is_Set then
 Handler.Key_Name ("occurrenceCount");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.occurrenceCount.Value)));
+Handler.Integer_Value(Value.occurrenceCount.Value);
 end if;
 if not Value.partialFingerprints.Is_Empty then
 Handler.Key_Name ("partialFingerprints");
@@ -8240,7 +8242,7 @@ Output_result_baselineState (Handler, Value.baselineState.Value);
 end if;
 if Value.rank.Is_Set then
 Handler.Key_Name ("rank");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.rank.Value));
+Handler.Float_Value(Value.rank.Value);
 end if;
 if not Value.attachments.Is_Null then
 Handler.Key_Name ("attachments");
@@ -8304,35 +8306,35 @@ begin
 Handler.Start_Object;
 if Value.startLine.Is_Set then
 Handler.Key_Name ("startLine");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.startLine.Value)));
+Handler.Integer_Value(Value.startLine.Value);
 end if;
 if Value.startColumn.Is_Set then
 Handler.Key_Name ("startColumn");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.startColumn.Value)));
+Handler.Integer_Value(Value.startColumn.Value);
 end if;
 if Value.endLine.Is_Set then
 Handler.Key_Name ("endLine");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.endLine.Value)));
+Handler.Integer_Value(Value.endLine.Value);
 end if;
 if Value.endColumn.Is_Set then
 Handler.Key_Name ("endColumn");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.endColumn.Value)));
+Handler.Integer_Value(Value.endColumn.Value);
 end if;
 if Value.charOffset.Is_Set then
 Handler.Key_Name ("charOffset");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.charOffset.Value)));
+Handler.Integer_Value(Value.charOffset.Value);
 end if;
 if Value.charLength.Is_Set then
 Handler.Key_Name ("charLength");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.charLength.Value)));
+Handler.Integer_Value(Value.charLength.Value);
 end if;
 if Value.byteOffset.Is_Set then
 Handler.Key_Name ("byteOffset");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.byteOffset.Value)));
+Handler.Integer_Value(Value.byteOffset.Value);
 end if;
 if Value.byteLength.Is_Set then
 Handler.Key_Name ("byteLength");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.byteLength.Value)));
+Handler.Integer_Value(Value.byteLength.Value);
 end if;
 if Value.snippet.Is_Set then
 Handler.Key_Name ("snippet");
@@ -8368,7 +8370,7 @@ Handler.String_Value (Value.uriBaseId);
 end if;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if Value.description.Is_Set then
 Handler.Key_Name ("description");
@@ -8388,11 +8390,11 @@ begin
 Handler.Start_Object;
 if Value.runGraphIndex.Is_Set then
 Handler.Key_Name ("runGraphIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.runGraphIndex.Value)));
+Handler.Integer_Value(Value.runGraphIndex.Value);
 end if;
 if Value.resultGraphIndex.Is_Set then
 Handler.Key_Name ("resultGraphIndex");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.resultGraphIndex.Value)));
+Handler.Integer_Value(Value.resultGraphIndex.Value);
 end if;
 if Value.description.Is_Set then
 Handler.Key_Name ("description");
@@ -8844,7 +8846,7 @@ begin
 Handler.Start_Object;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if Value.location.Is_Set then
 Handler.Key_Name ("location");
@@ -8880,11 +8882,11 @@ Output_Any_Value (Handler, Value.state);
 end if;
 if Value.nestingLevel.Is_Set then
 Handler.Key_Name ("nestingLevel");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.nestingLevel.Value)));
+Handler.Integer_Value(Value.nestingLevel.Value);
 end if;
 if Value.executionOrder.Is_Set then
 Handler.Key_Name ("executionOrder");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.executionOrder.Value)));
+Handler.Integer_Value(Value.executionOrder.Value);
 end if;
 if not Value.executionTimeUtc.Is_Null then
 Handler.Key_Name ("executionTimeUtc");
@@ -8980,7 +8982,7 @@ begin
 Handler.Start_Object;
 if Value.index.Is_Set then
 Handler.Key_Name ("index");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.index.Value)));
+Handler.Integer_Value(Value.index.Value);
 end if;
 if not Value.protocol.Is_Null then
 Handler.Key_Name ("protocol");
@@ -8992,7 +8994,7 @@ Handler.String_Value (Value.version);
 end if;
 if Value.statusCode.Is_Set then
 Handler.Key_Name ("statusCode");
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.statusCode.Value)));
+Handler.Integer_Value(Value.statusCode.Value);
 end if;
 if not Value.reasonPhrase.Is_Null then
 Handler.Key_Name ("reasonPhrase");
@@ -9752,7 +9754,7 @@ Input_Any_Value (Reader, Value.finalState, Success);
 Reader.Read_Next;
 Value.stepOverEdgeCount := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.stepOverEdgeCount.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.stepOverEdgeCount.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -9813,7 +9815,7 @@ end if;
 Reader.Read_Next;
 Value.threadId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.threadId.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.threadId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10025,7 +10027,7 @@ end if;
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10050,7 +10052,7 @@ end if;
 Reader.Read_Next;
 Value.parentIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.parentIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.parentIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10139,7 +10141,7 @@ end if;
 Reader.Read_Next;
 Value.invocationIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.invocationIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.invocationIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10357,7 +10359,7 @@ case Index is
 Reader.Read_Next;
 Value.absoluteAddress := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.absoluteAddress.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.absoluteAddress.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10366,7 +10368,7 @@ end if;
 Reader.Read_Next;
 Value.relativeAddress := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.relativeAddress.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.relativeAddress.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10375,7 +10377,7 @@ end if;
 Reader.Read_Next;
 Value.length := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.length.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.length.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10408,7 +10410,7 @@ end if;
 Reader.Read_Next;
 Value.offsetFromParent := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.offsetFromParent.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.offsetFromParent.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10417,7 +10419,7 @@ end if;
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10426,7 +10428,7 @@ end if;
 Reader.Read_Next;
 Value.parentIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.parentIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.parentIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10483,7 +10485,7 @@ end if;
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10650,7 +10652,7 @@ Input_notification_level (Reader, Value.level.Value, Success);
 Reader.Read_Next;
 Value.threadId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.threadId.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.threadId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -10859,7 +10861,7 @@ case Index is
 Reader.Read_Next;
 Value.id := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.id.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.id.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -11052,7 +11054,7 @@ end if;
 Reader.Read_Next;
 Value.itemCount := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.itemCount.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.itemCount.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -11100,7 +11102,7 @@ case Index is
    when 1 =>  --  target
 Reader.Read_Next;
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.target := Integer (Reader.Number_Value.Integer_Value);
+Value.target := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -11750,7 +11752,7 @@ end if;
 Reader.Read_Next;
 Value.exitCode := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.exitCode.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.exitCode.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -11851,7 +11853,7 @@ end if;
 Reader.Read_Next;
 Value.exitSignalNumber := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.exitSignalNumber.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.exitSignalNumber.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -11892,7 +11894,7 @@ end if;
 Reader.Read_Next;
 Value.processId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.processId.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.processId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -12515,9 +12517,9 @@ Reader.Read_Next;
 Value.top := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.top.Value := Float (Reader.Number_Value.Integer_Value);
+Value.top.Value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.top.Value := Float (Reader.Number_Value.Float_Value);
+Value.top.Value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -12530,9 +12532,9 @@ Reader.Read_Next;
 Value.left := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.left.Value := Float (Reader.Number_Value.Integer_Value);
+Value.left.Value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.left.Value := Float (Reader.Number_Value.Float_Value);
+Value.left.Value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -12545,9 +12547,9 @@ Reader.Read_Next;
 Value.bottom := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.bottom.Value := Float (Reader.Number_Value.Integer_Value);
+Value.bottom.Value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.bottom.Value := Float (Reader.Number_Value.Float_Value);
+Value.bottom.Value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -12560,9 +12562,9 @@ Reader.Read_Next;
 Value.right := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.right.Value := Float (Reader.Number_Value.Integer_Value);
+Value.right.Value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.right.Value := Float (Reader.Number_Value.Float_Value);
+Value.right.Value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -12808,7 +12810,7 @@ Input_artifactLocation (Reader, Value.location.Value, Success);
 Reader.Read_Next;
 Value.parentIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.parentIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.parentIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -12817,7 +12819,7 @@ end if;
 Reader.Read_Next;
 Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.offset.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -12826,7 +12828,7 @@ end if;
 Reader.Read_Next;
 Value.length := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.length.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.length.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -12946,9 +12948,9 @@ Reader.Read_Next;
 Value.rank := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.rank.Value := Float (Reader.Number_Value.Integer_Value);
+Value.rank.Value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.rank.Value := Float (Reader.Number_Value.Float_Value);
+Value.rank.Value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -13012,7 +13014,7 @@ end if;
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13131,7 +13133,7 @@ case Index is
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13293,7 +13295,7 @@ end if;
 Reader.Read_Next;
 Value.ruleIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.ruleIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.ruleIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13356,7 +13358,7 @@ end if;
 Reader.Read_Next;
 Value.occurrenceCount := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.occurrenceCount.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.occurrenceCount.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13490,9 +13492,9 @@ Reader.Read_Next;
 Value.rank := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.rank.Value := Float (Reader.Number_Value.Integer_Value);
+Value.rank.Value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.rank.Value := Float (Reader.Number_Value.Float_Value);
+Value.rank.Value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -13645,7 +13647,7 @@ case Index is
 Reader.Read_Next;
 Value.startLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.startLine.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.startLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13654,7 +13656,7 @@ end if;
 Reader.Read_Next;
 Value.startColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.startColumn.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.startColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13663,7 +13665,7 @@ end if;
 Reader.Read_Next;
 Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.endLine.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13672,7 +13674,7 @@ end if;
 Reader.Read_Next;
 Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.endColumn.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13681,7 +13683,7 @@ end if;
 Reader.Read_Next;
 Value.charOffset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.charOffset.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.charOffset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13690,7 +13692,7 @@ end if;
 Reader.Read_Next;
 Value.charLength := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.charLength.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.charLength.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13699,7 +13701,7 @@ end if;
 Reader.Read_Next;
 Value.byteOffset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.byteOffset.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.byteOffset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13708,7 +13710,7 @@ end if;
 Reader.Read_Next;
 Value.byteLength := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.byteLength.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.byteLength.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13789,7 +13791,7 @@ end if;
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13842,7 +13844,7 @@ case Index is
 Reader.Read_Next;
 Value.runGraphIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.runGraphIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.runGraphIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -13851,7 +13853,7 @@ end if;
 Reader.Read_Next;
 Value.resultGraphIndex := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.resultGraphIndex.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.resultGraphIndex.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -14914,7 +14916,7 @@ case Index is
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -14985,7 +14987,7 @@ Input_Any_Value (Reader, Value.state, Success);
 Reader.Read_Next;
 Value.nestingLevel := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.nestingLevel.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.nestingLevel.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -14994,7 +14996,7 @@ end if;
 Reader.Read_Next;
 Value.executionOrder := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.executionOrder.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.executionOrder.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -15242,7 +15244,7 @@ case Index is
 Reader.Read_Next;
 Value.index := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.index.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.index.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -15267,7 +15269,7 @@ end if;
 Reader.Read_Next;
 Value.statusCode := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.statusCode.Value := Integer (Reader.Number_Value.Integer_Value);
+Value.statusCode.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;

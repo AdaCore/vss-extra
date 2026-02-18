@@ -24,33 +24,36 @@ pragma Ada_2022;
 pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Finalization;
+with Interfaces;
 with VSS.JSON.Streams;
 with VSS.Strings;
 with VSS.String_Vectors;
 
 package LSP_Gen.Entities is
+subtype Integer_64 is Interfaces.Integer_64;
+subtype Float_64 is Interfaces.IEEE_Float_64;
 package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists
 (VSS.JSON.Streams.JSON_Stream_Element, VSS.JSON.Streams."=");
 
 type Any_Value is new JSON_Event_Lists.List with null record;
 type Any_Object is new Any_Value with null record;
 
-type Optional_Integer (Is_Set : Boolean := False) is record
+type Optional_Integer_64 (Is_Set : Boolean := False) is record
 case Is_Set is
-when True => Value : Integer;
+when True => Value : Integer_64;
 when False => null;
 end case; end record;
 
-type Optional_Float (Is_Set : Boolean := False) is record
+type Optional_Float_64 (Is_Set : Boolean := False) is record
 case Is_Set is
-when True => Value : Float;
+when True => Value : Float_64;
 when False => null;
 end case; end record;
 
 type Integer_Or_String (Is_String : Boolean := False) is record
 case Is_String is
 when False =>
-Integer : Standard.Integer;
+Integer : Integer_64;
 when True =>
 String : VSS.Strings.Virtual_String;
 end case;
@@ -71,11 +74,6 @@ Aggregate => (Empty => Empty, Add_Unnamed => Append);
 type Request_Vector is tagged private
 with Variable_Indexing => Get_Request_Variable_Reference,
 Constant_Indexing => Get_Request_Constant_Reference,
-Aggregate => (Empty => Empty, Add_Unnamed => Append);
-
-type Integer_Vector is tagged private
-with Variable_Indexing => Get_Integer_Variable_Reference,
-Constant_Indexing => Get_Integer_Constant_Reference,
 Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type TypeAlias_Vector is tagged private
@@ -101,6 +99,11 @@ Aggregate => (Empty => Empty, Add_Unnamed => Append);
 type Enumeration_Vector is tagged private
 with Variable_Indexing => Get_Enumeration_Variable_Reference,
 Constant_Indexing => Get_Enumeration_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+type Integer_64_Vector is tagged private
+with Variable_Indexing => Get_Integer_64_Variable_Reference,
+Constant_Indexing => Get_Integer_64_Constant_Reference,
 Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type AType_Vector is tagged private
@@ -216,7 +219,7 @@ value : VSS.Strings.Virtual_String;
 end record;
 
 type IntegerLiteralType is record
-value : Float;
+value : Float_64;
 end record;
 
 type BooleanLiteralType is record
@@ -435,38 +438,6 @@ Index : Positive)
 return Request_Constant_Reference
 with Inline;
 
-function Empty return Integer_Vector;
-
-function Is_Null (Self : Integer_Vector) return Boolean;
-
-function Length (Self : Integer_Vector) return Natural;
-
-procedure Clear (Self : in out Integer_Vector; Is_Null : Boolean := True);
-
-procedure Append
-(Self : in out Integer_Vector;
-Value : Integer);
-
-type Integer_Variable_Reference
-(Element : not null access Integer) is null record
-with Implicit_Dereference => Element;
-
-not overriding function Get_Integer_Variable_Reference
-(Self : aliased in out Integer_Vector;
-Index : Positive)
-return Integer_Variable_Reference
-with Inline;
-
-type Integer_Constant_Reference
-(Element : not null access constant Integer) is null record
-with Implicit_Dereference => Element;
-
-not overriding function Get_Integer_Constant_Reference
-(Self : aliased Integer_Vector;
-Index : Positive)
-return Integer_Constant_Reference
-with Inline;
-
 function Empty return TypeAlias_Vector;
 
 function Is_Null (Self : TypeAlias_Vector) return Boolean;
@@ -627,6 +598,38 @@ Index : Positive)
 return Enumeration_Constant_Reference
 with Inline;
 
+function Empty return Integer_64_Vector;
+
+function Is_Null (Self : Integer_64_Vector) return Boolean;
+
+function Length (Self : Integer_64_Vector) return Natural;
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64);
+
+type Integer_64_Variable_Reference
+(Element : not null access Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+with Inline;
+
+type Integer_64_Constant_Reference
+(Element : not null access constant Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+with Inline;
+
 function Empty return AType_Vector;
 
 function Is_Null (Self : AType_Vector) return Boolean;
@@ -692,18 +695,6 @@ overriding procedure Adjust (Self : in out Request_Vector);
 
 overriding procedure Finalize (Self : in out Request_Vector);
 
-type Integer_Array is array (Positive range <>) of aliased Integer;
-type Integer_Array_Access is access Integer_Array;
-type Integer_Vector is new Ada.Finalization.Controlled with record
-Data   : Integer_Array_Access;
-Length : Natural := 0;
-Is_Null : Boolean := True;
-end record;
-
-overriding procedure Adjust (Self : in out Integer_Vector);
-
-overriding procedure Finalize (Self : in out Integer_Vector);
-
 type TypeAlias_Array is array (Positive range <>) of aliased TypeAlias;
 type TypeAlias_Array_Access is access TypeAlias_Array;
 type TypeAlias_Vector is new Ada.Finalization.Controlled with record
@@ -763,6 +754,18 @@ end record;
 overriding procedure Adjust (Self : in out Enumeration_Vector);
 
 overriding procedure Finalize (Self : in out Enumeration_Vector);
+
+type Integer_64_Array is array (Positive range <>) of aliased Integer_64;
+type Integer_64_Array_Access is access Integer_64_Array;
+type Integer_64_Vector is new Ada.Finalization.Controlled with record
+Data   : Integer_64_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out Integer_64_Vector);
+
+overriding procedure Finalize (Self : in out Integer_64_Vector);
 
 type AType_Array is array (Positive range <>) of aliased AType;
 type AType_Array_Access is access AType_Array;
@@ -925,67 +928,6 @@ not overriding function Get_Request_Constant_Reference
 (Self : aliased Request_Vector;
 Index : Positive)
 return Request_Constant_Reference
-is (Element => Self.Data (Index)'Access);
-
-procedure Free is new Ada.Unchecked_Deallocation
-(Integer_Array, Integer_Array_Access);
-
-overriding procedure Adjust (Self : in out Integer_Vector) is
-begin
-if Self.Length > 0 then
-Self.Data :=
-new Integer_Array'(Self.Data (1 .. Self.Length));
-end if;
-end Adjust;
-
-overriding procedure Finalize (Self : in out Integer_Vector) is
-begin
-Free (Self.Data);
-Self.Length := 0;
-end Finalize;
-
-function Empty return Integer_Vector is (Ada.Finalization.Controlled with others => <>);
-
-function Is_Null (Self : Integer_Vector) return Boolean is (Self.Is_Null);
-
-function Length (Self : Integer_Vector) return Natural is (Self.Length);
-
-procedure Clear (Self : in out Integer_Vector; Is_Null : Boolean := True) is
-begin
-   Self.Length := 0;
-   Self.Is_Null := Is_Null;
-end Clear;
-
-procedure Append
-(Self : in out Integer_Vector;
-Value : Integer) is
-Init_Length : constant Positive :=
-Positive'Max (2, 256 / Integer'Size);
-Self_Data_Saved : Integer_Array_Access := Self.Data;
-begin
-if Self.Length = 0 then
-Self.Is_Null := False;
-Self.Data := new Integer_Array (1 .. Init_Length);
-elsif Self.Length = Self.Data'Last then
-Self.Data :=
-new Integer_Array (1 .. 3 * Self.Length / 2 + 1);
-Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
-Free (Self_Data_Saved);
-end if;
-Self.Length := Self.Length + 1;
-Self.Data (Self.Length) := Value;
-end Append;
-
-not overriding function Get_Integer_Variable_Reference
-(Self : aliased in out Integer_Vector;
-Index : Positive)
-return Integer_Variable_Reference
-is (Element => Self.Data (Index)'Access);
-
-not overriding function Get_Integer_Constant_Reference
-(Self : aliased Integer_Vector;
-Index : Positive)
-return Integer_Constant_Reference
 is (Element => Self.Data (Index)'Access);
 
 procedure Free is new Ada.Unchecked_Deallocation
@@ -1294,6 +1236,67 @@ return Enumeration_Constant_Reference
 is (Element => Self.Data (Index)'Access);
 
 procedure Free is new Ada.Unchecked_Deallocation
+(Integer_64_Array, Integer_64_Array_Access);
+
+overriding procedure Adjust (Self : in out Integer_64_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new Integer_64_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out Integer_64_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return Integer_64_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Integer_64_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : Integer_64_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / Integer_64'Size);
+Self_Data_Saved : Integer_64_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new Integer_64_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new Integer_64_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+procedure Free is new Ada.Unchecked_Deallocation
 (AType_Array, AType_Array_Access);
 
 overriding procedure Adjust (Self : in out AType_Vector) is
@@ -1527,7 +1530,6 @@ end LSP_Gen.Entities.Outputs;
 --
 --  DON'T EDIT THIS FILE! It was generated from metaModel.schema.json.
 
-with Interfaces;
 package body LSP_Gen.Entities.Outputs is
 pragma Style_Checks (Off);
 procedure Output_Any_Value
@@ -1749,7 +1751,7 @@ Handler.Key_Name ("value");
 if Value.value.Is_String then
 Handler.String_Value (Value.value.String);
 else
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.value.Integer)));
+Handler.Integer_Value(Value.value.Integer);
 end if;
 Handler.End_Object;
 end Output_EnumerationEntry;
@@ -1992,7 +1994,7 @@ begin
 Handler.Start_Object;
 Handler.Key_Name ("kind");Handler.String_Value ("integerLiteral");
 Handler.Key_Name ("value");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.value));
+Handler.Float_Value(Value.value);
 Handler.End_Object;
 end Output_IntegerLiteralType;
 
@@ -2712,7 +2714,7 @@ if Reader.Is_String_Value then
 Value.value := (True, Reader.String_Value);
 Reader.Read_Next;
 elsif Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.value.Integer := Integer (Reader.Number_Value.Integer_Value);
+Value.value.Integer := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
@@ -3553,9 +3555,9 @@ end if;
 Reader.Read_Next;
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.value := Float (Reader.Number_Value.Integer_Value);
+Value.value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.value := Float (Reader.Number_Value.Float_Value);
+Value.value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
