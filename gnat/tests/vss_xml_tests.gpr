@@ -6,14 +6,14 @@
 
 --  VSS: XML processing subproject tests
 
-with "../vss_extras_common.gpr";
+with "../vss_extra_common.gpr";
 with "../vss_xml_xmlada.gpr";
 with "vss_test_common.gpr";
 
 project VSS_XML_Tests is
 
    for Languages use ("Ada");
-   for Object_Dir use VSS_Extras_Common.Tests_Object_Dir;
+   for Object_Dir use VSS_Extra_Common.Tests_Object_Dir;
    for Source_Dirs use ("../../testsuite/xml", "../../testsuite/html");
    for Main use ("test_xml_simple_writer.adb");
 
