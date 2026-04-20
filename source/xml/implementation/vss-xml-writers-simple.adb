@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2025, AdaCore
+--  Copyright (C) 2025-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -26,6 +26,8 @@ package body VSS.XML.Writers.Simple is
    Less_Than_Sign_Reference : constant VSS.Strings.Virtual_String := "&lt;";
    Quotation_Mark_Reference : constant VSS.Strings.Virtual_String := "&quot;";
 
+   type Qname_Kind is (Element, Attribute);
+
    procedure Write
      (Self    : Simple_XML_Writer'Class;
       Item    : VSS.Characters.Virtual_Character;
@@ -40,6 +42,7 @@ package body VSS.XML.Writers.Simple is
 
    procedure Write_Qname
      (Self    : Simple_XML_Writer'Class;
+      Kind    : Qname_Kind;
       URI     : VSS.IRIs.IRI;
       Name    : VSS.Strings.Virtual_String;
       Success : in out Boolean);
@@ -168,7 +171,9 @@ package body VSS.XML.Writers.Simple is
      (Self    : in out Simple_XML_Writer;
       Success : in out Boolean) is
    begin
-      raise Program_Error;
+      --  Nothing to do.
+
+      null;
    end End_Document;
 
    -----------------
@@ -187,7 +192,7 @@ package body VSS.XML.Writers.Simple is
 
       else
          Self.Write (End_Tag_Open, Success);
-         Self.Write_Qname (URI, Name, Success);
+         Self.Write_Qname (Element, URI, Name, Success);
          Self.Write (End_Tag_Close, Success);
       end if;
 
@@ -310,7 +315,7 @@ package body VSS.XML.Writers.Simple is
       Self.Namespace_Map.Start_Element;
 
       Self.Write (Start_Tag_Open, Success);
-      Self.Write_Qname (URI, Name, Success);
+      Self.Write_Qname (Element, URI, Name, Success);
 
       for J in 1 .. Attributes.Get_Length loop
          Self.Write_Attribute
@@ -478,7 +483,7 @@ package body VSS.XML.Writers.Simple is
    begin
       if Self.Output /= null then
          Self.Write (VSS.Characters.Latin.Space, Success);
-         Self.Write_Qname (URI, Name, Success);
+         Self.Write_Qname (Attribute, URI, Name, Success);
          Self.Write (VSS.Characters.Latin.Equals_Sign, Success);
 
          case Syntax is
@@ -566,14 +571,25 @@ package body VSS.XML.Writers.Simple is
 
    procedure Write_Qname
      (Self    : Simple_XML_Writer'Class;
+      Kind    : Qname_Kind;
       URI     : VSS.IRIs.IRI;
       Name    : VSS.Strings.Virtual_String;
       Success : in out Boolean)
    is
-      Prefix : constant VSS.Strings.Virtual_String :=
-        Self.Namespace_Map.Prefix (URI);
+      Prefix : VSS.Strings.Virtual_String;
 
    begin
+      if Kind = Attribute and URI.Is_Empty then
+         --  Attributes doesn't have default namespaces. Such attributes are
+         --  represented with empty URI. So, left prefix be empty for attribute
+         --  with empty URI.
+
+         null;
+
+      else
+         Prefix := Self.Namespace_Map.Prefix (URI);
+      end if;
+
       if not Prefix.Is_Empty then
          Self.Write (Prefix, Success);
          Self.Write (VSS.Characters.Latin.Colon, Success);

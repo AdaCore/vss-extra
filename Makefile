@@ -84,9 +84,10 @@ build-tests-%:
 	gprbuild $(GPRBUILD_FLAGS) gnat/tests/vss_os_tests.gpr
 	gprbuild $(GPRBUILD_FLAGS) gnat/tests/vss_json_tests.gpr
 	gprbuild $(GPRBUILD_FLAGS) gnat/tests/vss_regexp_tests.gpr
+	gprbuild $(GPRBUILD_FLAGS) gnat/tests/vss_xml_tests.gpr
 	gprbuild $(GPRBUILD_FLAGS) gnat/tests/vss_html_tests.gpr
 
-check: build-tests check_text check_json check_regexp check_html
+check: build-tests check_text check_json check_regexp check_xml check_html
 
 check_text:
 	.objs/validation/tests/test_file_text_streams testsuite/os/test_file_text_stream/vss.197.in.txt /tmp/vss.197.out.txt && diff -u --strip-trailing-cr /tmp/vss.197.out.txt testsuite/os/test_file_text_stream/vss.197.out.txt
@@ -121,6 +122,13 @@ check_json:
 check_regexp:
 	.objs/validation/tests/test_regexp
 	.objs/validation/tests/test_regexp_re_tests $(OK_RE_TESTS) < data/re_tests
+
+check_xml:
+	rm -f .objs/validation/tests/.fails
+	for f in testsuite/xml/test_data/*.xml; do \
+	  echo -n "$$f: "; if .objs/validation/tests/test_xml_simple_writer $$f 1>.objs/out 2>.objs/err; (cat .objs/out; sed 's/.*[\/\\]\(.*:\)/\1/' .objs/err) | diff --strip-trailing-cr -u -- $${f%xml}out - ; then echo "PASS"; else echo "FAIL"; touch .objs/validation/tests/.fails; fi ; \
+	done
+	test ! -e .objs/validation/tests/.fails
 
 check_html:
 	rm -f .objs/validation/tests/.fails

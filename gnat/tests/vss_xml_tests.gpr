@@ -1,0 +1,26 @@
+--
+--  Copyright (C) 2026, AdaCore
+--
+--  SPDX-License-Identifier: Apache-2.0
+--
+
+--  VSS: XML processing subproject tests
+
+with "../vss_extra_common.gpr";
+with "../vss_xml_xmlada.gpr";
+with "vss_test_common.gpr";
+
+project VSS_XML_Tests is
+
+   for Languages use ("Ada");
+   for Object_Dir use VSS_Extra_Common.Tests_Object_Dir;
+   for Source_Dirs use ("../../testsuite/xml", "../../testsuite/html");
+   for Main use ("test_xml_simple_writer.adb");
+
+   package Compiler renames VSS_Test_Common.Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Wb");
+   end Binder;
+
+end VSS_XML_Tests;
