@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2020-2024, AdaCore
+--  Copyright (C) 2020-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0
 --
@@ -22,8 +22,7 @@ aggregate project VSS_Documentation is
       for Output_Dir (others) use ".docs";
       for Resources_Dir (others) use "gnatdoc";
       for Excluded_Project_Files use
-        ("config/vss_config.gpr",
-         "gnat/vss_gnat.gpr");
+        ("config/vss_config.gpr");
    end Documentation;
 
 end VSS_Documentation;
