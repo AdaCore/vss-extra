@@ -705,12 +705,19 @@ package body JSON_Schema.Writers is
    begin
       if Schema.Ref.Is_Empty then
          for Property of Schema.Properties loop
-            --  Look for the first string `const` property
+            --  Look for the first string `const` property. A single-item
+            --  `enum` is a widely used (e.g. by OpenAPI-flavored schemas)
+            --  equivalent of `const` and is treated the same way elsewhere
+            --  in this tool (see Get_Field_Type / Write_Record_Component).
             if not Property.Schema.Const.Is_Empty and then
               Property.Schema.Const.First_Element.Kind = String_Value
             then
 
                return Property.Schema.Const.First_Element.String_Value;
+
+            elsif Property.Schema.Enum.Length = 1 then
+
+               return Property.Schema.Enum.First_Element;
             end if;
          end loop;
 

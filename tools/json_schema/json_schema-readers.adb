@@ -384,7 +384,15 @@ package body JSON_Schema.Readers is
                   elsif Key = "anyOf" then
                      Value.Any_Of.Append (Item);
                   else
+                     --  `oneOf` and `anyOf` both mean "a value matching (at
+                     --  least/exactly) one of these alternatives", and the
+                     --  code generator only knows how to turn Any_Of into a
+                     --  variant/union type. Feed oneOf through the same
+                     --  path -- the "exactly one" vs. "at least one"
+                     --  distinction is a validation-strictness difference
+                     --  that doesn't matter for generating an Ada binding.
                      Value.One_Of.Append (Item);
+                     Value.Any_Of.Append (Item);
                   end if;
                end;
             end loop;
@@ -419,9 +427,14 @@ package body JSON_Schema.Readers is
             pragma Assert (Reader.Is_End_Array);
             Reader.Read_Next;
 
-         else
+         elsif Key.Starts_With ("x-") then
+            --  OpenAPI vendor extension (e.g. `x-oaiMeta`, `x-stainless-*`).
+            --  Not part of the schema, and its shape is unspecified (can be
+            --  an object, string, array, ...): just skip it, don't attempt
+            --  to parse its contents as nested schemas.
+            Reader.Skip_Current_Value;
+         elsif Reader.Is_Start_Object then
             --  Any unknown object is a new schema namespace
-            pragma Assert (Reader.Is_Start_Object);
             Reader.Read_Next;
 
             while not Reader.At_End and then not Reader.Is_End_Object loop
@@ -438,6 +451,11 @@ package body JSON_Schema.Readers is
 
             pragma Assert (Reader.Is_End_Object);
             Reader.Read_Next;
+         else
+            --  Unknown key with a non-object value, e.g. an OpenAPI vendor
+            --  extension like `x-stainless-const: true`. Nothing to record,
+            --  just skip it.
+            Reader.Skip_Current_Value;
          end if;
       end loop;
 

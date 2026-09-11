@@ -793,6 +793,14 @@ package body JSON_Schema.Writers.Inputs is
         (Field_Name  : VSS.Strings.Virtual_String;
          Type_Name   : VSS.Strings.Virtual_String) is
       begin
+         --  OpenAPI-style schemas routinely use `nullable: true` properties
+         --  that are still listed as required, so the value is present but
+         --  can be JSON null. Tolerate null here for any type by leaving the
+         --  field at its default value instead of failing to parse.
+         Put ("if Reader.Is_Null_Value then"); New_Line;
+         Put ("Reader.Read_Next;"); New_Line;
+         Put ("else"); New_Line;
+
          if Type_Name = "Any_Object" then
             Write_Value (Field_Name, "Any_Value");
          elsif Type_Name = "Virtual_String" then
@@ -895,6 +903,8 @@ package body JSON_Schema.Writers.Inputs is
             Put (", Success);");
             New_Line;
          end if;
+
+         Put ("end if;"); New_Line;
       end Write_Value;
 
       Fallback : constant VSS.Strings.Virtual_String :=

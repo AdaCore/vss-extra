@@ -1081,6 +1081,7 @@ package body JSON_Schema.Writers.Types is
             Root_Package, Enum_Package, Holders);
       end On_Anonymous_Schema;
 
+      Has_Component : Boolean := False;
    begin
       --  Write dependencies
       for Property of Schema.Properties loop
@@ -1110,6 +1111,14 @@ package body JSON_Schema.Writers.Types is
       New_Line;
 
       for Property of Schema.Properties loop
+         if not Writers.Types.Field_Type
+           (Map, Property.Schema, Schema.Required.Contains (Property.Name),
+            Ref_To_Type_Name (Name) & "_" & Property.Name,
+            Enum_Package).Is_Empty
+         then
+            Has_Component := True;
+         end if;
+
          Write_Record_Component
            (Name,
             Map,
@@ -1125,6 +1134,13 @@ package body JSON_Schema.Writers.Types is
            not Schema.Additional_Properties.Is_False)
       then
          Put ("Additional_Properties : Any_Object;");
+         Has_Component := True;
+      end if;
+
+      if not Has_Component then
+         --  Ada doesn't allow a record with no components at all
+         Put ("null;");
+         New_Line;
       end if;
 
       Put ("end record;");
