@@ -9,8 +9,11 @@ project-files = ["../../gnat/tools/json_schema.gpr"]
 executables = ["gen_json"]
 
 [[depends-on]]
-vss = "*"
+vss_extra = "*"
 
 [[pins]]
 
-vss = { path = "../.." }
+vss_extra = { path = "../.." }
+
+[[pins]]
+vss_text = { path='../../../vss-text' }

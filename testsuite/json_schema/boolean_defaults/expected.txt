@@ -1,0 +1,369 @@
+pragma Ada_2022;
+pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
+with Ada.Containers.Doubly_Linked_Lists;
+with Ada.Finalization;
+with Interfaces;
+with VSS.JSON.Streams;
+with VSS.Strings;
+with VSS.String_Vectors;
+
+package Boolean_Defaults.Types is
+subtype Integer_64 is Interfaces.Integer_64;
+subtype Float_64 is Interfaces.IEEE_Float_64;
+package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists
+(VSS.JSON.Streams.JSON_Stream_Element, VSS.JSON.Streams."=");
+
+type Any_Value is new JSON_Event_Lists.List with null record;
+type Any_Object is new Any_Value with null record;
+
+type Optional_Integer_64 (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Integer_64;
+when False => null;
+end case; end record;
+
+type Optional_Float_64 (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Float_64;
+when False => null;
+end case; end record;
+
+type Integer_Or_String (Is_String : Boolean := False) is record
+case Is_String is
+when False =>
+Integer : Integer_64;
+when True =>
+String : VSS.Strings.Virtual_String;
+end case;
+end record;
+
+type Optional_Integer_Or_String (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Integer_Or_String;
+when False => null;
+end case; end record;
+
+
+type Integer_64_Vector is tagged private
+with Variable_Indexing => Get_Integer_64_Variable_Reference,
+Constant_Indexing => Get_Integer_64_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+
+type Settings is record
+enabled : Boolean := Boolean'Last;
+disabled : Boolean := Boolean'First;
+unspecified : Boolean := Boolean'First;
+end record;
+
+function Empty return Integer_64_Vector;
+
+function Is_Null (Self : Integer_64_Vector) return Boolean;
+
+function Length (Self : Integer_64_Vector) return Natural;
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64);
+
+type Integer_64_Variable_Reference
+(Element : not null access Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+with Inline;
+
+type Integer_64_Constant_Reference
+(Element : not null access constant Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+with Inline;
+
+private
+type Integer_64_Array is array (Positive range <>) of aliased Integer_64;
+type Integer_64_Array_Access is access Integer_64_Array;
+type Integer_64_Vector is new Ada.Finalization.Controlled with record
+Data   : Integer_64_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out Integer_64_Vector);
+
+overriding procedure Finalize (Self : in out Integer_64_Vector);
+
+end Boolean_Defaults.Types;
+pragma Style_Checks ("M99");  --  suppress style warning unitl gnatpp is fixed
+with Ada.Unchecked_Deallocation;
+
+package body Boolean_Defaults.Types is
+procedure Free is new Ada.Unchecked_Deallocation
+(Integer_64_Array, Integer_64_Array_Access);
+
+overriding procedure Adjust (Self : in out Integer_64_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new Integer_64_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out Integer_64_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return Integer_64_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Integer_64_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : Integer_64_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / Integer_64'Size);
+Self_Data_Saved : Integer_64_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new Integer_64_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new Integer_64_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+end Boolean_Defaults.Types;
+
+with VSS.JSON.Content_Handlers;
+
+package Boolean_Defaults.Types.Outputs is
+
+procedure Output_Settings
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Settings);
+
+end Boolean_Defaults.Types.Outputs;
+package body Boolean_Defaults.Types.Outputs is
+pragma Style_Checks (Off);
+procedure Output_Any_Value
+  (Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+   Value   : Any_Value'Class) is
+begin
+   for Item of Value loop
+      case Item.Kind is
+         when VSS.JSON.Streams.Start_Array =>
+            Handler.Start_Array;
+         when VSS.JSON.Streams.End_Array =>
+            Handler.End_Array;
+         when VSS.JSON.Streams.Start_Object =>
+            Handler.Start_Object;
+         when VSS.JSON.Streams.End_Object =>
+            Handler.End_Object;
+         when VSS.JSON.Streams.Key_Name =>
+            Handler.Key_Name (Item.Key_Name);
+         when VSS.JSON.Streams.String_Value =>
+            Handler.String_Value (Item.String_Value);
+         when VSS.JSON.Streams.Number_Value =>
+            Handler.Number_Value (Item.Number_Value);
+         when VSS.JSON.Streams.Boolean_Value =>
+            Handler.Boolean_Value (Item.Boolean_Value);
+         when VSS.JSON.Streams.Null_Value =>
+            Handler.Null_Value;
+         when VSS.JSON.Streams.None =>
+            null;
+         when VSS.JSON.Streams.Invalid =>
+            raise Program_Error;
+         when VSS.JSON.Streams.Start_Document =>
+            raise Program_Error;
+         when VSS.JSON.Streams.End_Document =>
+            raise Program_Error;
+         when VSS.JSON.Streams.Comment =>
+            raise Program_Error;
+      end case;
+   end loop;
+end Output_Any_Value;
+
+procedure Output_Settings
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Settings) is
+begin
+Handler.Start_Object;
+if not Value.enabled then
+Handler.Key_Name ("enabled");
+Handler.Boolean_Value (Value.enabled);
+end if;
+if Value.disabled then
+Handler.Key_Name ("disabled");
+Handler.Boolean_Value (Value.disabled);
+end if;
+if Value.unspecified then
+Handler.Key_Name ("unspecified");
+Handler.Boolean_Value (Value.unspecified);
+end if;
+Handler.End_Object;
+end Output_Settings;
+
+end Boolean_Defaults.Types.Outputs;
+with VSS.JSON.Pull_Readers;
+
+package Boolean_Defaults.Types.Inputs is
+
+procedure Input_Settings
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Settings;
+Success : in out Boolean);
+
+end Boolean_Defaults.Types.Inputs;
+pragma Ada_2022;
+with Minimal_Perfect_Hash;
+
+package body Boolean_Defaults.Types.Inputs is
+pragma Style_Checks (Off);
+use type VSS.JSON.JSON_Number_Kind;
+use type VSS.Strings.Virtual_String;
+
+procedure Input_Any_Value
+  (Reader  : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+   Value   : out Any_Value'Class;
+   Success : in out Boolean) is
+use type VSS.JSON.Streams.JSON_Stream_Element_Kind;
+begin
+case Reader.Element_Kind is
+when VSS.JSON.Streams.Start_Array =>
+Value.Append ((Kind => VSS.JSON.Streams.Start_Array));
+Reader.Read_Next;
+while Success and Reader.Element_Kind /= VSS.JSON.Streams.End_Array loop
+Input_Any_Value (Reader, Value, Success);
+end loop;
+Value.Append ((Kind => VSS.JSON.Streams.End_Array));
+when VSS.JSON.Streams.Start_Object =>
+Value.Append ((Kind => VSS.JSON.Streams.Start_Object));
+Reader.Read_Next;
+while Success and Reader.Element_Kind = VSS.JSON.Streams.Key_Name loop
+Value.Append (Reader.Element);
+Reader.Read_Next;
+Input_Any_Value (Reader, Value, Success);
+end loop;
+Value.Append ((Kind => VSS.JSON.Streams.End_Object));
+when VSS.JSON.Streams.String_Value
+   | VSS.JSON.Streams.Number_Value
+   | VSS.JSON.Streams.Boolean_Value
+   | VSS.JSON.Streams.Null_Value
+=>
+Value.Append (Reader.Element);
+when others =>
+Success := False;
+end case;
+if Success then
+Reader.Read_Next;
+end if;
+end Input_Any_Value;
+
+package Settings_Minimal_Perfect_Hash is new Minimal_Perfect_Hash (["enabled", "disabled", "unspecified"]);
+
+procedure Input_Settings
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Settings;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+Settings_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  enabled
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Boolean_Value then
+Value.enabled := Reader.Boolean_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 2 =>  --  disabled
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Boolean_Value then
+Value.disabled := Reader.Boolean_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 3 =>  --  unspecified
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Boolean_Value then
+Value.unspecified := Reader.Boolean_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_Settings;
+
+end Boolean_Defaults.Types.Inputs;

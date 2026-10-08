@@ -20,36 +20,40 @@
 --
 --  DON'T EDIT THIS FILE! It was generated from metaModel.schema.json.
 
-pragma Style_Checks ("M99");  --  suppress style warning unitl gnatpp is fixed
+pragma Ada_2022;
+pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Finalization;
+with Interfaces;
 with VSS.JSON.Streams;
 with VSS.Strings;
 with VSS.String_Vectors;
 
 package LSP_Gen.Entities is
+subtype Integer_64 is Interfaces.Integer_64;
+subtype Float_64 is Interfaces.IEEE_Float_64;
 package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists
 (VSS.JSON.Streams.JSON_Stream_Element, VSS.JSON.Streams."=");
 
 type Any_Value is new JSON_Event_Lists.List with null record;
 type Any_Object is new Any_Value with null record;
 
-type Optional_Integer (Is_Set : Boolean := False) is record
+type Optional_Integer_64 (Is_Set : Boolean := False) is record
 case Is_Set is
-when True => Value : Integer;
+when True => Value : Integer_64;
 when False => null;
 end case; end record;
 
-type Optional_Float (Is_Set : Boolean := False) is record
+type Optional_Float_64 (Is_Set : Boolean := False) is record
 case Is_Set is
-when True => Value : Float;
+when True => Value : Float_64;
 when False => null;
 end case; end record;
 
 type Integer_Or_String (Is_String : Boolean := False) is record
 case Is_String is
 when False =>
-Integer : Standard.Integer;
+Integer : Integer_64;
 when True =>
 String : VSS.Strings.Virtual_String;
 end case;
@@ -64,39 +68,48 @@ end case; end record;
 
 type Property_Vector is tagged private
 with Variable_Indexing => Get_Property_Variable_Reference,
-Constant_Indexing => Get_Property_Constant_Reference;
+Constant_Indexing => Get_Property_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Request_Vector is tagged private
 with Variable_Indexing => Get_Request_Variable_Reference,
-Constant_Indexing => Get_Request_Constant_Reference;
-
-type Integer_Vector is tagged private
-with Variable_Indexing => Get_Integer_Variable_Reference,
-Constant_Indexing => Get_Integer_Constant_Reference;
+Constant_Indexing => Get_Request_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type TypeAlias_Vector is tagged private
 with Variable_Indexing => Get_TypeAlias_Variable_Reference,
-Constant_Indexing => Get_TypeAlias_Constant_Reference;
+Constant_Indexing => Get_TypeAlias_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Structure_Vector is tagged private
 with Variable_Indexing => Get_Structure_Variable_Reference,
-Constant_Indexing => Get_Structure_Constant_Reference;
+Constant_Indexing => Get_Structure_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Notification_Vector is tagged private
 with Variable_Indexing => Get_Notification_Variable_Reference,
-Constant_Indexing => Get_Notification_Constant_Reference;
+Constant_Indexing => Get_Notification_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type EnumerationEntry_Vector is tagged private
 with Variable_Indexing => Get_EnumerationEntry_Variable_Reference,
-Constant_Indexing => Get_EnumerationEntry_Constant_Reference;
+Constant_Indexing => Get_EnumerationEntry_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type Enumeration_Vector is tagged private
 with Variable_Indexing => Get_Enumeration_Variable_Reference,
-Constant_Indexing => Get_Enumeration_Constant_Reference;
+Constant_Indexing => Get_Enumeration_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+type Integer_64_Vector is tagged private
+with Variable_Indexing => Get_Integer_64_Variable_Reference,
+Constant_Indexing => Get_Integer_64_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type AType_Vector is tagged private
 with Variable_Indexing => Get_AType_Variable_Reference,
-Constant_Indexing => Get_AType_Constant_Reference;
+Constant_Indexing => Get_AType_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
 type AType_Holder is tagged private;
 
@@ -206,7 +219,7 @@ value : VSS.Strings.Virtual_String;
 end record;
 
 type IntegerLiteralType is record
-value : Float;
+value : Float_64;
 end record;
 
 type BooleanLiteralType is record
@@ -361,9 +374,13 @@ since : VSS.Strings.Virtual_String;
       --  Since when (release number) this request is available. Is undefined if not known.
 end record;
 
+function Empty return Property_Vector;
+
+function Is_Null (Self : Property_Vector) return Boolean;
+
 function Length (Self : Property_Vector) return Natural;
 
-procedure Clear (Self : in out Property_Vector);
+procedure Clear (Self : in out Property_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out Property_Vector;
@@ -389,9 +406,13 @@ Index : Positive)
 return Property_Constant_Reference
 with Inline;
 
+function Empty return Request_Vector;
+
+function Is_Null (Self : Request_Vector) return Boolean;
+
 function Length (Self : Request_Vector) return Natural;
 
-procedure Clear (Self : in out Request_Vector);
+procedure Clear (Self : in out Request_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out Request_Vector;
@@ -417,37 +438,13 @@ Index : Positive)
 return Request_Constant_Reference
 with Inline;
 
-function Length (Self : Integer_Vector) return Natural;
+function Empty return TypeAlias_Vector;
 
-procedure Clear (Self : in out Integer_Vector);
-
-procedure Append
-(Self : in out Integer_Vector;
-Value : Integer);
-
-type Integer_Variable_Reference
-(Element : not null access Integer) is null record
-with Implicit_Dereference => Element;
-
-not overriding function Get_Integer_Variable_Reference
-(Self : aliased in out Integer_Vector;
-Index : Positive)
-return Integer_Variable_Reference
-with Inline;
-
-type Integer_Constant_Reference
-(Element : not null access constant Integer) is null record
-with Implicit_Dereference => Element;
-
-not overriding function Get_Integer_Constant_Reference
-(Self : aliased Integer_Vector;
-Index : Positive)
-return Integer_Constant_Reference
-with Inline;
+function Is_Null (Self : TypeAlias_Vector) return Boolean;
 
 function Length (Self : TypeAlias_Vector) return Natural;
 
-procedure Clear (Self : in out TypeAlias_Vector);
+procedure Clear (Self : in out TypeAlias_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out TypeAlias_Vector;
@@ -473,9 +470,13 @@ Index : Positive)
 return TypeAlias_Constant_Reference
 with Inline;
 
+function Empty return Structure_Vector;
+
+function Is_Null (Self : Structure_Vector) return Boolean;
+
 function Length (Self : Structure_Vector) return Natural;
 
-procedure Clear (Self : in out Structure_Vector);
+procedure Clear (Self : in out Structure_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out Structure_Vector;
@@ -501,9 +502,13 @@ Index : Positive)
 return Structure_Constant_Reference
 with Inline;
 
+function Empty return Notification_Vector;
+
+function Is_Null (Self : Notification_Vector) return Boolean;
+
 function Length (Self : Notification_Vector) return Natural;
 
-procedure Clear (Self : in out Notification_Vector);
+procedure Clear (Self : in out Notification_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out Notification_Vector;
@@ -529,9 +534,13 @@ Index : Positive)
 return Notification_Constant_Reference
 with Inline;
 
+function Empty return EnumerationEntry_Vector;
+
+function Is_Null (Self : EnumerationEntry_Vector) return Boolean;
+
 function Length (Self : EnumerationEntry_Vector) return Natural;
 
-procedure Clear (Self : in out EnumerationEntry_Vector);
+procedure Clear (Self : in out EnumerationEntry_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out EnumerationEntry_Vector;
@@ -557,9 +566,13 @@ Index : Positive)
 return EnumerationEntry_Constant_Reference
 with Inline;
 
+function Empty return Enumeration_Vector;
+
+function Is_Null (Self : Enumeration_Vector) return Boolean;
+
 function Length (Self : Enumeration_Vector) return Natural;
 
-procedure Clear (Self : in out Enumeration_Vector);
+procedure Clear (Self : in out Enumeration_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out Enumeration_Vector;
@@ -585,9 +598,45 @@ Index : Positive)
 return Enumeration_Constant_Reference
 with Inline;
 
+function Empty return Integer_64_Vector;
+
+function Is_Null (Self : Integer_64_Vector) return Boolean;
+
+function Length (Self : Integer_64_Vector) return Natural;
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64);
+
+type Integer_64_Variable_Reference
+(Element : not null access Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+with Inline;
+
+type Integer_64_Constant_Reference
+(Element : not null access constant Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+with Inline;
+
+function Empty return AType_Vector;
+
+function Is_Null (Self : AType_Vector) return Boolean;
+
 function Length (Self : AType_Vector) return Natural;
 
-procedure Clear (Self : in out AType_Vector);
+procedure Clear (Self : in out AType_Vector; Is_Null : Boolean := True);
 
 procedure Append
 (Self : in out AType_Vector;
@@ -627,6 +676,7 @@ type Property_Array_Access is access Property_Array;
 type Property_Vector is new Ada.Finalization.Controlled with record
 Data   : Property_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out Property_Vector);
@@ -638,28 +688,19 @@ type Request_Array_Access is access Request_Array;
 type Request_Vector is new Ada.Finalization.Controlled with record
 Data   : Request_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out Request_Vector);
 
 overriding procedure Finalize (Self : in out Request_Vector);
 
-type Integer_Array is array (Positive range <>) of aliased Integer;
-type Integer_Array_Access is access Integer_Array;
-type Integer_Vector is new Ada.Finalization.Controlled with record
-Data   : Integer_Array_Access;
-Length : Natural := 0;
-end record;
-
-overriding procedure Adjust (Self : in out Integer_Vector);
-
-overriding procedure Finalize (Self : in out Integer_Vector);
-
 type TypeAlias_Array is array (Positive range <>) of aliased TypeAlias;
 type TypeAlias_Array_Access is access TypeAlias_Array;
 type TypeAlias_Vector is new Ada.Finalization.Controlled with record
 Data   : TypeAlias_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out TypeAlias_Vector);
@@ -671,6 +712,7 @@ type Structure_Array_Access is access Structure_Array;
 type Structure_Vector is new Ada.Finalization.Controlled with record
 Data   : Structure_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out Structure_Vector);
@@ -682,6 +724,7 @@ type Notification_Array_Access is access Notification_Array;
 type Notification_Vector is new Ada.Finalization.Controlled with record
 Data   : Notification_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out Notification_Vector);
@@ -693,6 +736,7 @@ type EnumerationEntry_Array_Access is access EnumerationEntry_Array;
 type EnumerationEntry_Vector is new Ada.Finalization.Controlled with record
 Data   : EnumerationEntry_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out EnumerationEntry_Vector);
@@ -704,17 +748,31 @@ type Enumeration_Array_Access is access Enumeration_Array;
 type Enumeration_Vector is new Ada.Finalization.Controlled with record
 Data   : Enumeration_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out Enumeration_Vector);
 
 overriding procedure Finalize (Self : in out Enumeration_Vector);
 
+type Integer_64_Array is array (Positive range <>) of aliased Integer_64;
+type Integer_64_Array_Access is access Integer_64_Array;
+type Integer_64_Vector is new Ada.Finalization.Controlled with record
+Data   : Integer_64_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out Integer_64_Vector);
+
+overriding procedure Finalize (Self : in out Integer_64_Vector);
+
 type AType_Array is array (Positive range <>) of aliased AType;
 type AType_Array_Access is access AType_Array;
 type AType_Vector is new Ada.Finalization.Controlled with record
 Data   : AType_Array_Access;
 Length : Natural := 0;
+Is_Null : Boolean := True;
 end record;
 
 overriding procedure Adjust (Self : in out AType_Vector);
@@ -767,26 +825,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Property_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Property_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : Property_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out Property_Vector) is
+procedure Clear (Self : in out Property_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out Property_Vector;
 Value : Property) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / Property'Size);
+Positive'Max (2, 256 / Property'Size);
 Self_Data_Saved : Property_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new Property_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new Property_Array'(Self.Data.all
- & Property_Array'(1 .. Self.Length => <>));
+new Property_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -822,26 +886,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Request_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Request_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : Request_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out Request_Vector) is
+procedure Clear (Self : in out Request_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out Request_Vector;
 Value : Request) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / Request'Size);
+Positive'Max (2, 256 / Request'Size);
 Self_Data_Saved : Request_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new Request_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new Request_Array'(Self.Data.all
- & Request_Array'(1 .. Self.Length => <>));
+new Request_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -861,61 +931,6 @@ return Request_Constant_Reference
 is (Element => Self.Data (Index)'Access);
 
 procedure Free is new Ada.Unchecked_Deallocation
-(Integer_Array, Integer_Array_Access);
-
-overriding procedure Adjust (Self : in out Integer_Vector) is
-begin
-if Self.Length > 0 then
-Self.Data :=
-new Integer_Array'(Self.Data (1 .. Self.Length));
-end if;
-end Adjust;
-
-overriding procedure Finalize (Self : in out Integer_Vector) is
-begin
-Free (Self.Data);
-Self.Length := 0;
-end Finalize;
-
-function Length (Self : Integer_Vector) return Natural is (Self.Length);
-
-procedure Clear (Self : in out Integer_Vector) is
-begin
-   Self.Length := 0;
-end Clear;
-
-procedure Append
-(Self : in out Integer_Vector;
-Value : Integer) is
-Init_Length : constant Positive :=
-Positive'Max (1, 256 / Integer'Size);
-Self_Data_Saved : Integer_Array_Access := Self.Data;
-begin
-if Self.Length = 0 then
-Self.Data := new Integer_Array (1 .. Init_Length);
-elsif Self.Length = Self.Data'Last then
-Self.Data :=
-new Integer_Array'(Self.Data.all
- & Integer_Array'(1 .. Self.Length => <>));
-Free (Self_Data_Saved);
-end if;
-Self.Length := Self.Length + 1;
-Self.Data (Self.Length) := Value;
-end Append;
-
-not overriding function Get_Integer_Variable_Reference
-(Self : aliased in out Integer_Vector;
-Index : Positive)
-return Integer_Variable_Reference
-is (Element => Self.Data (Index)'Access);
-
-not overriding function Get_Integer_Constant_Reference
-(Self : aliased Integer_Vector;
-Index : Positive)
-return Integer_Constant_Reference
-is (Element => Self.Data (Index)'Access);
-
-procedure Free is new Ada.Unchecked_Deallocation
 (TypeAlias_Array, TypeAlias_Array_Access);
 
 overriding procedure Adjust (Self : in out TypeAlias_Vector) is
@@ -932,26 +947,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return TypeAlias_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : TypeAlias_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : TypeAlias_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out TypeAlias_Vector) is
+procedure Clear (Self : in out TypeAlias_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out TypeAlias_Vector;
 Value : TypeAlias) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / TypeAlias'Size);
+Positive'Max (2, 256 / TypeAlias'Size);
 Self_Data_Saved : TypeAlias_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new TypeAlias_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new TypeAlias_Array'(Self.Data.all
- & TypeAlias_Array'(1 .. Self.Length => <>));
+new TypeAlias_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -987,26 +1008,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Structure_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Structure_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : Structure_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out Structure_Vector) is
+procedure Clear (Self : in out Structure_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out Structure_Vector;
 Value : Structure) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / Structure'Size);
+Positive'Max (2, 256 / Structure'Size);
 Self_Data_Saved : Structure_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new Structure_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new Structure_Array'(Self.Data.all
- & Structure_Array'(1 .. Self.Length => <>));
+new Structure_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -1042,26 +1069,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Notification_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Notification_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : Notification_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out Notification_Vector) is
+procedure Clear (Self : in out Notification_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out Notification_Vector;
 Value : Notification) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / Notification'Size);
+Positive'Max (2, 256 / Notification'Size);
 Self_Data_Saved : Notification_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new Notification_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new Notification_Array'(Self.Data.all
- & Notification_Array'(1 .. Self.Length => <>));
+new Notification_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -1097,26 +1130,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return EnumerationEntry_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : EnumerationEntry_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : EnumerationEntry_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out EnumerationEntry_Vector) is
+procedure Clear (Self : in out EnumerationEntry_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out EnumerationEntry_Vector;
 Value : EnumerationEntry) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / EnumerationEntry'Size);
+Positive'Max (2, 256 / EnumerationEntry'Size);
 Self_Data_Saved : EnumerationEntry_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new EnumerationEntry_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new EnumerationEntry_Array'(Self.Data.all
- & EnumerationEntry_Array'(1 .. Self.Length => <>));
+new EnumerationEntry_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -1152,26 +1191,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return Enumeration_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Enumeration_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : Enumeration_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out Enumeration_Vector) is
+procedure Clear (Self : in out Enumeration_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out Enumeration_Vector;
 Value : Enumeration) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / Enumeration'Size);
+Positive'Max (2, 256 / Enumeration'Size);
 Self_Data_Saved : Enumeration_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new Enumeration_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new Enumeration_Array'(Self.Data.all
- & Enumeration_Array'(1 .. Self.Length => <>));
+new Enumeration_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -1191,6 +1236,67 @@ return Enumeration_Constant_Reference
 is (Element => Self.Data (Index)'Access);
 
 procedure Free is new Ada.Unchecked_Deallocation
+(Integer_64_Array, Integer_64_Array_Access);
+
+overriding procedure Adjust (Self : in out Integer_64_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new Integer_64_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out Integer_64_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return Integer_64_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Integer_64_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : Integer_64_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / Integer_64'Size);
+Self_Data_Saved : Integer_64_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new Integer_64_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new Integer_64_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+procedure Free is new Ada.Unchecked_Deallocation
 (AType_Array, AType_Array_Access);
 
 overriding procedure Adjust (Self : in out AType_Vector) is
@@ -1207,26 +1313,32 @@ Free (Self.Data);
 Self.Length := 0;
 end Finalize;
 
+function Empty return AType_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : AType_Vector) return Boolean is (Self.Is_Null);
+
 function Length (Self : AType_Vector) return Natural is (Self.Length);
 
-procedure Clear (Self : in out AType_Vector) is
+procedure Clear (Self : in out AType_Vector; Is_Null : Boolean := True) is
 begin
    Self.Length := 0;
+   Self.Is_Null := Is_Null;
 end Clear;
 
 procedure Append
 (Self : in out AType_Vector;
 Value : AType) is
 Init_Length : constant Positive :=
-Positive'Max (1, 256 / AType'Size);
+Positive'Max (2, 256 / AType'Size);
 Self_Data_Saved : AType_Array_Access := Self.Data;
 begin
 if Self.Length = 0 then
+Self.Is_Null := False;
 Self.Data := new AType_Array (1 .. Init_Length);
 elsif Self.Length = Self.Data'Last then
 Self.Data :=
-new AType_Array'(Self.Data.all
- & AType_Array'(1 .. Self.Length => <>));
+new AType_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
 Free (Self_Data_Saved);
 end if;
 Self.Length := Self.Length + 1;
@@ -1418,7 +1530,6 @@ end LSP_Gen.Entities.Outputs;
 --
 --  DON'T EDIT THIS FILE! It was generated from metaModel.schema.json.
 
-with Interfaces;
 package body LSP_Gen.Entities.Outputs is
 pragma Style_Checks (Off);
 procedure Output_Any_Value
@@ -1554,7 +1665,7 @@ if not Value.documentation.Is_Null then
 Handler.Key_Name ("documentation");
 Handler.String_Value (Value.documentation);
 end if;
-if Value.extends.Length > 0 then
+if not Value.extends.Is_Null then
 Handler.Key_Name ("extends");
 Handler.Start_Array;
 for J in 1 .. Value.extends.Length loop
@@ -1562,7 +1673,7 @@ Output_AType (Handler, Value.extends (J));
 end loop;
 Handler.End_Array;
 end if;
-if Value.mixins.Length > 0 then
+if not Value.mixins.Is_Null then
 Handler.Key_Name ("mixins");
 Handler.Start_Array;
 for J in 1 .. Value.mixins.Length loop
@@ -1640,7 +1751,7 @@ Handler.Key_Name ("value");
 if Value.value.Is_String then
 Handler.String_Value (Value.value.String);
 else
-Handler.Integer_Value(Interfaces.Integer_64 (Integer'(Value.value.Integer)));
+Handler.Integer_Value(Value.value.Integer);
 end if;
 Handler.End_Object;
 end Output_EnumerationEntry;
@@ -1883,7 +1994,7 @@ begin
 Handler.Start_Object;
 Handler.Key_Name ("kind");Handler.String_Value ("integerLiteral");
 Handler.Key_Name ("value");
-Handler.Float_Value(Interfaces.IEEE_Float_64 (Value.value));
+Handler.Float_Value(Value.value);
 Handler.End_Object;
 end Output_IntegerLiteralType;
 
@@ -2358,10 +2469,10 @@ declare
 Index : constant Natural :=
 Structure_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -2369,8 +2480,10 @@ else
 Success := False;
 end if;
    when 2 =>  --  extends
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.extends.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
@@ -2386,8 +2499,10 @@ else
 Success := False;
 end if;
    when 3 =>  --  mixins
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.mixins.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
@@ -2403,6 +2518,7 @@ else
 Success := False;
 end if;
    when 4 =>  --  name
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
@@ -2410,8 +2526,10 @@ else
 Success := False;
 end if;
    when 5 =>  --  properties
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.properties.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : Property;
@@ -2427,6 +2545,7 @@ else
 Success := False;
 end if;
    when 6 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2434,6 +2553,7 @@ else
 Success := False;
 end if;
    when 7 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -2441,6 +2561,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2473,10 +2594,10 @@ declare
 Index : constant Natural :=
 Property_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -2484,6 +2605,7 @@ else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
@@ -2491,6 +2613,7 @@ else
 Success := False;
 end if;
    when 3 =>  --  optional
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.optional := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2498,6 +2621,7 @@ else
 Success := False;
 end if;
    when 4 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2505,6 +2629,7 @@ else
 Success := False;
 end if;
    when 5 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -2512,8 +2637,10 @@ else
 Success := False;
 end if;
    when 6 =>  --  type
+Reader.Read_Next;
 Input_AType (Reader, Value.a_type, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2546,10 +2673,10 @@ declare
 Index : constant Natural :=
 EnumerationEntry_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -2557,6 +2684,7 @@ else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
@@ -2564,6 +2692,7 @@ else
 Success := False;
 end if;
    when 3 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2571,6 +2700,7 @@ else
 Success := False;
 end if;
    when 4 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -2578,17 +2708,19 @@ else
 Success := False;
 end if;
    when 5 =>  --  value
+Reader.Read_Next;
 Value.value := (False, Integer => <>);
 if Reader.Is_String_Value then
 Value.value := (True, Reader.String_Value);
 Reader.Read_Next;
 elsif Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.value.Integer := Integer (Reader.Number_Value.Integer_Value);
+Value.value.Integer := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2621,12 +2753,13 @@ declare
 Index : constant Natural :=
 AndType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  items
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.items.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
@@ -2642,12 +2775,14 @@ else
 Success := False;
 end if;
    when 2 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "and" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2680,10 +2815,10 @@ declare
 Index : constant Natural :=
 Notification_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -2691,6 +2826,7 @@ else
 Success := False;
 end if;
    when 2 =>  --  method
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.method := Reader.String_Value;
 Reader.Read_Next;
@@ -2698,9 +2834,11 @@ else
 Success := False;
 end if;
    when 3 =>  --  params
+Reader.Read_Next;
 Value.params := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.params.Value, Success);
    when 4 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2708,9 +2846,11 @@ else
 Success := False;
 end if;
    when 5 =>  --  registrationOptions
+Reader.Read_Next;
 Value.registrationOptions := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.registrationOptions.Value, Success);
    when 6 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -2718,6 +2858,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2754,18 +2895,20 @@ declare
 Index : constant Natural :=
 MapKeyType_base_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "base" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 Input_MapKeyType_name (Reader, Value.name, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2850,10 +2993,10 @@ declare
 Index : constant Natural :=
 Enumeration_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -2861,6 +3004,7 @@ else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
@@ -2868,6 +3012,7 @@ else
 Success := False;
 end if;
    when 3 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2875,6 +3020,7 @@ else
 Success := False;
 end if;
    when 4 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -2882,6 +3028,7 @@ else
 Success := False;
 end if;
    when 5 =>  --  supportsCustomValues
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.supportsCustomValues := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -2889,10 +3036,13 @@ else
 Success := False;
 end if;
    when 6 =>  --  type
+Reader.Read_Next;
 Input_EnumerationType (Reader, Value.a_type, Success);
    when 7 =>  --  values
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.values.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : EnumerationEntry;
@@ -2908,6 +3058,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2940,12 +3091,13 @@ declare
 Index : constant Natural :=
 OrType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  items
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.items.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
@@ -2961,12 +3113,14 @@ else
 Success := False;
 end if;
    when 2 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "or" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -2999,12 +3153,13 @@ declare
 Index : constant Natural :=
 MetaModel_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  enumerations
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.enumerations.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : Enumeration;
@@ -3020,8 +3175,10 @@ else
 Success := False;
 end if;
    when 2 =>  --  notifications
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.notifications.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : Notification;
@@ -3037,8 +3194,10 @@ else
 Success := False;
 end if;
    when 3 =>  --  requests
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.requests.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : Request;
@@ -3054,8 +3213,10 @@ else
 Success := False;
 end if;
    when 4 =>  --  structures
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.structures.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : Structure;
@@ -3071,8 +3232,10 @@ else
 Success := False;
 end if;
    when 5 =>  --  typeAliases
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.typeAliases.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : TypeAlias;
@@ -3088,6 +3251,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3120,18 +3284,20 @@ declare
 Index : constant Natural :=
 EnumerationType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "base" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 Input_EnumerationType_name (Reader, Value.name, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3164,10 +3330,10 @@ declare
 Index : constant Natural :=
 StructureLiteral_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -3175,8 +3341,10 @@ else
 Success := False;
 end if;
    when 2 =>  --  properties
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.properties.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : Property;
@@ -3192,6 +3360,7 @@ else
 Success := False;
 end if;
    when 3 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -3199,6 +3368,7 @@ else
 Success := False;
 end if;
    when 4 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -3206,6 +3376,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3238,12 +3409,13 @@ declare
 Index : constant Natural :=
 TupleType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  items
+Reader.Read_Next;
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
+Value.items.Clear (Is_Null => False);
 while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
@@ -3259,12 +3431,14 @@ else
 Success := False;
 end if;
    when 2 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "tuple" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3297,10 +3471,10 @@ declare
 Index : constant Natural :=
 TypeAlias_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -3308,6 +3482,7 @@ else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
@@ -3315,6 +3490,7 @@ else
 Success := False;
 end if;
    when 3 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -3322,6 +3498,7 @@ else
 Success := False;
 end if;
    when 4 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -3329,8 +3506,10 @@ else
 Success := False;
 end if;
    when 5 =>  --  type
+Reader.Read_Next;
 Input_AType (Reader, Value.a_type, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3363,21 +3542,22 @@ declare
 Index : constant Natural :=
 IntegerLiteralType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "integerLiteral" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  value
+Reader.Read_Next;
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
-Value.value := Float (Reader.Number_Value.Integer_Value);
+Value.value := Float_64 (Reader.Number_Value.Integer_Value);
 elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then
-Value.value := Float (Reader.Number_Value.Float_Value);
+Value.value := Reader.Number_Value.Float_Value;
 else
 Success := False;
 end if;
@@ -3386,6 +3566,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3418,10 +3599,10 @@ declare
 Index : constant Natural :=
 Request_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  documentation
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
@@ -3429,9 +3610,11 @@ else
 Success := False;
 end if;
    when 2 =>  --  errorData
+Reader.Read_Next;
 Value.errorData := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.errorData.Value, Success);
    when 3 =>  --  method
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.method := Reader.String_Value;
 Reader.Read_Next;
@@ -3439,12 +3622,15 @@ else
 Success := False;
 end if;
    when 4 =>  --  params
+Reader.Read_Next;
 Value.params := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.params.Value, Success);
    when 5 =>  --  partialResult
+Reader.Read_Next;
 Value.partialResult := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.partialResult.Value, Success);
    when 6 =>  --  proposed
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -3452,11 +3638,14 @@ else
 Success := False;
 end if;
    when 7 =>  --  registrationOptions
+Reader.Read_Next;
 Value.registrationOptions := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.registrationOptions.Value, Success);
    when 8 =>  --  result
+Reader.Read_Next;
 Input_AType (Reader, Value.result, Success);
    when 9 =>  --  since
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
@@ -3464,6 +3653,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3496,18 +3686,20 @@ declare
 Index : constant Natural :=
 ArrayType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  element
+Reader.Read_Next;
 Input_AType (Reader, Value.element.Element, Success);
    when 2 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "array" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3540,16 +3732,17 @@ declare
 Index : constant Natural :=
 ReferenceType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "reference" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
@@ -3557,6 +3750,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3589,16 +3783,17 @@ declare
 Index : constant Natural :=
 BooleanLiteralType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "booleanLiteral" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  value
+Reader.Read_Next;
 if Reader.Is_Boolean_Value then
 Value.value := Reader.Boolean_Value;
 Reader.Read_Next;
@@ -3606,6 +3801,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3638,18 +3834,20 @@ declare
 Index : constant Natural :=
 BaseType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "base" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  name
+Reader.Read_Next;
 Input_BaseTypes (Reader, Value.name, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3682,18 +3880,20 @@ declare
 Index : constant Natural :=
 StructureLiteralType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "literal" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  value
+Reader.Read_Next;
 Input_StructureLiteral (Reader, Value.value, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3726,16 +3926,17 @@ declare
 Index : constant Natural :=
 StringLiteralType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "stringLiteral" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 2 =>  --  value
+Reader.Read_Next;
 if Reader.Is_String_Value then
 Value.value := Reader.String_Value;
 Reader.Read_Next;
@@ -3743,6 +3944,7 @@ else
 Success := False;
 end if;
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;
@@ -3775,20 +3977,23 @@ declare
 Index : constant Natural :=
 MapType_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
 begin
-Reader.Read_Next;
 
 case Index is
    when 1 =>  --  key
+Reader.Read_Next;
 Input_MapKeyType (Reader, Value.key, Success);
    when 2 =>  --  kind
+Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "map" then
 Reader.Read_Next;
 else
 Success := False;
 end if;
    when 3 =>  --  value
+Reader.Read_Next;
 Input_AType (Reader, Value.value.Element, Success);
 when others =>
+Reader.Read_Next;
 Reader.Skip_Current_Value;
 end case;
 end;

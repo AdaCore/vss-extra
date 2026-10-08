@@ -41,12 +41,40 @@ package body JSON_Schema.Writers is
       Schema : Schema_Access;
       Action : access procedure (Property : JSON_Schema.Property)) is
    begin
+      --  Check direct properties for anonymous objects
+      for Property of Schema.Properties loop
+         if Property.Schema.Kind.Last_Index = 1 then
+            case Property.Schema.Kind (1) is
+               when Definitions.An_Object =>
+                  --  Skip objects with additionalProperties (use Any_Object)
+                  --  Skip objects without properties (use Any_Object)
+                  if not (Property.Schema.Additional_Properties /= null
+                    and then not
+                      Property.Schema.Additional_Properties.Is_False)
+                    and then not Property.Schema.Properties.Is_Empty
+                  then
+                     Action (Property);
+                  end if;
+               when others =>
+                  null;
+            end case;
+         end if;
+      end loop;
+
       for Used of Schema.All_Of loop
          for Property of Used.Properties loop
             if Property.Schema.Kind.Last_Index = 1 then
                case Property.Schema.Kind (1) is
                   when Definitions.An_Object =>
-                     Action (Property);
+                     --  Skip objects with additionalProperties
+                     --  Skip objects without properties (use Any_Object)
+                     if not (Property.Schema.Additional_Properties /= null
+                       and then not
+                         Property.Schema.Additional_Properties.Is_False)
+                       and then not Property.Schema.Properties.Is_Empty
+                     then
+                        Action (Property);
+                     end if;
                   when others =>
                      null;
                end case;
@@ -416,13 +444,20 @@ package body JSON_Schema.Writers is
    ----------------------
 
    procedure Get_Element_Type
-     (Name      : Schema_Name;
-      Map       : JSON_Schema.Readers.Schema_Map;
-      Prop      : Property;
-      Type_Name : out VSS.Strings.Virtual_String;
-      Prefix    : out VSS.Strings.Virtual_String)
+     (Name         : Schema_Name;
+      Map          : JSON_Schema.Readers.Schema_Map;
+      Prop         : Property;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Type_Name    : out VSS.Strings.Virtual_String;
+      Prefix       : out VSS.Strings.Virtual_String)
    is
+      use VSS.Strings;
+
       Schema : constant Schema_Access := Prop.Schema;
+
+      Enum_Prefix : constant VSS.Strings.Virtual_String :=
+        (if Enum_Package.Is_Empty then Empty_Virtual_String
+         else Enum_Package & To_Virtual_String ("."));
    begin
       if Schema.Kind.Last_Index = 1 then
          case Schema.Kind (1) is
@@ -432,12 +467,12 @@ package body JSON_Schema.Writers is
                   Type_Name := Ref_To_Type_Name (Name);
                   Type_Name.Append ("_");
                   Type_Name.Append (Prop.Name);
-                  Prefix := "Enum.";
+                  Prefix := Enum_Prefix;
 
                else
                   Get_Field_Type
                     (Map, Schema.Items.First_Element,
-                     True, "", Type_Name, Prefix);
+                     True, "", Enum_Package, Type_Name, Prefix);
 
                   if Type_Name.Is_Empty then
                      Type_Name := "Virtual_String";
@@ -455,24 +490,30 @@ package body JSON_Schema.Writers is
    --------------------
 
    procedure Get_Field_Type
-     (Map       : JSON_Schema.Readers.Schema_Map;
-      Schema    : Schema_Access;
-      Required  : Boolean;
-      Fallback  : VSS.Strings.Virtual_String;
-      Type_Name : out VSS.Strings.Virtual_String;
-      Prefix    : out VSS.Strings.Virtual_String)
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Type_Name    : out VSS.Strings.Virtual_String;
+      Prefix       : out VSS.Strings.Virtual_String)
    is
       use type JSON_Schema.Simple_Type_Vectors.Vector;
+      use VSS.Strings;
 
       Result : VSS.Strings.Virtual_String :=
-        (if Required then VSS.Strings.Empty_Virtual_String
+        (if Required then Empty_Virtual_String
          else "Optional_");
+
+      Enum_Prefix : constant VSS.Strings.Virtual_String :=
+        (if Enum_Package.Is_Empty then Empty_Virtual_String
+         else Enum_Package & To_Virtual_String ("."));
    begin
       if not Schema.Ref.Is_Empty then
          Result.Append (Ref_To_Type_Name (Schema.Ref));
 
          if Is_Enum (Map (Schema.Ref)) then
-            Prefix := "Enum.";
+            Prefix := Enum_Prefix;
          end if;
 
       elsif Is_Enum (Schema) then
@@ -482,7 +523,7 @@ package body JSON_Schema.Writers is
 
          else
             Result.Append (Fallback);
-            Prefix := "Enum.";
+            Prefix := Enum_Prefix;
          end if;
 
       elsif Schema.Additional_Properties /= null and then not
@@ -505,13 +546,13 @@ package body JSON_Schema.Writers is
                Result := "Boolean";
 
             when Definitions.An_Integer =>
-               Result.Append ("Integer");
+               Result.Append ("Integer_64");
 
             when Definitions.A_Null =>
                raise Program_Error;
 
             when Definitions.A_Number =>
-               Result.Append ("Float");
+               Result.Append ("Float_64");
 
             when Definitions.A_String =>
 
@@ -524,7 +565,7 @@ package body JSON_Schema.Writers is
                   --  then skip this property by returning an empty type name.
                   Result := VSS.Strings.Empty_Virtual_String;
                elsif Is_Enum (Schema) then
-                  Prefix := "Enum.";
+                  Prefix := Enum_Prefix;
                   Result.Append (Fallback);
                else
                   --  Instead of Optional_String use just Virtual_String,
@@ -553,7 +594,7 @@ package body JSON_Schema.Writers is
                            Result := "Boolean_Vector";
 
                         when Definitions.An_Integer =>
-                           Result := "Integer_Vector";
+                           Result := "Integer_64_Vector";
 
                         when Definitions.A_Null
                            | Definitions.An_Array
@@ -561,7 +602,7 @@ package body JSON_Schema.Writers is
                            raise Program_Error;
 
                         when Definitions.A_Number =>
-                           Result := "Float_Vector";
+                           Result := "Float_64_Vector";
 
                         when Definitions.A_String =>
                            Result := "Virtual_String_Vector";
@@ -571,7 +612,12 @@ package body JSON_Schema.Writers is
                end;
 
             when Definitions.An_Object =>
-               Result.Append (Fallback);
+               --  If object has no properties, use Any_Object
+               if Schema.Properties.Is_Empty then
+                  Result := "Any_Object";
+               else
+                  Result.Append (Fallback);
+               end if;
          end case;
       else
          Result.Append ("YYY");
@@ -659,12 +705,19 @@ package body JSON_Schema.Writers is
    begin
       if Schema.Ref.Is_Empty then
          for Property of Schema.Properties loop
-            --  Look for the first string `const` property
+            --  Look for the first string `const` property. A single-item
+            --  `enum` is a widely used (e.g. by OpenAPI-flavored schemas)
+            --  equivalent of `const` and is treated the same way elsewhere
+            --  in this tool (see Get_Field_Type / Write_Record_Component).
             if not Property.Schema.Const.Is_Empty and then
               Property.Schema.Const.First_Element.Kind = String_Value
             then
 
                return Property.Schema.Const.First_Element.String_Value;
+
+            elsif Property.Schema.Enum.Length = 1 then
+
+               return Property.Schema.Enum.First_Element;
             end if;
          end loop;
 

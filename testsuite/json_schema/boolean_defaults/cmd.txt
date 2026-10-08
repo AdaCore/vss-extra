@@ -1,0 +1,3 @@
+--root-package Boolean_Defaults.Types
+--root-type Settings
+schema.json

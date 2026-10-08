@@ -94,12 +94,13 @@ package JSON_Schema.Writers is
    --  Convert $ref to a type name
 
    procedure Get_Field_Type
-     (Map       : JSON_Schema.Readers.Schema_Map;
-      Schema    : Schema_Access;
-      Required  : Boolean;
-      Fallback  : VSS.Strings.Virtual_String;
-      Type_Name : out VSS.Strings.Virtual_String;
-      Prefix    : out VSS.Strings.Virtual_String);
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Type_Name    : out VSS.Strings.Virtual_String;
+      Prefix       : out VSS.Strings.Virtual_String);
    --  Return an Ada type name for given Schema. Fallback if a type name for
    --  properties with nested schema declaration.
    --  Return an empty string for string properties with just one enumeration
@@ -107,11 +108,12 @@ package JSON_Schema.Writers is
    --  If type is defined in a package, then return package name in Prefix.
 
    procedure Get_Element_Type
-     (Name      : Schema_Name;
-      Map       : JSON_Schema.Readers.Schema_Map;
-      Prop      : Property;
-      Type_Name : out VSS.Strings.Virtual_String;
-      Prefix    : out VSS.Strings.Virtual_String);
+     (Name         : Schema_Name;
+      Map          : JSON_Schema.Readers.Schema_Map;
+      Prop         : Property;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Type_Name    : out VSS.Strings.Virtual_String;
+      Prefix       : out VSS.Strings.Virtual_String);
 
    procedure Print_Vector (Header : VSS.String_Vectors.Virtual_String_Vector);
 

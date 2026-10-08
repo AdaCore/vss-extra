@@ -64,6 +64,7 @@ package body JSON_Schema.Writers.Types is
      (Name         : Schema_Name;
       Map          : JSON_Schema.Readers.Schema_Map;
       Root_Package : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
       Property     : JSON_Schema.Property;
       Required     : Boolean;
       Is_Holder    : Boolean);
@@ -168,10 +169,12 @@ package body JSON_Schema.Writers.Types is
    --  Write package specification with type declarations
 
    function Field_Type
-     (Map      : JSON_Schema.Readers.Schema_Map;
-      Schema   : Schema_Access;
-      Required : Boolean;
-      Fallback : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String)
+      return VSS.Strings.Virtual_String;
    --  Return an Ada type name for given Schema. Fallback if a type name for
    --  properties with nested schema declaration.
    --  Return an empty string for string properties with just one enumeration
@@ -182,16 +185,19 @@ package body JSON_Schema.Writers.Types is
    ----------------
 
    function Field_Type
-     (Map      : JSON_Schema.Readers.Schema_Map;
-      Schema   : Schema_Access;
-      Required : Boolean;
-      Fallback : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Schema       : Schema_Access;
+      Required     : Boolean;
+      Fallback     : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String)
+      return VSS.Strings.Virtual_String
    is
       Name : VSS.Strings.Virtual_String;
       Prefix : VSS.Strings.Virtual_String;
 
    begin
-      Get_Field_Type (Map, Schema, Required, Fallback, Name, Prefix);
+      Get_Field_Type (Map, Schema, Required, Fallback, Enum_Package,
+                      Name, Prefix);
       Prefix.Append (Name);
 
       return Prefix;
@@ -322,7 +328,7 @@ package body JSON_Schema.Writers.Types is
          end;
       end loop;
 
-      Array_Types.Insert ("Integer", null);
+      Array_Types.Insert ("Integer_64", null);
 
       Write_Type_Package
         (Map, Root_Package, Enum_Package, Header, Holders,
@@ -385,6 +391,7 @@ package body JSON_Schema.Writers.Types is
            (Enclosing_Type,
             Map,
             Root_Package,
+            Enum_Package,
             Item,
             Property.Schema.Required.Contains (Item.Name),
             False);
@@ -489,7 +496,8 @@ package body JSON_Schema.Writers.Types is
          Required  : Boolean) is
       begin
          Write_Record_Component
-           (Enclosing, Map, Root_Package, Property, Required, False);
+           (Enclosing, Map, Root_Package, Enum_Package,
+            Property, Required, False);
       end On_Property;
 
       Schema : constant Schema_Access := Map (Name);
@@ -936,7 +944,9 @@ package body JSON_Schema.Writers.Types is
             New_Line;
             Put ("Constant_Indexing => Get_");
             Put (Item);
-            Put ("_Constant_Reference;");
+            Put ("_Constant_Reference,");
+            New_Line;
+            Put ("Aggregate => (Empty => Empty, Add_Unnamed => Append);");
             New_Line;
             New_Line;
          end;
@@ -951,13 +961,16 @@ package body JSON_Schema.Writers.Types is
      (Name         : Schema_Name;
       Map          : JSON_Schema.Readers.Schema_Map;
       Root_Package : VSS.Strings.Virtual_String;
+      Enum_Package : VSS.Strings.Virtual_String;
       Property     : JSON_Schema.Property;
       Required     : Boolean;
       Is_Holder    : Boolean)
    is
       use type VSS.Strings.Virtual_String;
 
-      function Get_Default_Value (Field_Type : VSS.Strings.Virtual_String)
+      function Get_Default_Value
+        (Schema     : Schema_Access;
+         Field_Type : VSS.Strings.Virtual_String)
         return VSS.Strings.Virtual_String;
       --  Return default value for the record component
 
@@ -965,16 +978,20 @@ package body JSON_Schema.Writers.Types is
       -- Get_Default_Value --
       -----------------------
 
-      function Get_Default_Value (Field_Type : VSS.Strings.Virtual_String)
+      function Get_Default_Value
+        (Schema     : Schema_Access;
+         Field_Type : VSS.Strings.Virtual_String)
         return VSS.Strings.Virtual_String is
       begin
          if Required then
             return VSS.Strings.Empty_Virtual_String;
          elsif Field_Type = "Boolean" then
-            return Field_Type & "'First";
-         elsif Field_Type = "Integer" then
+            return
+              (if Schema.Default = True
+               then Field_Type & "'Last" else Field_Type & "'First");
+         elsif Field_Type = "Integer_64" then
             return "0";
-         elsif Field_Type = "Float" then
+         elsif Field_Type = "Float_64" then
             return "0.0";
          else
             return VSS.Strings.Empty_Virtual_String;
@@ -989,10 +1006,11 @@ package body JSON_Schema.Writers.Types is
         Escape_Keywords (Property.Name);
 
       Field_Type : VSS.Strings.Virtual_String :=
-        Writers.Types.Field_Type (Map, Property.Schema, Required, Fallback);
+        Writers.Types.Field_Type (Map, Property.Schema, Required, Fallback,
+                                  Enum_Package);
 
       Default  : constant VSS.Strings.Virtual_String :=
-        Get_Default_Value (Field_Type);
+        Get_Default_Value (Property.Schema, Field_Type);
 
    begin
       if Field_Type.Is_Empty then
@@ -1042,6 +1060,28 @@ package body JSON_Schema.Writers.Types is
 
       Type_Name : constant VSS.Strings.Virtual_String :=
         Ref_To_Type_Name (Name);
+
+      procedure On_Anonymous_Schema (Property : JSON_Schema.Property);
+      --  Generate anonymous type for given property
+
+      -------------------------
+      -- On_Anonymous_Schema --
+      -------------------------
+
+      procedure On_Anonymous_Schema (Property : JSON_Schema.Property) is
+      begin
+         Write_Anonymous_Type
+           (Name,
+            Property,
+            Map,
+            Optional_Types,
+            Keep_Extra,
+            Done,
+            Schema.Required.Contains (Property.Name),
+            Root_Package, Enum_Package, Holders);
+      end On_Anonymous_Schema;
+
+      Has_Component : Boolean := False;
    begin
       --  Write dependencies
       for Property of Schema.Properties loop
@@ -1062,6 +1102,8 @@ package body JSON_Schema.Writers.Types is
          end if;
       end loop;
 
+      Each_Anonymous_Schema (Map, Schema, On_Anonymous_Schema'Access);
+
       Put ("type ");
       Put (Type_Name);
       Put (" is ");
@@ -1069,10 +1111,19 @@ package body JSON_Schema.Writers.Types is
       New_Line;
 
       for Property of Schema.Properties loop
+         if not Writers.Types.Field_Type
+           (Map, Property.Schema, Schema.Required.Contains (Property.Name),
+            Ref_To_Type_Name (Name) & "_" & Property.Name,
+            Enum_Package).Is_Empty
+         then
+            Has_Component := True;
+         end if;
+
          Write_Record_Component
            (Name,
             Map,
             Root_Package,
+            Enum_Package,
             Property,
             Schema.Required.Contains (Property.Name),
             Is_Holder_Field (Name, Property.Name, Holders));
@@ -1083,6 +1134,13 @@ package body JSON_Schema.Writers.Types is
            not Schema.Additional_Properties.Is_False)
       then
          Put ("Additional_Properties : Any_Object;");
+         Has_Component := True;
+      end if;
+
+      if not Has_Component then
+         --  Ada doesn't allow a record with no components at all
+         Put ("null;");
+         New_Line;
       end if;
 
       Put ("end record;");
@@ -1107,11 +1165,15 @@ package body JSON_Schema.Writers.Types is
       Done : String_Sets.Set;
    begin
       Print_Vector (Header);
-      Put ("pragma Style_Checks (""M99"");");
+      Put ("pragma Ada_2022;");
+      New_Line;
+      Put ("pragma Style_Checks (""M999"");");
       Put ("  --  suppress style warning unitl gnatpp is fixed"); New_Line;
       Put ("with Ada.Containers.Doubly_Linked_Lists;");
       New_Line;
       Put ("with Ada.Finalization;");
+      New_Line;
+      Put ("with Interfaces;");
       New_Line;
       Put ("with VSS.JSON.Streams;");
       New_Line;
@@ -1125,6 +1187,10 @@ package body JSON_Schema.Writers.Types is
       Put (Root_Package);
       Put (" is");
       New_Line;
+      Put ("subtype Integer_64 is Interfaces.Integer_64;");
+      New_Line;
+      Put ("subtype Float_64 is Interfaces.IEEE_Float_64;");
+      New_Line;
       Put
         ("package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists");
       New_Line;
@@ -1136,15 +1202,15 @@ package body JSON_Schema.Writers.Types is
       Put ("type Any_Object is new Any_Value with null record;");
       New_Line;
       New_Line;
-      Write_Optional_Type ("Integer");
-      Write_Optional_Type ("Float");
+      Write_Optional_Type ("Integer_64");
+      Write_Optional_Type ("Float_64");
       Put ("type Integer_Or_String (Is_String : Boolean := False) is record");
       New_Line;
       Put ("case Is_String is");
       New_Line;
       Put ("when False =>");
       New_Line;
-      Put ("Integer : Standard.Integer;");
+      Put ("Integer : Integer_64;");
       New_Line;
       Put ("when True =>");
       New_Line;
@@ -1374,7 +1440,8 @@ package body JSON_Schema.Writers.Types is
             Put (" =>");
             New_Line;
             Write_Record_Component
-              (Name, Map, Root_Package, Property, True, False);
+              (Name, Map, Root_Package, Enum_Package,
+               Property, True, False);
          end;
       end loop;
       Put ("end case;");
@@ -1495,6 +1562,18 @@ package body JSON_Schema.Writers.Types is
                New_Line;
             end if;
 
+            Put ("function Empty return ");
+            Put (Item);
+            Put ("_Vector");
+
+            if Kind = Implemenetation then
+               Put (" is (Ada.Finalization.Controlled with others => <>)");
+            end if;
+
+            Put (";");
+            New_Line;
+            New_Line;
+
             Put ("function Is_Null (Self : ");
             Put (Item);
             Put ("_Vector) return Boolean");
@@ -1578,7 +1657,7 @@ package body JSON_Schema.Writers.Types is
                New_Line;
                Put ("new ");
                Put (Item);
-               Put ("_Array (1 .. 3 * Self.Length / 2);");
+               Put ("_Array (1 .. 3 * Self.Length / 2 + 1);");
                New_Line;
                Put ("Self.Data (1 .. Self.Length) := Self_Data_Saved.all;");
                New_Line;

@@ -149,4 +149,8 @@ package JSON_Schema is
 
    function Is_False (Self : Schema'Class) return Boolean;
    --  Check if given schema is "False". Than means it equals to `not {}` JSON.
+
+   function True return JSON_Schema.JSON_Value is
+     [(VSS.JSON.Streams.Boolean_Value, True)];
+
 end JSON_Schema;

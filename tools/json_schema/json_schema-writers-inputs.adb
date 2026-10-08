@@ -25,16 +25,18 @@ package body JSON_Schema.Writers.Inputs is
      (Enclosing_Type : Schema_Name;
       Property       : JSON_Schema.Property;
       Map            : JSON_Schema.Readers.Schema_Map;
+      Enum_Package   : VSS.Strings.Virtual_String;
       Holders        : VSS.String_Vectors.Virtual_String_Vector;
       Keep_Extra     : Boolean);
 
    procedure Write_Object_Reader
-     (Map        : JSON_Schema.Readers.Schema_Map;
-      Name       : Schema_Name;
-      Suffix     : VSS.Strings.Virtual_String;
-      Schema     : Schema_Access;
-      Holders    : VSS.String_Vectors.Virtual_String_Vector;
-      Keep_Extra : Boolean);
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Name         : Schema_Name;
+      Suffix       : VSS.Strings.Virtual_String;
+      Schema       : Schema_Access;
+      Holders      : VSS.String_Vectors.Virtual_String_Vector;
+      Keep_Extra   : Boolean);
 
    procedure Write_Union_Reader
      (Map          : JSON_Schema.Readers.Schema_Map;
@@ -46,11 +48,12 @@ package body JSON_Schema.Writers.Inputs is
       Prefix    : VSS.Strings.Virtual_String);
 
    procedure Write_Record_Component
-     (Name     : Schema_Name;
-      Map      : JSON_Schema.Readers.Schema_Map;
-      Property : JSON_Schema.Property;
-      Required : Boolean;
-      Holders  : VSS.String_Vectors.Virtual_String_Vector);
+     (Name         : Schema_Name;
+      Map          : JSON_Schema.Readers.Schema_Map;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Property     : JSON_Schema.Property;
+      Required     : Boolean;
+      Holders      : VSS.String_Vectors.Virtual_String_Vector);
 
    procedure Put (Value : Integer);
 
@@ -410,6 +413,7 @@ package body JSON_Schema.Writers.Inputs is
      (Enclosing_Type : Schema_Name;
       Property       : JSON_Schema.Property;
       Map            : JSON_Schema.Readers.Schema_Map;
+      Enum_Package   : VSS.Strings.Virtual_String;
       Holders        : VSS.String_Vectors.Virtual_String_Vector;
       Keep_Extra     : Boolean)
    is
@@ -424,7 +428,7 @@ package body JSON_Schema.Writers.Inputs is
       procedure Anonymous_Schema_Reader (Property : JSON_Schema.Property) is
       begin
          Write_Anonymous_Type
-           (Enclosing_Type, Property, Map, Holders, Keep_Extra);
+           (Enclosing_Type, Property, Map, Enum_Package, Holders, Keep_Extra);
       end Anonymous_Schema_Reader;
 
       Schema : Schema_Access renames Property.Schema;
@@ -445,7 +449,8 @@ package body JSON_Schema.Writers.Inputs is
 
       if not Schema.All_Of.Is_Empty or not Schema.Properties.Is_Empty then
          Write_Object_Reader
-           (Map, Enclosing_Type, "_" & Property.Name, Schema, Holders,
+           (Map, Enum_Package,
+            Enclosing_Type, "_" & Property.Name, Schema, Holders,
             Keep_Extra);
       else
          Put ("Input_Any_Value (Reader, Value, Success);");
@@ -588,7 +593,8 @@ package body JSON_Schema.Writers.Inputs is
 
       procedure Anonymous_Schema_Reader (Property : JSON_Schema.Property) is
       begin
-         Write_Anonymous_Type (Name, Property, Map, Holders, Keep_Extra);
+         Write_Anonymous_Type
+           (Name, Property, Map, Enum_Package, Holders, Keep_Extra);
       end Anonymous_Schema_Reader;
 
       -------------------------------
@@ -647,7 +653,8 @@ package body JSON_Schema.Writers.Inputs is
       end if;
 
       if not Schema.All_Of.Is_Empty or not Schema.Properties.Is_Empty then
-         Write_Object_Reader (Map, Name, "", Schema, Holders, Keep_Extra);
+         Write_Object_Reader
+           (Map, Enum_Package, Name, "", Schema, Holders, Keep_Extra);
       elsif Is_Union_Type (Schema) then
          Write_Union_Reader (Map, Name, Enum_Package);
       else
@@ -667,12 +674,13 @@ package body JSON_Schema.Writers.Inputs is
    -------------------------
 
    procedure Write_Object_Reader
-     (Map        : JSON_Schema.Readers.Schema_Map;
-      Name       : Schema_Name;
-      Suffix     : VSS.Strings.Virtual_String;
-      Schema     : Schema_Access;
-      Holders    : VSS.String_Vectors.Virtual_String_Vector;
-      Keep_Extra : Boolean)
+     (Map          : JSON_Schema.Readers.Schema_Map;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Name         : Schema_Name;
+      Suffix       : VSS.Strings.Virtual_String;
+      Schema       : Schema_Access;
+      Holders      : VSS.String_Vectors.Virtual_String_Vector;
+      Keep_Extra   : Boolean)
    is
       use type VSS.Strings.Virtual_String;
 
@@ -702,7 +710,8 @@ package body JSON_Schema.Writers.Inputs is
          New_Line;
          Put ("Reader.Read_Next;"); New_Line;
 
-         Write_Record_Component (Enclosing, Map, Property, Required, Holders);
+         Write_Record_Component
+           (Enclosing, Map, Enum_Package, Property, Required, Holders);
 
          Index := Index + 1;
       end Write_When_Clause;
@@ -762,11 +771,12 @@ package body JSON_Schema.Writers.Inputs is
    ----------------------------
 
    procedure Write_Record_Component
-     (Name     : Schema_Name;
-      Map      : JSON_Schema.Readers.Schema_Map;
-      Property : JSON_Schema.Property;
-      Required : Boolean;
-      Holders  : VSS.String_Vectors.Virtual_String_Vector)
+     (Name         : Schema_Name;
+      Map          : JSON_Schema.Readers.Schema_Map;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Property     : JSON_Schema.Property;
+      Required     : Boolean;
+      Holders      : VSS.String_Vectors.Virtual_String_Vector)
    is
       use type VSS.Strings.Virtual_String;
       use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
@@ -783,6 +793,14 @@ package body JSON_Schema.Writers.Inputs is
         (Field_Name  : VSS.Strings.Virtual_String;
          Type_Name   : VSS.Strings.Virtual_String) is
       begin
+         --  OpenAPI-style schemas routinely use `nullable: true` properties
+         --  that are still listed as required, so the value is present but
+         --  can be JSON null. Tolerate null here for any type by leaving the
+         --  field at its default value instead of failing to parse.
+         Put ("if Reader.Is_Null_Value then"); New_Line;
+         Put ("Reader.Read_Next;"); New_Line;
+         Put ("else"); New_Line;
+
          if Type_Name = "Any_Object" then
             Write_Value (Field_Name, "Any_Value");
          elsif Type_Name = "Virtual_String" then
@@ -793,28 +811,29 @@ package body JSON_Schema.Writers.Inputs is
             Put ("else"); New_Line;
             Put ("Success := False;"); New_Line;
             Put ("end if;"); New_Line;
-         elsif Type_Name = "Integer" then
+         elsif Type_Name = "Integer_64" then
             Put ("if Reader.Is_Number_Value and then ");
             Put ("Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then");
             New_Line;
 
             Put (Field_Name);
-            Put (" := Integer (Reader.Number_Value.Integer_Value);"); New_Line;
+            Put (" := Reader.Number_Value.Integer_Value;"); New_Line;
             Put ("Reader.Read_Next;"); New_Line;
             Put ("else"); New_Line;
             Put ("Success := False;"); New_Line;
             Put ("end if;"); New_Line;
-         elsif Type_Name = "Float" then
+         elsif Type_Name = "Float_64" then
             Put ("if Reader.Is_Number_Value then"); New_Line;
             Put ("if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then");
             New_Line;
 
             Put (Field_Name);
-            Put (" := Float (Reader.Number_Value.Integer_Value);"); New_Line;
+            Put (" := Float_64 (Reader.Number_Value.Integer_Value);");
+            New_Line;
             Put ("elsif Reader.Number_Value.Kind = VSS.JSON.JSON_Float then");
             New_Line;
             Put (Field_Name);
-            Put (" := Float (Reader.Number_Value.Float_Value);"); New_Line;
+            Put (" := Reader.Number_Value.Float_Value;"); New_Line;
             Put ("else"); New_Line;
             Put ("Success := False;"); New_Line;
             Put ("end if;"); New_Line;
@@ -836,7 +855,7 @@ package body JSON_Schema.Writers.Inputs is
                Type_Prefix : VSS.Strings.Virtual_String;
             begin
                Get_Element_Type
-                 (Name, Map, Property, Item_Type, Type_Prefix);
+                 (Name, Map, Property, Enum_Package, Item_Type, Type_Prefix);
 
                Put ("if Success and Reader.Is_Start_Array then"); New_Line;
                Put ("Reader.Read_Next;"); New_Line;
@@ -875,7 +894,7 @@ package body JSON_Schema.Writers.Inputs is
             Put (" := (True, Reader.String_Value);"); New_Line;
             Put ("Reader.Read_Next;"); New_Line;
             Put ("els");
-            Write_Value (Field_Name & ".Integer", "Integer");
+            Write_Value (Field_Name & ".Integer", "Integer_64");
          else
             Put ("Input_");
             Put (Type_Name);
@@ -884,6 +903,8 @@ package body JSON_Schema.Writers.Inputs is
             Put (", Success);");
             New_Line;
          end if;
+
+         Put ("end if;"); New_Line;
       end Write_Value;
 
       Fallback : constant VSS.Strings.Virtual_String :=
@@ -904,7 +925,8 @@ package body JSON_Schema.Writers.Inputs is
       Type_Prefix : VSS.Strings.Virtual_String;
    begin
       Get_Field_Type
-        (Map, Property.Schema, True, Fallback, Type_Name, Type_Prefix);
+        (Map, Property.Schema, True, Fallback, Enum_Package,
+         Type_Name, Type_Prefix);
 
       if Property.Schema.Enum.Length = 1 then
          --  Check constant property (single item enum)
@@ -948,7 +970,8 @@ package body JSON_Schema.Writers.Inputs is
       elsif not Required and Type_Name = "Boolean" then
          Write_Value ("Value." & Field_Name, Type_Name);
       elsif not Required and
-         (Property.Schema.Kind.Last_Index = 7 or
+         (Type_Name = "Any_Object" or
+           Property.Schema.Kind.Last_Index = 7 or
            Property.Schema.Additional_Properties /= null)
       then
          Write_Value ("Value." & Field_Name, Type_Name);
@@ -1022,7 +1045,8 @@ package body JSON_Schema.Writers.Inputs is
             Type_Prefix : VSS.Strings.Virtual_String;
          begin
             Get_Field_Type
-              (Map, Item, True, Fallback, Type_Name, Type_Prefix);
+              (Map, Item, True, Fallback, Enum_Package,
+               Type_Name, Type_Prefix);
             Put ("when ");
             Put (Index);
             Put (" =>  --  ");

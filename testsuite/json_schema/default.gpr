@@ -1,0 +1,8 @@
+with "vss_json";
+with "vss_os";
+
+project Default is
+   package Compiler is
+      for Default_Switches ("Ada") use ("-gnat2022");
+   end Compiler;
+end Default;
