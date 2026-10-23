@@ -720,7 +720,8 @@ package body JSON_Schema.Writers is
                end if;
          end case;
       else
-         Result.Append ("YYY");
+         --  No type at all (like `{}`), any value is allowed
+         Result := "Any_Value";
       end if;
 
       Type_Name := Result;
