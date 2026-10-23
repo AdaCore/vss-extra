@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with VSS.Strings.Conversions;
+
 package body JSON_Schema.Readers is
 
    function To_Simple_Type (Value : VSS.Strings.Virtual_String)
@@ -30,6 +32,61 @@ package body JSON_Schema.Readers is
    procedure Read_Any_JSON_Value
      (Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
       Result : in out JSON_Event_Vectors.Vector'Class);
+
+   function Decode_Reference
+     (Text : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+   --  Decode %XX escapes in the URI fragment of a JSON pointer, because
+   --  names of definitions are stored unescaped in the schema map.
+
+   ----------------------
+   -- Decode_Reference --
+   ----------------------
+
+   function Decode_Reference
+     (Text : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+   is
+      function Hex (Item : Character) return Natural;
+
+      ---------
+      -- Hex --
+      ---------
+
+      function Hex (Item : Character) return Natural is
+      begin
+         case Item is
+            when '0' .. '9' =>
+               return Character'Pos (Item) - Character'Pos ('0');
+            when 'a' .. 'f' =>
+               return Character'Pos (Item) - Character'Pos ('a') + 10;
+            when 'A' .. 'F' =>
+               return Character'Pos (Item) - Character'Pos ('A') + 10;
+            when others =>
+               raise Constraint_Error with "Bad escape in $ref";
+         end case;
+      end Hex;
+
+      Source : constant String :=
+        VSS.Strings.Conversions.To_UTF_8_String (Text);
+      Result : String (Source'Range);
+      Last   : Natural := Result'First - 1;
+      Index  : Positive := Source'First;
+   begin
+      while Index <= Source'Last loop
+         Last := Last + 1;
+
+         if Source (Index) = '%' and then Index + 2 <= Source'Last then
+            Result (Last) := Character'Val
+              (Hex (Source (Index + 1)) * 16 + Hex (Source (Index + 2)));
+            Index := Index + 3;
+         else
+            Result (Last) := Source (Index);
+            Index := Index + 1;
+         end if;
+      end loop;
+
+      return VSS.Strings.Conversions.To_Virtual_String
+        (Result (Result'First .. Last));
+   end Decode_Reference;
 
    ------------
    -- Id_Key --
@@ -406,7 +463,7 @@ package body JSON_Schema.Readers is
 
          elsif Key = "$ref" then
             pragma Assert (Reader.Is_String_Value);
-            Value.Ref := Reader.String_Value;
+            Value.Ref := Decode_Reference (Reader.String_Value);
             Reader.Read_Next;
 
          elsif Key = "default" then

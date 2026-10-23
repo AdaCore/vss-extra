@@ -401,8 +401,46 @@ package body JSON_Schema.Writers is
      return VSS.Strings.Virtual_String
    is
       use type VSS.Strings.Virtual_String;
+
+      function Replace_Invalid
+        (Text : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+      --  Replace any character not allowed in an identifier (like space or
+      --  dot) with underscore, collapse repeated underscores and drop the
+      --  trailing one.
+
+      ---------------------
+      -- Replace_Invalid --
+      ---------------------
+
+      function Replace_Invalid
+        (Text : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+      is
+         Result  : VSS.Strings.Virtual_String;
+         Pending : Boolean := False;
+         Char    : VSS.Characters.Virtual_Character'Base;
+         Cursor  : VSS.Strings.Character_Iterators.Character_Iterator :=
+           Text.Before_First_Character;
+      begin
+         while Cursor.Forward (Char) loop
+            if Char in 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' then
+               if Pending and not Result.Is_Empty then
+                  Result.Append ('_');
+               end if;
+
+               Pending := False;
+               Result.Append (Char);
+            else
+               Pending := True;
+            end if;
+         end loop;
+
+         return Result;
+      end Replace_Invalid;
+
    begin
-      if Name.At_First_Character.Element not in 'A' .. 'Z' | 'a' .. 'z' then
+      if Name.Is_Empty then
+         return Name;
+      elsif Name.At_First_Character.Element not in 'A' .. 'Z' | 'a' .. 'z' then
          --  Trim any non-alpha character at the begining of Name
          declare
             Char   : VSS.Characters.Virtual_Character'Base;
@@ -413,25 +451,16 @@ package body JSON_Schema.Writers is
                exit when Char in 'A' .. 'Z' | 'a' .. 'z';
             end loop;
 
-            return Name.Slice (Cursor, Name.At_Last_Character);
+            if Cursor.Has_Element then
+               return Escape_Keywords
+                 (Name.Slice (Cursor, Name.At_Last_Character));
+            else
+               --  No letters at all, like "0"
+               return "Item_" & Replace_Invalid (Name);
+            end if;
          end;
       elsif not Reserved_Words.Contains (Name) then
-         declare
-            --  Replace all spaces with underscores
-            Words : constant VSS.String_Vectors.Virtual_String_Vector :=
-              Name.Split (' ');
-            Result : VSS.Strings.Virtual_String;
-         begin
-            for J in 1 .. Words.Length loop
-               if J > 1 then
-                  Result.Append ("_");
-               end if;
-
-               Result.Append (Words.Element (J));
-            end loop;
-
-            return Result;
-         end;
+         return Replace_Invalid (Name);
       elsif Name.Starts_With ("i") or Name.Starts_With ("a") then
          return "an_" & Name;
       else
@@ -686,10 +715,45 @@ package body JSON_Schema.Writers is
    function Ref_To_Type_Name (Subschema : Schema_Name)
      return VSS.Strings.Virtual_String
    is
+      function To_Identifier
+        (Name : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+      --  Replace any sequence of characters that is not allowed in Ada
+      --  identifier with a single underscore (schemas generated from
+      --  TypeScript have names like `Omit<Type,"key">`).
+
+      -------------------
+      -- To_Identifier --
+      -------------------
+
+      function To_Identifier
+        (Name : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+      is
+         Result  : VSS.Strings.Virtual_String;
+         Pending : Boolean := False;
+         Char    : VSS.Characters.Virtual_Character'Base;
+         Cursor  : VSS.Strings.Character_Iterators.Character_Iterator :=
+           Name.Before_First_Character;
+      begin
+         while Cursor.Forward (Char) loop
+            if Char in 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' then
+               if Pending and not Result.Is_Empty then
+                  Result.Append ('_');
+               end if;
+
+               Pending := False;
+               Result.Append (Char);
+            else
+               Pending := True;
+            end if;
+         end loop;
+
+         return Result;
+      end To_Identifier;
+
       List : constant VSS.String_Vectors.Virtual_String_Vector :=
         Subschema.Split ('/');
    begin
-      return Escape_Keywords (List.Element (List.Length));
+      return Escape_Keywords (To_Identifier (List.Element (List.Length)));
    end Ref_To_Type_Name;
 
    ------------------
