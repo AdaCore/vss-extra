@@ -29,6 +29,26 @@ package body JSON_Schema.Writers is
    Integer_Or_String : constant JSON_Schema.Simple_Type_Vectors.Vector :=
      [Definitions.An_Integer, Definitions.A_String];
 
+   -------------------
+   -- Resolve_Alias --
+   -------------------
+
+   function Resolve_Alias
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Schema_Access
+   is
+      Result : Schema_Access := Schema;
+   begin
+      while not Result.Ref.Is_Empty
+        and then Map.Contains (Result.Ref)
+        and then Is_Alias (Map (Result.Ref))
+      loop
+         Result := Map (Result.Ref);
+      end loop;
+
+      return Result;
+   end Resolve_Alias;
+
    function Is_Numeric_Const (Schema : Schema_Access) return Boolean is
      (Schema /= null
       and then not Schema.Const.Is_Empty
@@ -545,7 +565,31 @@ package body JSON_Schema.Writers is
         (if Enum_Package.Is_Empty then Empty_Virtual_String
          else Enum_Package & To_Virtual_String ("."));
    begin
-      if not Schema.Ref.Is_Empty then
+      if Resolve_Alias (Map, Schema) /= Schema then
+         --  No Ada type is declared for an alias (like `Snowflake = string`
+         --  or a reference to another type), so use the aliased type.
+         declare
+            Target : constant Schema_Access := Resolve_Alias (Map, Schema);
+         begin
+            if Is_Numeric_Const (Target) then
+               --  An alias of a single value enum. Unlike a constant
+               --  property it isn't skipped, but kept as a number.
+               if Target.Kind.Contains (Definitions.A_Number) then
+                  Result.Append ("Float_64");
+               else
+                  Result.Append ("Integer_64");
+               end if;
+
+               Type_Name := Result;
+            else
+               Get_Field_Type
+                 (Map, Target, Required, Fallback, Enum_Package,
+                  Type_Name, Prefix);
+            end if;
+         end;
+
+         return;
+      elsif not Schema.Ref.Is_Empty then
          Result.Append (Ref_To_Type_Name (Schema.Ref));
 
          if Is_Enum (Map (Schema.Ref)) then
@@ -622,7 +666,7 @@ package body JSON_Schema.Writers is
             when Definitions.An_Array =>
                declare
                   Item : constant Schema_Access :=
-                    Schema.Items.First_Element;
+                    Resolve_Alias (Map, Schema.Items.First_Element);
                begin
                   --  TODO: Optional vectors???
                   if not Item.Ref.Is_Empty then

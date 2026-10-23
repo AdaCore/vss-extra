@@ -142,6 +142,37 @@ package JSON_Schema.Writers is
    --  Name of a generic package to find index of a key name, see
    --  testsuite/json_schema/minimal_perfect_hash.ads for its specification.
 
+   function Is_Simple_Alias (Schema : Schema_Access) return Boolean is
+     (Schema.Ref.Is_Empty
+      and then Schema.Properties.Is_Empty
+      and then Schema.All_Of.Is_Empty
+      and then Schema.Any_Of.Is_Empty
+      and then Schema.Enum.Is_Empty
+      and then Schema.X_Enum.Is_Empty
+      and then Schema.Additional_Properties = null
+      and then not (Schema.Kind.Last_Index = 1
+                    and then Schema.Kind.First_Element in
+                      Definitions.An_Object));
+   --  Check if a named Schema is just an alias of a simple type (string,
+   --  integer, array, etc) and has no Ada type declaration for itself.
+
+   function Is_Reference_Alias (Schema : Schema_Access) return Boolean is
+     (not Schema.Ref.Is_Empty
+      and then Schema.Properties.Is_Empty
+      and then Schema.All_Of.Is_Empty
+      and then Schema.Any_Of.Is_Empty);
+   --  Check if a named Schema is just a reference to another schema
+
+   function Is_Alias (Schema : Schema_Access) return Boolean is
+     (Is_Simple_Alias (Schema) or else Is_Reference_Alias (Schema));
+   --  Check if a named Schema has no Ada type declaration for itself
+
+   function Resolve_Alias
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Schema_Access;
+   --  If Schema refers to an alias, return the aliased schema (following
+   --  alias chains), otherwise return Schema.
+
    function Is_Enum (Schema : Schema_Access) return Boolean is
      (not Schema.Enum.Is_Empty or not Schema.X_Enum.Is_Empty);
    --  Check for enumeration schema

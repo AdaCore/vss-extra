@@ -615,7 +615,9 @@ package body JSON_Schema.Writers.Inputs is
       end Hash_For_Anonymous_Schema;
 
    begin
-      if Is_Enum (Schema) then
+      if Is_Enum (Schema) or Is_Alias (Schema) then
+         --  Enumerations are processed separately, simple aliases have no
+         --  own type.
          return;
       end if;
 

@@ -227,9 +227,11 @@ package body JSON_Schema.Writers.Types is
          if Schema.Kind.Last_Index = 1
            and then Schema.Kind (1) = Definitions.An_Array
          then
-            if not Schema.Items.First_Element.Ref.Is_Empty then
+            if not Resolve_Alias (Map, Schema.Items.First_Element)
+              .Ref.Is_Empty
+            then
                pragma Assert (Schema.Items.Last_Index = 1);
-               Ref := Schema.Items.First_Element.Ref;
+               Ref := Resolve_Alias (Map, Schema.Items.First_Element).Ref;
                Result.Include (Ref_To_Type_Name (Ref), Map (Ref));
 
             elsif Is_Enum (Schema.Items.First_Element) then
@@ -720,6 +722,17 @@ package body JSON_Schema.Writers.Types is
    begin
       if Done.Contains (Name) then
          return;
+      elsif Is_Reference_Alias (Schema) then
+         --  No own type, but the aliased type is required
+         Done.Insert (Name);
+
+         if Map.Contains (Schema.Ref) then
+            Write_Named_Type
+              (Schema.Ref, Map, Root_Package, Enum_Package, Holders,
+               Optional_Types, Keep_Extra, Done);
+         end if;
+
+         return;
       elsif not Schema.Enum.Is_Empty then
          Done.Insert (Name);
          Write_Enumeration_Type (Ref_To_Type_Name (Name), Schema);
@@ -744,9 +757,12 @@ package body JSON_Schema.Writers.Types is
          Done.Insert (Name);
          Write_Any_Object (Name);
       else
+         Done.Insert (Name);
          Put ("--  Left:");
          Put (Name);
          New_Line;
+
+         return;  --  No type, so no Optional_ type
       end if;
 
       if Optional_Types.Contains (Ref_To_Type_Name (Name)) then

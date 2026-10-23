@@ -406,7 +406,9 @@ package body JSON_Schema.Writers.Outputs is
            (Enclosing, Map, Enum_Package, Property, Required, Holders);
       end On_Property;
    begin
-      if Is_Enum (Schema) then
+      if Is_Enum (Schema) or Is_Alias (Schema) then
+         --  Enumerations are processed separately, simple aliases have no
+         --  own type.
          return;
       end if;
 
