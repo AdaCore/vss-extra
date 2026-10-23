@@ -138,7 +138,9 @@ procedure JSON_Schema.Driver is
    Schema : JSON_Schema.Schema_Access;
    Other  : JSON_Schema.Readers.Schema_Map;
 begin
-   if not Parse_Command_Line then
+   if Parse_Command_Line then
+      JSON_Schema.Writers.Has_Enum_Package := not Enum_Package.Is_Empty;
+   else
       Ada.Wide_Wide_Text_IO.Put_Line
        ("Usage: gen_json [options] <json_schema>.json");
       Ada.Wide_Wide_Text_IO.New_Line;

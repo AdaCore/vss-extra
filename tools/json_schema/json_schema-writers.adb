@@ -10,6 +10,7 @@ with Ada.Wide_Wide_Text_IO;
 with VSS.Characters;
 with VSS.Strings.Character_Iterators;
 with VSS.Strings.Conversions;
+with VSS.Transformers.Casing;
 
 package body JSON_Schema.Writers is
 
@@ -1095,7 +1096,28 @@ package body JSON_Schema.Writers is
               Find_Property (Resolve (Map, Schema), Key);
          begin
             if not Is_Numeric_Const (Property) then
-               return Const_Image (Property);
+               declare
+                  use VSS.Transformers.Casing;
+
+                  Name : constant VSS.Strings.Virtual_String :=
+                    Const_Image (Property);
+               begin
+                  if not Has_Enum_Package then
+                     --  Variant enumeration literal is declared in the same
+                     --  package as types, avoid a conflict with type names
+                     for Cursor in Map.Iterate loop
+                        if To_Lowercase.Transform
+                          (Ref_To_Type_Name
+                             (JSON_Schema.Readers.Schema_Maps.Key (Cursor)))
+                          = To_Lowercase.Transform (Escape_Keywords (Name))
+                        then
+                           return Name & "_Variant";
+                        end if;
+                     end loop;
+                  end if;
+
+                  return Name;
+               end;
             elsif not Schema.Ref.Is_Empty then
                --  Numeric value is not an identifier, use the type name
                return Ref_To_Type_Name (Schema.Ref) & "_Variant";

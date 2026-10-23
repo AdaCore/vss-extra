@@ -162,6 +162,9 @@ package JSON_Schema.Writers is
 
    Hash_Package : VSS.Strings.Virtual_String := "Minimal_Perfect_Hash";
 
+   Has_Enum_Package : Boolean := False;
+   --  Enumeration types are declared in a separate package, so their
+   --  literals can't conflict with type names.
    --  Name of a generic package to find index of a key name, see
    --  testsuite/json_schema/minimal_perfect_hash.ads for its specification.
 
