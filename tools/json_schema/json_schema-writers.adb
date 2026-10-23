@@ -29,6 +29,13 @@ package body JSON_Schema.Writers is
    Integer_Or_String : constant JSON_Schema.Simple_Type_Vectors.Vector :=
      [Definitions.An_Integer, Definitions.A_String];
 
+   function Is_Numeric_Const (Schema : Schema_Access) return Boolean is
+     (Schema /= null
+      and then not Schema.Const.Is_Empty
+      and then Schema.Const.First_Element.Kind in
+        VSS.JSON.Streams.Number_Value);
+   --  Check if Schema has a numeric `const`
+
    String_Or_Null : constant JSON_Schema.Simple_Type_Vectors.Vector :=
      [Definitions.A_String, Definitions.A_Null];
 
@@ -575,13 +582,22 @@ package body JSON_Schema.Writers is
                Result := "Boolean";
 
             when Definitions.An_Integer =>
-               Result.Append ("Integer_64");
+               if Required and Is_Numeric_Const (Schema) then
+                  --  A constant property (like discriminator), skip it
+                  Result := VSS.Strings.Empty_Virtual_String;
+               else
+                  Result.Append ("Integer_64");
+               end if;
 
             when Definitions.A_Null =>
                raise Program_Error;
 
             when Definitions.A_Number =>
-               Result.Append ("Float_64");
+               if Required and Is_Numeric_Const (Schema) then
+                  Result := VSS.Strings.Empty_Virtual_String;
+               else
+                  Result.Append ("Float_64");
+               end if;
 
             when Definitions.A_String =>
 
@@ -755,6 +771,50 @@ package body JSON_Schema.Writers is
    begin
       return Escape_Keywords (To_Identifier (List.Element (List.Length)));
    end Ref_To_Type_Name;
+
+
+   -----------------
+   -- Const_Image --
+   -----------------
+
+   function Const_Image
+     (Schema : Schema_Access) return VSS.Strings.Virtual_String
+   is
+      use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
+      use type VSS.JSON.JSON_Number_Kind;
+   begin
+      if Schema = null then
+         return VSS.Strings.Empty_Virtual_String;
+      elsif not Schema.Const.Is_Empty then
+         declare
+            Item : constant VSS.JSON.Streams.JSON_Stream_Element :=
+              Schema.Const.First_Element;
+         begin
+            case Item.Kind is
+               when String_Value =>
+                  return Item.String_Value;
+               when Number_Value =>
+                  if Item.Number_Value.Kind = VSS.JSON.JSON_Integer then
+                     declare
+                        Image : constant Wide_Wide_String :=
+                          Item.Number_Value.Integer_Value'Wide_Wide_Image;
+                     begin
+                        return VSS.Strings.To_Virtual_String
+                          (if Image (Image'First) = ' '
+                           then Image (Image'First + 1 .. Image'Last)
+                           else Image);
+                     end;
+                  end if;
+               when others =>
+                  null;
+            end case;
+         end;
+      elsif Schema.Enum.Length = 1 then
+         return Schema.Enum.First_Element;
+      end if;
+
+      return VSS.Strings.Empty_Virtual_String;
+   end Const_Image;
 
    ------------------
    -- Variant_Name --

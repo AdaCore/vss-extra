@@ -628,6 +628,17 @@ package body JSON_Schema.Writers.Outputs is
          Put (Property.Schema.Enum.Element (1));
          Put (""");");
          New_Line;
+      elsif not Property.Schema.Const.Is_Empty
+        and then Property.Schema.Const.First_Element.Kind = Number_Value
+      then
+         --  Write numeric constant property
+         Put ("Handler.Key_Name (""");
+         Put (Property.Name);
+         Put (""");");
+         Put ("Handler.Integer_Value (");
+         Put (Const_Image (Property.Schema));
+         Put (");");
+         New_Line;
       elsif not Property.Schema.Const.Is_Empty then
          --  Write constant property
 

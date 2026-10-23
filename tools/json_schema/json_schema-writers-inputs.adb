@@ -950,6 +950,23 @@ package body JSON_Schema.Writers.Inputs is
          New_Line;
          Put ("end if;");
          New_Line;
+      elsif not Property.Schema.Const.Is_Empty
+        and then Property.Schema.Const.First_Element.Kind = Number_Value
+      then
+         --  Check numeric constant property
+         Put ("if Reader.Is_Number_Value and then ");
+         Put ("Reader.Number_Value.String_Value = """);
+         Put (Const_Image (Property.Schema));
+         Put (""" then");
+         New_Line;
+         Put ("Reader.Read_Next;");
+         New_Line;
+         Put ("else");
+         New_Line;
+         Put ("Success := False;");
+         New_Line;
+         Put ("end if;");
+         New_Line;
       elsif not Property.Schema.Const.Is_Empty then
          --  Write constant property
 

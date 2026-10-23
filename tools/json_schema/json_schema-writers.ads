@@ -121,7 +121,11 @@ package JSON_Schema.Writers is
      (Map       : JSON_Schema.Readers.Schema_Map;
       Schema    : Schema_Access) return VSS.Strings.Virtual_String;
    --  Return a variant name for given Schema when schema is an element of
-   --  anyOf schema
+   function Const_Image
+     (Schema : Schema_Access) return VSS.Strings.Virtual_String;
+   --  Return image of string/integer `const` or single item `enum` of the
+   --  Schema or an empty string if there is no such constant.
+
 
    function Is_Holder_Field
      (Name     : Schema_Name;
