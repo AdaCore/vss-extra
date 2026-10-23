@@ -319,6 +319,17 @@ package body JSON_Schema.Writers.Types is
    is
       Optional_Types : String_Sets.Set;
       Array_Types    : Readers.Schema_Map;
+
+      procedure Add_Holder_Type (Name : Schema_Name);
+
+      ---------------------
+      -- Add_Holder_Type --
+      ---------------------
+
+      procedure Add_Holder_Type (Name : Schema_Name) is
+      begin
+         Array_Types.Include (Ref_To_Type_Name (Name), Map (Name));
+      end Add_Holder_Type;
    begin
       for Cursor in Map.Iterate loop
          declare
@@ -333,6 +344,9 @@ package body JSON_Schema.Writers.Types is
       end loop;
 
       Array_Types.Insert ("Integer_64", null);
+
+      --  Holders are derived from vectors
+      Each_Holder_Type (Map, Holders, Add_Holder_Type'Access);
 
       Write_Type_Package
         (Map, Root_Package, Enum_Package, Header, Holders,
@@ -683,6 +697,23 @@ package body JSON_Schema.Writers.Types is
             New_Line;
          end if;
 
+         Put ("not overriding function Is_Set"); New_Line;
+         Put ("(Self : ");
+         Put (Type_Name);
+         Put ("_Holder) return Boolean");
+
+         if Kind = Specification then
+            Put (" with Inline;");
+            New_Line;
+            Put ("--  Check if the holder contains a value");
+            New_Line;
+            New_Line;
+         else
+            Put (" is (Self.Length > 0);");
+            New_Line;
+            New_Line;
+         end if;
+
          Put ("not overriding function Value"); New_Line;
          Put ("(Self  : aliased ");
          Put (Type_Name);
@@ -1024,8 +1055,10 @@ package body JSON_Schema.Writers.Types is
         Escape_Keywords (Property.Name);
 
       Field_Type : VSS.Strings.Virtual_String :=
-        Writers.Types.Field_Type (Map, Property.Schema, Required, Fallback,
-                                  Enum_Package);
+        Writers.Types.Field_Type
+          (Map, Property.Schema, Required or Is_Holder, Fallback,
+           Enum_Package);
+      --  An empty holder means an absent value, so no Optional_ type
 
       Default  : constant VSS.Strings.Virtual_String :=
         Get_Default_Value (Property.Schema, Field_Type);

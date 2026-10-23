@@ -1004,7 +1004,7 @@ package body JSON_Schema.Writers.Inputs is
               and then not Property.Schema.Additional_Properties.Is_False))
       then
          Write_Value ("Value." & Field_Name, Type_Name);
-      elsif Required then
+      elsif Required or Is_Holder then
          Write_Value ("Value." & Field_Name & Suffix, Type_Name);
       else
          Put ("Value.");

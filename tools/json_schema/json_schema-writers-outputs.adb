@@ -752,6 +752,15 @@ package body JSON_Schema.Writers.Outputs is
          New_Line;
       elsif Required then
          Write_Key_And_Value (Field_Name, Type_Name, Suffix);
+      elsif Is_Holder then
+         --  An empty holder means an absent value
+         Put ("if Value.");
+         Put (Field_Name);
+         Put (".Length > 0 then");
+         New_Line;
+         Write_Key_And_Value (Field_Name, Type_Name, Suffix);
+         Put ("end if;");
+         New_Line;
       else
          Put ("if Value.");
          Put (Field_Name);
