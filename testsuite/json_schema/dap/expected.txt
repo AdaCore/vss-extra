@@ -9769,7 +9769,11 @@ Value : DataBreakpointInfoResponse_body) is
 begin
 Handler.Start_Object;
 Handler.Key_Name ("dataId");
+if Value.dataId.Is_Null then
+Handler.Null_Value;
+else
 Handler.String_Value (Value.dataId);
+end if;
 Handler.Key_Name ("description");
 Handler.String_Value (Value.description);
 if not Value.accessTypes.Is_Null then
@@ -14289,10 +14293,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -14565,10 +14569,10 @@ end if;
 end if;
    when 2 =>  --  totalModules
 Reader.Read_Next;
-Value.totalModules := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.totalModules := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.totalModules.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -14663,10 +14667,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -14738,10 +14742,10 @@ end if;
 end if;
    when 3 =>  --  granularity
 Reader.Read_Next;
-Value.granularity := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.granularity := (Is_Set => True, Value => <>);
 Input_SteppingGranularity (Reader, Value.granularity.Value, Success);
 end if;
 when others =>
@@ -15419,10 +15423,10 @@ begin
 case Index is
    when 1 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_AttachRequestArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -15499,10 +15503,10 @@ end if;
 end if;
    when 4 =>  --  format
 Reader.Read_Next;
-Value.format := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.format := (Is_Set => True, Value => <>);
 Input_ValueFormat (Reader, Value.format.Value, Success);
 end if;
 when others =>
@@ -15624,10 +15628,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_BreakpointLocationsArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -15767,18 +15771,18 @@ end if;
 end if;
    when 4 =>  --  type
 Reader.Read_Next;
-Value.a_type := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_type := (Is_Set => True, Value => <>);
 Input_ColumnDescriptor_type (Reader, Value.a_type.Value, Success);
 end if;
    when 5 =>  --  width
 Reader.Read_Next;
-Value.width := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.width := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.width.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -16426,10 +16430,10 @@ end if;
 end if;
    when 2 =>  --  totalFrames
 Reader.Read_Next;
-Value.totalFrames := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.totalFrames := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.totalFrames.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -16524,10 +16528,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -16609,10 +16613,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_ConfigurationDoneArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -16771,10 +16775,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -16846,10 +16850,10 @@ end if;
 end if;
    when 3 =>  --  source
 Reader.Read_Next;
-Value.source := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.source := (Is_Set => True, Value => <>);
 Input_Source (Reader, Value.source.Value, Success);
 end if;
    when 4 =>  --  line
@@ -16878,10 +16882,10 @@ end if;
 end if;
    when 6 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -16891,10 +16895,10 @@ end if;
 end if;
    when 7 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -16928,10 +16932,10 @@ end if;
 end if;
    when 10 =>  --  moduleId
 Reader.Read_Next;
-Value.moduleId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.moduleId := (Is_Set => True, Value => <>);
 Value.moduleId.Value := (False, Integer => <>);
 if Reader.Is_String_Value then
 Value.moduleId.Value := (True, Reader.String_Value);
@@ -16949,10 +16953,10 @@ end if;
 end if;
    when 11 =>  --  presentationHint
 Reader.Read_Next;
-Value.presentationHint := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.presentationHint := (Is_Set => True, Value => <>);
 Input_StackFrame_presentationHint (Reader, Value.presentationHint.Value, Success);
 end if;
 when others =>
@@ -17062,10 +17066,10 @@ begin
 case Index is
    when 1 =>  --  source
 Reader.Read_Next;
-Value.source := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.source := (Is_Set => True, Value => <>);
 Input_Source (Reader, Value.source.Value, Success);
 end if;
    when 2 =>  --  sourceReference
@@ -17577,10 +17581,10 @@ end if;
 end if;
    when 2 =>  --  offset
 Reader.Read_Next;
-Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -17664,10 +17668,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_LoadedSourcesArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -18072,10 +18076,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -18159,10 +18163,10 @@ end if;
 end if;
    when 4 =>  --  presentationHint
 Reader.Read_Next;
-Value.presentationHint := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.presentationHint := (Is_Set => True, Value => <>);
 Input_VariablePresentationHint (Reader, Value.presentationHint.Value, Success);
 end if;
    when 5 =>  --  evaluateName
@@ -18191,10 +18195,10 @@ end if;
 end if;
    when 7 =>  --  namedVariables
 Reader.Read_Next;
-Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.namedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -18204,10 +18208,10 @@ end if;
 end if;
    when 8 =>  --  indexedVariables
 Reader.Read_Next;
-Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.indexedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -18290,10 +18294,10 @@ end if;
 end if;
    when 3 =>  --  threadId
 Reader.Read_Next;
-Value.threadId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.threadId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.threadId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -18546,10 +18550,10 @@ Input_Any_Value (Reader, Value.restart, Success);
 end if;
    when 2 =>  --  pid
 Reader.Read_Next;
-Value.pid := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.pid := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.pid.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -18725,10 +18729,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -18800,10 +18804,10 @@ end if;
 end if;
    when 3 =>  --  granularity
 Reader.Read_Next;
-Value.granularity := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.granularity := (Is_Set => True, Value => <>);
 Input_SteppingGranularity (Reader, Value.granularity.Value, Success);
 end if;
 when others =>
@@ -18997,10 +19001,10 @@ end if;
 end if;
    when 3 =>  --  percentage
 Reader.Read_Next;
-Value.percentage := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.percentage := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.percentage.Value := Float_64 (Reader.Number_Value.Integer_Value);
@@ -19152,10 +19156,10 @@ Input_ExceptionBreakMode (Reader, Value.breakMode, Success);
 end if;
    when 4 =>  --  details
 Reader.Read_Next;
-Value.details := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.details := (Is_Set => True, Value => <>);
 Input_ExceptionDetails (Reader, Value.details.Value, Success);
 end if;
 when others =>
@@ -19245,10 +19249,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -19395,18 +19399,18 @@ end if;
 end if;
    when 3 =>  --  presentationHint
 Reader.Read_Next;
-Value.presentationHint := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.presentationHint := (Is_Set => True, Value => <>);
 Input_VariablePresentationHint (Reader, Value.presentationHint.Value, Success);
 end if;
    when 4 =>  --  variablesReference
 Reader.Read_Next;
-Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.variablesReference.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19416,10 +19420,10 @@ end if;
 end if;
    when 5 =>  --  namedVariables
 Reader.Read_Next;
-Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.namedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19429,10 +19433,10 @@ end if;
 end if;
    when 6 =>  --  indexedVariables
 Reader.Read_Next;
-Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.indexedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19527,10 +19531,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -19602,10 +19606,10 @@ end if;
 end if;
    when 3 =>  --  line
 Reader.Read_Next;
-Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.line.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19615,10 +19619,10 @@ end if;
 end if;
    when 4 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19628,10 +19632,10 @@ end if;
 end if;
    when 5 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19641,10 +19645,10 @@ end if;
 end if;
    when 6 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19745,10 +19749,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -19802,10 +19806,10 @@ begin
 case Index is
    when 1 =>  --  category
 Reader.Read_Next;
-Value.category := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.category := (Is_Set => True, Value => <>);
 Input_OutputEvent_category (Reader, Value.category.Value, Success);
 end if;
    when 2 =>  --  output
@@ -19822,18 +19826,18 @@ end if;
 end if;
    when 3 =>  --  group
 Reader.Read_Next;
-Value.group := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.group := (Is_Set => True, Value => <>);
 Input_OutputEvent_group (Reader, Value.group.Value, Success);
 end if;
    when 4 =>  --  variablesReference
 Reader.Read_Next;
-Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.variablesReference.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19843,18 +19847,18 @@ end if;
 end if;
    when 5 =>  --  source
 Reader.Read_Next;
-Value.source := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.source := (Is_Set => True, Value => <>);
 Input_Source (Reader, Value.source.Value, Success);
 end if;
    when 6 =>  --  line
 Reader.Read_Next;
-Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.line.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -19864,10 +19868,10 @@ end if;
 end if;
    when 7 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -20009,10 +20013,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_RestartArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -20065,10 +20069,10 @@ end if;
 end if;
    when 2 =>  --  startFrame
 Reader.Read_Next;
-Value.startFrame := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.startFrame := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.startFrame.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -20078,10 +20082,10 @@ end if;
 end if;
    when 3 =>  --  levels
 Reader.Read_Next;
-Value.levels := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.levels := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.levels.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -20091,10 +20095,10 @@ end if;
 end if;
    when 4 =>  --  format
 Reader.Read_Next;
-Value.format := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.format := (Is_Set => True, Value => <>);
 Input_StackFrameFormat (Reader, Value.format.Value, Success);
 end if;
 when others =>
@@ -20388,10 +20392,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -20526,10 +20530,10 @@ end if;
 end if;
    when 2 =>  --  systemProcessId
 Reader.Read_Next;
-Value.systemProcessId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.systemProcessId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.systemProcessId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -20551,18 +20555,18 @@ end if;
 end if;
    when 4 =>  --  startMethod
 Reader.Read_Next;
-Value.startMethod := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.startMethod := (Is_Set => True, Value => <>);
 Input_ProcessEvent_startMethod (Reader, Value.startMethod.Value, Success);
 end if;
    when 5 =>  --  pointerSize
 Reader.Read_Next;
-Value.pointerSize := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.pointerSize := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.pointerSize.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -20726,10 +20730,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -20832,10 +20836,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -20938,10 +20942,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -21113,10 +21117,10 @@ end if;
 end if;
    when 2 =>  --  presentationHint
 Reader.Read_Next;
-Value.presentationHint := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.presentationHint := (Is_Set => True, Value => <>);
 Input_Scope_presentationHint (Reader, Value.presentationHint.Value, Success);
 end if;
    when 3 =>  --  variablesReference
@@ -21133,10 +21137,10 @@ end if;
 end if;
    when 4 =>  --  namedVariables
 Reader.Read_Next;
-Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.namedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21146,10 +21150,10 @@ end if;
 end if;
    when 5 =>  --  indexedVariables
 Reader.Read_Next;
-Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.indexedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21171,18 +21175,18 @@ end if;
 end if;
    when 7 =>  --  source
 Reader.Read_Next;
-Value.source := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.source := (Is_Set => True, Value => <>);
 Input_Source (Reader, Value.source.Value, Success);
 end if;
    when 8 =>  --  line
 Reader.Read_Next;
-Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.line.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21192,10 +21196,10 @@ end if;
 end if;
    when 9 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21205,10 +21209,10 @@ end if;
 end if;
    when 10 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21218,10 +21222,10 @@ end if;
 end if;
    when 11 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21279,10 +21283,10 @@ end if;
 end if;
    when 2 =>  --  offset
 Reader.Read_Next;
-Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21292,10 +21296,10 @@ end if;
 end if;
    when 3 =>  --  instructionOffset
 Reader.Read_Next;
-Value.instructionOffset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.instructionOffset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.instructionOffset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -21489,10 +21493,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -21694,10 +21698,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -21757,10 +21761,10 @@ end if;
 end if;
    when 2 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22007,10 +22011,10 @@ end if;
 end if;
    when 3 =>  --  frameId
 Reader.Read_Next;
-Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.frameId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22020,10 +22024,10 @@ end if;
 end if;
    when 4 =>  --  format
 Reader.Read_Next;
-Value.format := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.format := (Is_Set => True, Value => <>);
 Input_ValueFormat (Reader, Value.format.Value, Success);
 end if;
 when others =>
@@ -22303,10 +22307,10 @@ begin
 case Index is
    when 1 =>  --  frameId
 Reader.Read_Next;
-Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.frameId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22340,10 +22344,10 @@ end if;
 end if;
    when 4 =>  --  line
 Reader.Read_Next;
-Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.line.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22395,10 +22399,10 @@ begin
 case Index is
    when 1 =>  --  offset
 Reader.Read_Next;
-Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22408,10 +22412,10 @@ end if;
 end if;
    when 2 =>  --  bytesWritten
 Reader.Read_Next;
-Value.bytesWritten := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.bytesWritten := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.bytesWritten.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22506,18 +22510,18 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
 Reader.Read_Next;
-Value.a_body := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_body := (Is_Set => True, Value => <>);
 Input_WriteMemoryResponse_body (Reader, Value.a_body.Value, Success);
 end if;
 when others =>
@@ -22624,10 +22628,10 @@ begin
 case Index is
    when 1 =>  --  processId
 Reader.Read_Next;
-Value.processId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.processId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.processId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22637,10 +22641,10 @@ end if;
 end if;
    when 2 =>  --  shellProcessId
 Reader.Read_Next;
-Value.shellProcessId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.shellProcessId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.shellProcessId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -22735,10 +22739,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -23209,10 +23213,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -23378,10 +23382,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -23441,10 +23445,10 @@ end if;
 end if;
    when 2 =>  --  accessType
 Reader.Read_Next;
-Value.accessType := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.accessType := (Is_Set => True, Value => <>);
 Input_DataBreakpointAccessType (Reader, Value.accessType.Value, Success);
 end if;
    when 3 =>  --  condition
@@ -23886,10 +23890,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -24040,10 +24044,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -24146,10 +24150,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -24221,10 +24225,10 @@ end if;
 end if;
    when 3 =>  --  targetId
 Reader.Read_Next;
-Value.targetId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.targetId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.targetId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -24234,10 +24238,10 @@ end if;
 end if;
    when 4 =>  --  granularity
 Reader.Read_Next;
-Value.granularity := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.granularity := (Is_Set => True, Value => <>);
 Input_SteppingGranularity (Reader, Value.granularity.Value, Success);
 end if;
 when others =>
@@ -24333,10 +24337,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -24439,10 +24443,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -24662,10 +24666,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -24866,10 +24870,10 @@ end if;
 end if;
    when 3 =>  --  granularity
 Reader.Read_Next;
-Value.granularity := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.granularity := (Is_Set => True, Value => <>);
 Input_SteppingGranularity (Reader, Value.granularity.Value, Success);
 end if;
 when others =>
@@ -24929,10 +24933,10 @@ end if;
 end if;
    when 3 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -24942,10 +24946,10 @@ end if;
 end if;
    when 4 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -24955,10 +24959,10 @@ end if;
 end if;
    when 5 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25004,10 +25008,10 @@ begin
 case Index is
    when 1 =>  --  requestId
 Reader.Read_Next;
-Value.requestId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.requestId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.requestId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25183,10 +25187,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -25234,10 +25238,10 @@ begin
 case Index is
    when 1 =>  --  id
 Reader.Read_Next;
-Value.id := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.id := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.id.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25271,18 +25275,18 @@ end if;
 end if;
    when 4 =>  --  source
 Reader.Read_Next;
-Value.source := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.source := (Is_Set => True, Value => <>);
 Input_Source (Reader, Value.source.Value, Success);
 end if;
    when 5 =>  --  line
 Reader.Read_Next;
-Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.line.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25292,10 +25296,10 @@ end if;
 end if;
    when 6 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25305,10 +25309,10 @@ end if;
 end if;
    when 7 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25318,10 +25322,10 @@ end if;
 end if;
    when 8 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25343,10 +25347,10 @@ end if;
 end if;
    when 10 =>  --  offset
 Reader.Read_Next;
-Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25416,10 +25420,10 @@ end if;
 end if;
    when 3 =>  --  sourceReference
 Reader.Read_Next;
-Value.sourceReference := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.sourceReference := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.sourceReference.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -25429,10 +25433,10 @@ end if;
 end if;
    when 4 =>  --  presentationHint
 Reader.Read_Next;
-Value.presentationHint := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.presentationHint := (Is_Set => True, Value => <>);
 Input_Source_presentationHint (Reader, Value.presentationHint.Value, Success);
 end if;
    when 5 =>  --  origin
@@ -25558,10 +25562,10 @@ end if;
 end if;
    when 2 =>  --  offset
 Reader.Read_Next;
-Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -26120,10 +26124,10 @@ end if;
 end if;
    when 2 =>  --  unreadableBytes
 Reader.Read_Next;
-Value.unreadableBytes := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.unreadableBytes := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.unreadableBytes.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -26230,18 +26234,18 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
 Reader.Read_Next;
-Value.a_body := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_body := (Is_Set => True, Value => <>);
 Input_ReadMemoryResponse_body (Reader, Value.a_body.Value, Success);
 end if;
 when others =>
@@ -26593,10 +26597,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -26644,10 +26648,10 @@ begin
 case Index is
    when 1 =>  --  kind
 Reader.Read_Next;
-Value.kind := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.kind := (Is_Set => True, Value => <>);
 Input_RunInTerminalRequestArguments_kind (Reader, Value.kind.Value, Success);
 end if;
    when 2 =>  --  title
@@ -26793,10 +26797,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_TerminateArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -26849,18 +26853,18 @@ end if;
 end if;
    when 2 =>  --  filter
 Reader.Read_Next;
-Value.filter := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.filter := (Is_Set => True, Value => <>);
 Input_VariablesArguments_filter (Reader, Value.filter.Value, Success);
 end if;
    when 3 =>  --  start
 Reader.Read_Next;
-Value.start := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.start := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.start.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -26870,10 +26874,10 @@ end if;
 end if;
    when 4 =>  --  count
 Reader.Read_Next;
-Value.count := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.count := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.count.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -26883,10 +26887,10 @@ end if;
 end if;
    when 5 =>  --  format
 Reader.Read_Next;
-Value.format := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.format := (Is_Set => True, Value => <>);
 Input_ValueFormat (Reader, Value.format.Value, Success);
 end if;
 when others =>
@@ -27114,10 +27118,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -27165,10 +27169,10 @@ begin
 case Index is
    when 1 =>  --  kind
 Reader.Read_Next;
-Value.kind := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.kind := (Is_Set => True, Value => <>);
 Input_VariablePresentationHint_kind (Reader, Value.kind.Value, Success);
 end if;
    when 2 =>  --  attributes
@@ -27200,10 +27204,10 @@ end if;
 end if;
    when 3 =>  --  visibility
 Reader.Read_Next;
-Value.visibility := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.visibility := (Is_Set => True, Value => <>);
 Input_VariablePresentationHint_visibility (Reader, Value.visibility.Value, Success);
 end if;
    when 4 =>  --  lazy
@@ -27304,18 +27308,18 @@ end if;
 end if;
    when 5 =>  --  location
 Reader.Read_Next;
-Value.location := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.location := (Is_Set => True, Value => <>);
 Input_Source (Reader, Value.location.Value, Success);
 end if;
    when 6 =>  --  line
 Reader.Read_Next;
-Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.line := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.line.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -27325,10 +27329,10 @@ end if;
 end if;
    when 7 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -27338,10 +27342,10 @@ end if;
 end if;
    when 8 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -27351,10 +27355,10 @@ end if;
 end if;
    when 9 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -27503,10 +27507,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -27626,10 +27630,10 @@ end if;
 end if;
    when 7 =>  --  pathFormat
 Reader.Read_Next;
-Value.pathFormat := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.pathFormat := (Is_Set => True, Value => <>);
 Input_InitializeRequestArguments_pathFormat (Reader, Value.pathFormat.Value, Success);
 end if;
    when 8 =>  --  supportsVariableType
@@ -27896,10 +27900,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -27973,10 +27977,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_CancelArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -28428,10 +28432,10 @@ Success := False;
 end if;
    when 4 =>  --  body
 Reader.Read_Next;
-Value.a_body := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_body := (Is_Set => True, Value => <>);
 Input_TerminatedEvent_body (Reader, Value.a_body.Value, Success);
 end if;
 when others =>
@@ -28783,10 +28787,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -28882,18 +28886,18 @@ end if;
 end if;
    when 5 =>  --  type
 Reader.Read_Next;
-Value.a_type := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_type := (Is_Set => True, Value => <>);
 Input_CompletionItemType (Reader, Value.a_type.Value, Success);
 end if;
    when 6 =>  --  start
 Reader.Read_Next;
-Value.start := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.start := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.start.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -28903,10 +28907,10 @@ end if;
 end if;
    when 7 =>  --  length
 Reader.Read_Next;
-Value.length := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.length := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.length.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -28916,10 +28920,10 @@ end if;
 end if;
    when 8 =>  --  selectionStart
 Reader.Read_Next;
-Value.selectionStart := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.selectionStart := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.selectionStart.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -28929,10 +28933,10 @@ end if;
 end if;
    when 9 =>  --  selectionLength
 Reader.Read_Next;
-Value.selectionLength := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.selectionLength := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.selectionLength.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29032,10 +29036,10 @@ begin
 case Index is
    when 1 =>  --  error
 Reader.Read_Next;
-Value.error := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.error := (Is_Set => True, Value => <>);
 Input_Message (Reader, Value.error.Value, Success);
 end if;
 when others =>
@@ -29125,10 +29129,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -29454,10 +29458,10 @@ end if;
 end if;
    when 4 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29467,10 +29471,10 @@ end if;
 end if;
    when 5 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29480,10 +29484,10 @@ end if;
 end if;
    when 6 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29610,10 +29614,10 @@ begin
 case Index is
    when 1 =>  --  startModule
 Reader.Read_Next;
-Value.startModule := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.startModule := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.startModule.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29623,10 +29627,10 @@ end if;
 end if;
    when 2 =>  --  moduleCount
 Reader.Read_Next;
-Value.moduleCount := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.moduleCount := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.moduleCount.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29771,10 +29775,10 @@ end if;
 end if;
    when 3 =>  --  requestId
 Reader.Read_Next;
-Value.requestId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.requestId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.requestId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29808,10 +29812,10 @@ end if;
 end if;
    when 6 =>  --  percentage
 Reader.Read_Next;
-Value.percentage := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.percentage := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.percentage.Value := Float_64 (Reader.Number_Value.Integer_Value);
@@ -29956,10 +29960,10 @@ end if;
 end if;
    when 3 =>  --  variablesReference
 Reader.Read_Next;
-Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.variablesReference.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29969,10 +29973,10 @@ end if;
 end if;
    when 4 =>  --  namedVariables
 Reader.Read_Next;
-Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.namedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -29982,10 +29986,10 @@ end if;
 end if;
    when 5 =>  --  indexedVariables
 Reader.Read_Next;
-Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.indexedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30080,10 +30084,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -30143,10 +30147,10 @@ end if;
 end if;
    when 2 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30156,10 +30160,10 @@ end if;
 end if;
    when 3 =>  --  endLine
 Reader.Read_Next;
-Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endLine := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endLine.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30169,10 +30173,10 @@ end if;
 end if;
    when 4 =>  --  endColumn
 Reader.Read_Next;
-Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.endColumn := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.endColumn.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30321,10 +30325,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -30510,10 +30514,10 @@ begin
 case Index is
    when 1 =>  --  variablesReference
 Reader.Read_Next;
-Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.variablesReference := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.variablesReference.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30535,10 +30539,10 @@ end if;
 end if;
    when 3 =>  --  frameId
 Reader.Read_Next;
-Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.frameId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30639,18 +30643,18 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
 Reader.Read_Next;
-Value.a_body := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_body := (Is_Set => True, Value => <>);
 Input_Capabilities (Reader, Value.a_body.Value, Success);
 end if;
 when others =>
@@ -30746,10 +30750,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -30857,10 +30861,10 @@ end if;
 end if;
    when 2 =>  --  frameId
 Reader.Read_Next;
-Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.frameId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.frameId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -30870,18 +30874,18 @@ end if;
 end if;
    when 3 =>  --  context
 Reader.Read_Next;
-Value.context := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.context := (Is_Set => True, Value => <>);
 Input_EvaluateArguments_context (Reader, Value.context.Value, Success);
 end if;
    when 4 =>  --  format
 Reader.Read_Next;
-Value.format := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.format := (Is_Set => True, Value => <>);
 Input_ValueFormat (Reader, Value.format.Value, Success);
 end if;
 when others =>
@@ -31172,10 +31176,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -31370,10 +31374,10 @@ end if;
 end if;
    when 3 =>  --  presentationHint
 Reader.Read_Next;
-Value.presentationHint := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.presentationHint := (Is_Set => True, Value => <>);
 Input_VariablePresentationHint (Reader, Value.presentationHint.Value, Success);
 end if;
    when 4 =>  --  variablesReference
@@ -31390,10 +31394,10 @@ end if;
 end if;
    when 5 =>  --  namedVariables
 Reader.Read_Next;
-Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.namedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.namedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -31403,10 +31407,10 @@ end if;
 end if;
    when 6 =>  --  indexedVariables
 Reader.Read_Next;
-Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.indexedVariables := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.indexedVariables.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -31513,10 +31517,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -31820,10 +31824,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -31883,10 +31887,10 @@ end if;
 end if;
    when 2 =>  --  offset
 Reader.Read_Next;
-Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.offset := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.offset.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -31982,10 +31986,10 @@ Success := False;
 end if;
    when 4 =>  --  arguments
 Reader.Read_Next;
-Value.arguments := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.arguments := (Is_Set => True, Value => <>);
 Input_DisconnectArguments (Reader, Value.arguments.Value, Success);
 end if;
 when others =>
@@ -32081,10 +32085,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -32319,18 +32323,18 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
 Reader.Read_Next;
-Value.a_body := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_body := (Is_Set => True, Value => <>);
 Input_SetExceptionBreakpointsResponse_body (Reader, Value.a_body.Value, Success);
 end if;
 when others =>
@@ -32426,10 +32430,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -32595,18 +32599,18 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
 Reader.Read_Next;
-Value.a_body := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.a_body := (Is_Set => True, Value => <>);
 Input_DisassembleResponse_body (Reader, Value.a_body.Value, Success);
 end if;
 when others =>
@@ -32680,10 +32684,10 @@ end if;
 end if;
    when 2 =>  --  threadId
 Reader.Read_Next;
-Value.threadId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.threadId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.threadId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -32693,10 +32697,10 @@ end if;
 end if;
    when 3 =>  --  stackFrameId
 Reader.Read_Next;
-Value.stackFrameId := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.stackFrameId := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.stackFrameId.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -32824,10 +32828,10 @@ end if;
 end if;
    when 3 =>  --  column
 Reader.Read_Next;
-Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.column := (Is_Set => True, Value => <>);
 if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.column.Value := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
@@ -33129,10 +33133,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body
@@ -33235,10 +33239,10 @@ end if;
 end if;
    when 6 =>  --  message
 Reader.Read_Next;
-Value.message := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.message := (Is_Set => True, Value => <>);
 Input_Response_message (Reader, Value.message.Value, Success);
 end if;
    when 7 =>  --  body

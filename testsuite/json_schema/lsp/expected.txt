@@ -666,6 +666,10 @@ not overriding function Element
 (Self  : aliased in out AType_Holder)
  return AType_Variable_Reference with Inline;
 
+not overriding function Is_Set
+(Self : AType_Holder) return Boolean with Inline;
+--  Check if the holder contains a value
+
 not overriding function Value
 (Self  : aliased AType_Holder)
  return AType_Constant_Reference with Inline;
@@ -1366,6 +1370,9 @@ Self.Append ((others => <>));
 end if;
 return (Element => Self.Data (1)'Access);
 end Element;
+
+not overriding function Is_Set
+(Self : AType_Holder) return Boolean is (Self.Length > 0);
 
 not overriding function Value
 (Self  : aliased AType_Holder)
@@ -2939,10 +2946,10 @@ end if;
 end if;
    when 3 =>  --  params
 Reader.Read_Next;
-Value.params := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.params := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.params.Value, Success);
 end if;
    when 4 =>  --  proposed
@@ -2959,10 +2966,10 @@ end if;
 end if;
    when 5 =>  --  registrationOptions
 Reader.Read_Next;
-Value.registrationOptions := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.registrationOptions := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.registrationOptions.Value, Success);
 end if;
    when 6 =>  --  since
@@ -3063,6 +3070,7 @@ while Success and not Look_Ahead.Is_End_Object loop
 if not Look_Ahead.Is_Key_Name then
 Success := False;
 elsif Look_Ahead.Key_Name /= Variant_Key then
+Look_Ahead.Read_Next;  --  skip the key
 Look_Ahead.Skip_Current_Value;
 Success := not Look_Ahead.Is_End_Object;
 elsif Look_Ahead.Read_Next = String_Value then
@@ -3875,10 +3883,10 @@ end if;
 end if;
    when 2 =>  --  errorData
 Reader.Read_Next;
-Value.errorData := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.errorData := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.errorData.Value, Success);
 end if;
    when 3 =>  --  method
@@ -3895,18 +3903,18 @@ end if;
 end if;
    when 4 =>  --  params
 Reader.Read_Next;
-Value.params := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.params := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.params.Value, Success);
 end if;
    when 5 =>  --  partialResult
 Reader.Read_Next;
-Value.partialResult := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.partialResult := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.partialResult.Value, Success);
 end if;
    when 6 =>  --  proposed
@@ -3923,10 +3931,10 @@ end if;
 end if;
    when 7 =>  --  registrationOptions
 Reader.Read_Next;
-Value.registrationOptions := (Is_Set => True, Value => <>);
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
+Value.registrationOptions := (Is_Set => True, Value => <>);
 Input_AType (Reader, Value.registrationOptions.Value, Success);
 end if;
    when 8 =>  --  result
@@ -4356,6 +4364,7 @@ while Success and not Look_Ahead.Is_End_Object loop
 if not Look_Ahead.Is_Key_Name then
 Success := False;
 elsif Look_Ahead.Key_Name /= Variant_Key then
+Look_Ahead.Read_Next;  --  skip the key
 Look_Ahead.Skip_Current_Value;
 Success := not Look_Ahead.Is_End_Object;
 elsif Look_Ahead.Read_Next = String_Value then

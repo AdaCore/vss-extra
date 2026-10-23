@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Constructions produced by ts-json-schema-generator",
+  "definitions": {
+    "Snowflake": {
+      "$comment": "Alias of a simple type: no own Ada type",
+      "type": "string"
+    },
+    "Level": {
+      "$comment": "Numeric enum: mapped to Integer_64",
+      "enum": [0, 1, 2],
+      "type": "number"
+    },
+    "Layout": {
+      "$comment": "Single value enum, TypeScript turns it into const",
+      "const": 1,
+      "type": "number"
+    },
+    "Scope": {
+      "$comment": "Enumeration literals are not Ada identifiers",
+      "enum": ["messages.read", "guilds.join"],
+      "type": "string"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/definitions/Snowflake" },
+        "avatar": { "type": ["string", "null"] },
+        "level": { "$ref": "#/definitions/Level" }
+      },
+      "required": ["id", "avatar"],
+      "additionalProperties": false
+    },
+    "BaseChannel<0>": {
+      "$comment": "Name with characters not allowed in Ada",
+      "type": "object",
+      "properties": {
+        "type": { "const": 0, "type": "number" },
+        "id": { "$ref": "#/definitions/Snowflake" },
+        "topic": { "type": ["string", "null"] }
+      },
+      "required": ["type", "id"],
+      "additionalProperties": false
+    },
+    "TextChannel": {
+      "$comment": "Alias of another type, referenced percent-encoded",
+      "$ref": "#/definitions/BaseChannel%3C0%3E"
+    },
+    "DMChannel": {
+      "type": "object",
+      "properties": {
+        "type": { "const": 1, "type": "number" },
+        "id": { "$ref": "#/definitions/Snowflake" },
+        "name": { "type": "null" },
+        "recipients": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/User" }
+        }
+      },
+      "required": ["type", "id", "name"],
+      "additionalProperties": false
+    },
+    "Channel": {
+      "$comment": "Union with a numeric discriminator",
+      "anyOf": [
+        { "$ref": "#/definitions/TextChannel" },
+        { "$ref": "#/definitions/DMChannel" }
+      ]
+    },
+    "Circle": {
+      "type": "object",
+      "properties": {
+        "shape": { "const": "circle", "type": "string" },
+        "radius": { "type": "number" }
+      },
+      "required": ["shape", "radius"],
+      "additionalProperties": false
+    },
+    "Square": {
+      "type": "object",
+      "properties": {
+        "shape": { "const": "square", "type": "string" },
+        "side": { "type": "number" }
+      },
+      "required": ["shape", "side"],
+      "additionalProperties": false
+    },
+    "Shape": {
+      "$comment": "Union with a string discriminator other than `kind`",
+      "anyOf": [
+        { "$ref": "#/definitions/Circle" },
+        { "$ref": "#/definitions/Square" }
+      ]
+    },
+    "Mixed": {
+      "$comment": "Union without a discriminator: becomes Any_Object",
+      "anyOf": [
+        { "$ref": "#/definitions/User" },
+        { "$ref": "#/definitions/Circle" }
+      ]
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/definitions/Snowflake" },
+        "author": {
+          "anyOf": [ { "$ref": "#/definitions/User" }, { "type": "null" } ]
+        },
+        "channel": { "$ref": "#/definitions/Channel" },
+        "shape": { "$ref": "#/definitions/Shape" },
+        "layout": { "$ref": "#/definitions/Layout" },
+        "scope": { "$ref": "#/definitions/Scope" },
+        "count": { "type": "number" },
+        "nonce": {
+          "anyOf": [ { "type": "string" }, { "type": "number" } ]
+        },
+        "mentions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Snowflake" }
+        },
+        "levels": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Level" }
+        },
+        "extras": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Mixed" }
+        },
+        "0": { "type": "string" },
+        "application": {
+          "type": "object",
+          "properties": { "id": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "referenced_message": { "$ref": "#/definitions/Message" }
+      },
+      "required": ["id", "channel", "shape"],
+      "additionalProperties": false
+    }
+  }
+}
