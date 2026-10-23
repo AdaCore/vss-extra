@@ -357,9 +357,15 @@ package body JSON_Schema.Readers is
             Reader.Read_Next;
 
             while not Reader.At_End and then not Reader.Is_End_Array loop
-               pragma Assert (Reader.Is_String_Value);
-               Value.Enum.Append (Reader.String_Value);
-               Reader.Read_Next;
+               --  Only string enumerations are mapped to Ada enumeration
+               --  types. Numeric enumerations (and other values) are
+               --  ignored, so such a schema is just a number/integer.
+               if Reader.Is_String_Value then
+                  Value.Enum.Append (Reader.String_Value);
+                  Reader.Read_Next;
+               else
+                  Reader.Skip_Current_Value;
+               end if;
             end loop;
 
             pragma Assert (Reader.Is_End_Array);
