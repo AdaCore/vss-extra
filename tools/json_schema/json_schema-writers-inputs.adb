@@ -793,7 +793,10 @@ package body JSON_Schema.Writers.Inputs is
 
       procedure Write_Value
         (Field_Name  : VSS.Strings.Virtual_String;
-         Type_Name   : VSS.Strings.Virtual_String);
+         Type_Name   : VSS.Strings.Virtual_String;
+         Set_Field   : VSS.Strings.Virtual_String := "");
+      --  If Set_Field isn't empty, it's an optional field to mark as set
+      --  when the value isn't null.
 
       -----------------
       -- Write_Value --
@@ -801,7 +804,8 @@ package body JSON_Schema.Writers.Inputs is
 
       procedure Write_Value
         (Field_Name  : VSS.Strings.Virtual_String;
-         Type_Name   : VSS.Strings.Virtual_String) is
+         Type_Name   : VSS.Strings.Virtual_String;
+         Set_Field   : VSS.Strings.Virtual_String := "") is
       begin
          --  OpenAPI-style schemas routinely use `nullable: true` properties
          --  that are still listed as required, so the value is present but
@@ -810,6 +814,12 @@ package body JSON_Schema.Writers.Inputs is
          Put ("if Reader.Is_Null_Value then"); New_Line;
          Put ("Reader.Read_Next;"); New_Line;
          Put ("else"); New_Line;
+
+         if not Set_Field.Is_Empty then
+            Put (Set_Field);
+            Put (" := (Is_Set => True, Value => <>);");
+            New_Line;
+         end if;
 
          if Type_Name = "Any_Object" then
             Write_Value (Field_Name, "Any_Value");
@@ -1007,11 +1017,10 @@ package body JSON_Schema.Writers.Inputs is
       elsif Required or Is_Holder then
          Write_Value ("Value." & Field_Name & Suffix, Type_Name);
       else
-         Put ("Value.");
-         Put (Field_Name);
-         Put (" := (Is_Set => True, Value => <>);");
-         New_Line;
-         Write_Value ("Value." & Field_Name & ".Value", Type_Name);
+         --  Mark the field as set only if the value isn't null
+         Write_Value
+           ("Value." & Field_Name & ".Value", Type_Name,
+            Set_Field => "Value." & Field_Name);
       end if;
    end Write_Record_Component;
 
