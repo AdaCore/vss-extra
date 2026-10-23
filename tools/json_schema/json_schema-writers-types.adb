@@ -108,8 +108,9 @@ package body JSON_Schema.Writers.Types is
    --  Write vector type public declarations for each item of Array_Types
 
    procedure Write_Vector_Operations
-     (Array_Types : Readers.Schema_Map;
-      Kind        : Declaration_Kind);
+     (Array_Types  : Readers.Schema_Map;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Kind         : Declaration_Kind);
    --  Write vector type operations for each item of Array_Types
 
    procedure Write_Private_Vectors
@@ -1371,7 +1372,7 @@ package body JSON_Schema.Writers.Types is
         (Map, Root_Package, Enum_Package, Holders, Optional_Types, Keep_Extra,
          Done);
 
-      Write_Vector_Operations (Array_Types, Specification);
+      Write_Vector_Operations (Array_Types, Enum_Package, Specification);
       Write_Holders_Operations (Map, Holders, Specification);
       Put ("private");
       New_Line;
@@ -1392,7 +1393,7 @@ package body JSON_Schema.Writers.Types is
       Put (Root_Package);
       Put (" is");
       New_Line;
-      Write_Vector_Operations (Array_Types, Implemenetation);
+      Write_Vector_Operations (Array_Types, Enum_Package, Implemenetation);
       Write_Holders_Operations (Map, Holders, Implemenetation);
       Put ("end ");
       Put (Root_Package);
@@ -1548,8 +1549,9 @@ package body JSON_Schema.Writers.Types is
    -----------------------------
 
    procedure Write_Vector_Operations
-     (Array_Types : Readers.Schema_Map;
-      Kind        : Declaration_Kind)
+     (Array_Types  : Readers.Schema_Map;
+      Enum_Package : VSS.Strings.Virtual_String;
+      Kind         : Declaration_Kind)
    is
       use type VSS.Strings.Virtual_String;
    begin
@@ -1562,8 +1564,11 @@ package body JSON_Schema.Writers.Types is
               Readers.Schema_Maps.Element (Cursor);
 
             Element_Type : constant VSS.Strings.Virtual_String :=
-              (if Schema /= null and then Is_Enum (Schema)
-               then "Enum." & Item else Item);
+              (if Schema /= null
+                 and then Is_Enum (Schema)
+                 and then not Enum_Package.Is_Empty
+               then Enum_Package & "." & Item
+               else Item);
          begin
 
             if Kind = Implemenetation then
