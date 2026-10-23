@@ -1057,6 +1057,7 @@ package body JSON_Schema.Writers.Inputs is
       Put ("if not Look_Ahead.Is_Key_Name then"); New_Line;
       Put ("Success := False;"); New_Line;
       Put ("elsif Look_Ahead.Key_Name /= Variant_Key then"); New_Line;
+      Put ("Look_Ahead.Read_Next;  --  skip the key"); New_Line;
       Put ("Look_Ahead.Skip_Current_Value;"); New_Line;
       Put ("Success := not Look_Ahead.Is_End_Object;"); New_Line;
       if Has_Numeric_Discriminator (Map, Schema) then
