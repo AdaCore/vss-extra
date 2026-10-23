@@ -173,6 +173,16 @@ package JSON_Schema.Writers is
    --  If Schema refers to an alias, return the aliased schema (following
    --  alias chains), otherwise return Schema.
 
+   function Is_Untyped_Object (Schema : Schema_Access) return Boolean is
+     (Schema.Ref.Is_Empty
+      and then Schema.Properties.Is_Empty
+      and then Schema.All_Of.Is_Empty
+      and then Schema.Any_Of.Is_Empty
+      and then Schema.Kind.Last_Index = 1
+      and then Schema.Kind.First_Element in Definitions.An_Object);
+   --  Check if Schema is an object without known properties. Such a named
+   --  schema is declared as a tagged type derived from Any_Object.
+
    function Is_Enum (Schema : Schema_Access) return Boolean is
      (not Schema.Enum.Is_Empty or not Schema.X_Enum.Is_Empty);
    --  Check for enumeration schema

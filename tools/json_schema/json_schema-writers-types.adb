@@ -229,6 +229,8 @@ package body JSON_Schema.Writers.Types is
          then
             if not Resolve_Alias (Map, Schema.Items.First_Element)
               .Ref.Is_Empty
+              and then not Is_Untyped_Object
+                (Map (Resolve_Alias (Map, Schema.Items.First_Element).Ref))
             then
                pragma Assert (Schema.Items.Last_Index = 1);
                Ref := Resolve_Alias (Map, Schema.Items.First_Element).Ref;

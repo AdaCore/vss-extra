@@ -669,7 +669,16 @@ package body JSON_Schema.Writers is
                     Resolve_Alias (Map, Schema.Items.First_Element);
                begin
                   --  TODO: Optional vectors???
-                  if not Item.Ref.Is_Empty then
+                  if not Item.Ref.Is_Empty
+                    and then Map.Contains (Item.Ref)
+                    and then Is_Untyped_Object (Map (Item.Ref))
+                  then
+                     --  Elements are tagged (derived from Any_Object), so
+                     --  vector operations would be primitive for two tagged
+                     --  types. Keep the whole array as Any_Value instead.
+                     Result := "Any_Value";
+
+                  elsif not Item.Ref.Is_Empty then
                      Result := Ref_To_Type_Name (Item.Ref);
                      Result.Append ("_Vector");
 
