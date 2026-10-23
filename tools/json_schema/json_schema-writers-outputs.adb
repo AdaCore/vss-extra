@@ -714,6 +714,40 @@ package body JSON_Schema.Writers.Outputs is
 
          Put ("end if;");
          New_Line;
+      elsif Resolve_Alias (Map, Property.Schema).Kind.Last_Index = 1
+        and then Resolve_Alias (Map, Property.Schema).Kind.First_Element
+          in Definitions.A_Null
+      then
+         --  A property that is always `null`
+         if Required then
+            Put ("Handler.Key_Name (""");
+            Put (Property.Name);
+            Put (""");");
+            New_Line;
+            Put ("Handler.Null_Value;");
+            New_Line;
+         end if;
+      elsif Required
+        and then Type_Name = "Virtual_String"
+        and then Resolve_Alias (Map, Property.Schema).Kind.Contains
+          (Definitions.A_Null)
+      then
+         --  Nullable string: Is_Null means `null`
+         Put ("Handler.Key_Name (""");
+         Put (Property.Name);
+         Put (""");");
+         New_Line;
+         Put ("if Value.");
+         Put (Field_Name);
+         Put (".Is_Null then");
+         New_Line;
+         Put ("Handler.Null_Value;");
+         New_Line;
+         Put ("else");
+         New_Line;
+         Write_Value (Field_Name, Type_Name);
+         Put ("end if;");
+         New_Line;
       elsif Required then
          Write_Key_And_Value (Field_Name, Type_Name, Suffix);
       else

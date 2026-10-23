@@ -38,6 +38,11 @@ package body JSON_Schema.Readers is
    --  Decode %XX escapes in the URI fragment of a JSON pointer, because
    --  names of definitions are stored unescaped in the schema map.
 
+   procedure Remove_Null_Variant (Value : Schema_Access);
+   --  Drop `{"type": "null"}` from anyOf/oneOf. If only one variant is left,
+   --  replace the union with it, so a nullable reference becomes a plain
+   --  (optional) reference. `null` is tolerated by generated readers anyway.
+
    ----------------------
    -- Decode_Reference --
    ----------------------
@@ -525,6 +530,8 @@ package body JSON_Schema.Readers is
       pragma Assert (Reader.Is_End_Object);
       Reader.Read_Next;
 
+      Remove_Null_Variant (Value);
+
       if Exclusive_Maximum then
          Value.Exclusive_Maximum := Value.Maximum;
          Value.Maximum := (Kind => VSS.JSON.None);
@@ -576,6 +583,75 @@ package body JSON_Schema.Readers is
          exit when Depth = 0;
       end loop;
    end Read_Any_JSON_Value;
+
+   -------------------------
+   -- Remove_Null_Variant --
+   -------------------------
+
+   procedure Remove_Null_Variant (Value : Schema_Access) is
+      use type Definitions.Simple_Types;
+
+      function Is_Null (Item : Schema_Access) return Boolean is
+        (Item.Kind.Last_Index = 1
+         and then Item.Kind.First_Element = Definitions.A_Null
+         and then Item.Ref.Is_Empty
+         and then Item.Properties.Is_Empty
+         and then Item.Any_Of.Is_Empty
+         and then Item.All_Of.Is_Empty);
+
+      procedure Remove (List : in out Definitions.Schema_Array);
+
+      Has_Null : Boolean := False;
+
+      ------------
+      -- Remove --
+      ------------
+
+      procedure Remove (List : in out Definitions.Schema_Array) is
+      begin
+         for Index in reverse 1 .. List.Last_Index loop
+            if Is_Null (List (Index)) then
+               List.Delete (Index);
+               Has_Null := True;
+            end if;
+         end loop;
+      end Remove;
+   begin
+      Remove (Value.Any_Of);
+      Remove (Value.One_Of);
+
+      if Has_Null
+        and then Value.Any_Of.Last_Index = 1
+        and then Value.Ref.Is_Empty
+        and then Value.Kind.Is_Empty
+        and then Value.Properties.Is_Empty
+        and then Value.All_Of.Is_Empty
+      then
+         declare
+            --  Schema is limited, so copy fields used by the generator
+            Item : constant Schema_Access := Value.Any_Of.First_Element;
+         begin
+            if Value.Description.Is_Empty then
+               Value.Description := Item.Description;
+            end if;
+
+            Value.Ref := Item.Ref;
+            Value.Kind := Item.Kind;
+            Value.Format := Item.Format;
+            Value.Items := Item.Items;
+            Value.Required := Item.Required;
+            Value.Additional_Properties := Item.Additional_Properties;
+            Value.Properties := Item.Properties;
+            Value.Const := Item.Const;
+            Value.Enum := Item.Enum;
+            Value.X_Enum := Item.X_Enum;
+            Value.X_Enum_Descriptions := Item.X_Enum_Descriptions;
+            Value.All_Of := Item.All_Of;
+            Value.One_Of := Item.One_Of;
+            Value.Any_Of := Item.Any_Of;
+         end;
+      end if;
+   end Remove_Null_Variant;
 
    --------------------
    -- To_Simple_Type --

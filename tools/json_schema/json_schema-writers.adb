@@ -615,8 +615,9 @@ package body JSON_Schema.Writers is
       elsif Schema.Kind = Integer_Or_String then
          Result.Append ("Integer_Or_String");
       elsif Schema.Kind = String_Or_Null then
-         --  To represent `null` it uses Is_Null function
-         Result.Append ("Virtual_String");
+         --  To represent `null` (and an absent value) it uses Is_Null
+         --  function, so there is no Optional_ variant.
+         Result := "Virtual_String";
          Prefix := "VSS.Strings.";
       elsif Schema.Kind.Last_Index = 1 then
          case Schema.Kind (1) is
@@ -634,7 +635,8 @@ package body JSON_Schema.Writers is
                end if;
 
             when Definitions.A_Null =>
-               raise Program_Error;
+               --  A property that is always `null`
+               Result := "Any_Value";
 
             when Definitions.A_Number =>
                if Required and Is_Numeric_Const (Schema) then
