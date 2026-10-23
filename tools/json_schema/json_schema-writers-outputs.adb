@@ -445,7 +445,8 @@ package body JSON_Schema.Writers.Outputs is
                  Schema.Any_Of.Element (Index);
 
                Variant : constant VSS.Strings.Virtual_String :=
-                 Escape_Keywords (Variant_Name (Map, Item));
+                 Escape_Keywords
+                   (Variant_Name (Map, Item, Schema.X_Discriminator));
 
                Fallback : constant VSS.Strings.Virtual_String :=
                  Type_Name & "_" & Variant;

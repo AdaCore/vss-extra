@@ -1481,7 +1481,9 @@ package body JSON_Schema.Writers.Types is
          declare
             Variant : constant VSS.Strings.Virtual_String :=
               Escape_Keywords
-                (Variant_Name (Map, Schema.Any_Of.Element (Index)));
+                (Variant_Name
+                   (Map, Schema.Any_Of.Element (Index),
+                    Schema.X_Discriminator));
 
             Property : constant JSON_Schema.Property :=
              (Variant, Schema.Any_Of.Element (Index));
@@ -1536,7 +1538,9 @@ package body JSON_Schema.Writers.Types is
 
          Put
           (Escape_Keywords
-            (Variant_Name (Map, Schema.Any_Of.Element (Index))));
+            (Variant_Name
+               (Map, Schema.Any_Of.Element (Index),
+                Schema.X_Discriminator)));
       end loop;
 
       Put (");");

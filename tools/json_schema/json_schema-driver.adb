@@ -193,6 +193,7 @@ begin
    Reader.Read_Next;
 
    JSON_Schema.Readers.Read (Reader, Schema, Other);
+   JSON_Schema.Writers.Prepare_Unions (Other, Schema);
 
    if not Root_Type.Is_Empty then
       Other.Insert (Root_Type, Schema);

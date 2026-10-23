@@ -270,7 +270,7 @@ package body JSON_Schema.Writers.Inputs is
                  Schema.Any_Of.Element (Index);
 
                Variant : constant VSS.Strings.Virtual_String :=
-                 Variant_Name (Map, Item);
+                 Variant_Value (Map, Item, Schema.X_Discriminator);
             begin
                if Index > 1 then
                   Put (", ");
@@ -651,7 +651,10 @@ package body JSON_Schema.Writers.Inputs is
          Put (" (Reader'Access);"); New_Line;
          New_Line;
          Put ("Variant_Key : constant VSS.Strings.Virtual_String :=");
-         Put (" ""kind"";");
+         Put (" """);
+         Put (if Schema.X_Discriminator.Is_Empty then "kind"
+              else Schema.X_Discriminator);
+         Put (""";");
          New_Line;
          Put ("begin");
          New_Line;
@@ -1056,12 +1059,22 @@ package body JSON_Schema.Writers.Inputs is
       Put ("elsif Look_Ahead.Key_Name /= Variant_Key then"); New_Line;
       Put ("Look_Ahead.Skip_Current_Value;"); New_Line;
       Put ("Success := not Look_Ahead.Is_End_Object;"); New_Line;
-      Put ("elsif Look_Ahead.Read_Next = String_Value then"); New_Line;
+      if Has_Numeric_Discriminator (Map, Schema) then
+         Put ("elsif Look_Ahead.Read_Next = Number_Value then"); New_Line;
+      else
+         Put ("elsif Look_Ahead.Read_Next = String_Value then"); New_Line;
+      end if;
+
       Put ("declare"); New_Line;
       Put ("Index : constant Natural :="); New_Line;
       Put (Type_Name);
       Put ("_Minimal_Perfect_Hash.Get_Index"); New_Line;
-      Put ("(Look_Ahead.String_Value);"); New_Line;
+
+      if Has_Numeric_Discriminator (Map, Schema) then
+         Put ("(Look_Ahead.Number_Value.String_Value);"); New_Line;
+      else
+         Put ("(Look_Ahead.String_Value);"); New_Line;
+      end if;
       Put ("begin"); New_Line;
       Put ("Look_Ahead.Reset;"); New_Line;
       Put ("Look_Ahead.Unmark;"); New_Line;
@@ -1074,7 +1087,8 @@ package body JSON_Schema.Writers.Inputs is
               Schema.Any_Of.Element (Index);
 
             Variant : constant VSS.Strings.Virtual_String :=
-              Escape_Keywords (Variant_Name (Map, Item));
+              Escape_Keywords
+                (Variant_Name (Map, Item, Schema.X_Discriminator));
 
             Fallback : constant VSS.Strings.Virtual_String :=
               Ref_To_Type_Name (Name) & "_" & Variant;

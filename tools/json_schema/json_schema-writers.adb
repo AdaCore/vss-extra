@@ -29,6 +29,16 @@ package body JSON_Schema.Writers is
    Integer_Or_String : constant JSON_Schema.Simple_Type_Vectors.Vector :=
      [Definitions.An_Integer, Definitions.A_String];
 
+   function Resolve
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Schema_Access;
+   --  Follow $ref chain. Return null for unknown reference.
+
+   function Find_Property
+     (Schema : Schema_Access;
+      Name   : VSS.Strings.Virtual_String) return Schema_Access;
+   --  Return schema of the property with given Name or null
+
    -------------------
    -- Resolve_Alias --
    -------------------
@@ -113,7 +123,10 @@ package body JSON_Schema.Writers is
          if Used.Kind.Last_Index = 1 then
             case Used.Kind (1) is
                when Definitions.An_Object =>
-                  Action ((Escape_Keywords (Variant_Name (Map, Used)), Used));
+                  Action
+                    ((Escape_Keywords
+                       (Variant_Name (Map, Used, Schema.X_Discriminator)),
+                     Used));
                when others =>
                   null;
             end case;
@@ -872,18 +885,225 @@ package body JSON_Schema.Writers is
       return VSS.Strings.Empty_Virtual_String;
    end Const_Image;
 
+   -------------------
+   -- Find_Property --
+   -------------------
+
+   function Find_Property
+     (Schema : Schema_Access;
+      Name   : VSS.Strings.Virtual_String) return Schema_Access
+   is
+      use type VSS.Strings.Virtual_String;
+   begin
+      if Schema /= null then
+         for Property of Schema.Properties loop
+            if Property.Name = Name then
+               return Property.Schema;
+            end if;
+         end loop;
+      end if;
+
+      return null;
+   end Find_Property;
+
+   -------------------------------
+   -- Has_Numeric_Discriminator --
+   -------------------------------
+
+   function Has_Numeric_Discriminator
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Boolean is
+   begin
+      return not Schema.X_Discriminator.Is_Empty
+        and then not Schema.Any_Of.Is_Empty
+        and then Is_Numeric_Const
+          (Find_Property
+             (Resolve (Map, Schema.Any_Of.First_Element),
+              Schema.X_Discriminator));
+   end Has_Numeric_Discriminator;
+
+   --------------------
+   -- Prepare_Unions --
+   --------------------
+
+   procedure Prepare_Unions
+     (Map  : JSON_Schema.Readers.Schema_Map;
+      Root : Schema_Access)
+   is
+      function Find_Discriminator
+        (Schema : Schema_Access) return VSS.Strings.Virtual_String;
+      --  Find a property with distinct constant values in each variant
+
+      procedure Prepare
+        (Name     : VSS.Strings.Virtual_String;
+         Schema   : Schema_Access;
+         Is_Named : Boolean);
+
+      ------------------------
+      -- Find_Discriminator --
+      ------------------------
+
+      function Find_Discriminator
+        (Schema : Schema_Access) return VSS.Strings.Virtual_String
+      is
+         First : constant Schema_Access :=
+           Resolve (Map, Schema.Any_Of.First_Element);
+      begin
+         if First = null then
+            return VSS.Strings.Empty_Virtual_String;
+         end if;
+
+         for Candidate of First.Properties loop
+            if not Const_Image (Candidate.Schema).Is_Empty then
+               declare
+                  Values : VSS.String_Vectors.Virtual_String_Vector;
+                  Found  : Boolean := True;
+               begin
+                  for Item of Schema.Any_Of loop
+                     declare
+                        Value : constant VSS.Strings.Virtual_String :=
+                          Const_Image
+                            (Find_Property
+                               (Resolve (Map, Item), Candidate.Name));
+                     begin
+                        if Value.Is_Empty or else Values.Contains (Value) then
+                           Found := False;
+                           exit;
+                        end if;
+
+                        Values.Append (Value);
+                     end;
+                  end loop;
+
+                  if Found then
+                     return Candidate.Name;
+                  end if;
+               end;
+            end if;
+         end loop;
+
+         return VSS.Strings.Empty_Virtual_String;
+      end Find_Discriminator;
+
+      -------------
+      -- Prepare --
+      -------------
+
+      procedure Prepare
+        (Name     : VSS.Strings.Virtual_String;
+         Schema   : Schema_Access;
+         Is_Named : Boolean)
+      is
+         use type VSS.Strings.Virtual_String;
+      begin
+         if Schema = null then
+            return;
+         end if;
+
+         if not Schema.Any_Of.Is_Empty and then Is_Union_Type (Schema) then
+            Schema.X_Discriminator := Find_Discriminator (Schema);
+
+            if Schema.X_Discriminator.Is_Empty then
+               Ada.Wide_Wide_Text_IO.Put_Line
+                 (Ada.Wide_Wide_Text_IO.Standard_Error,
+                  VSS.Strings.Conversions.To_Wide_Wide_String (Name)
+                  & ": no discriminator in anyOf, use Any_Value");
+
+               Schema.Any_Of.Clear;
+               Schema.One_Of.Clear;
+               Schema.Kind.Clear;
+
+               if Is_Named then
+                  --  Named type is declared as `new Any_Object`
+                  Schema.Kind.Append (Definitions.An_Object);
+               else
+                  --  Any type means Any_Value
+                  for Kind in Definitions.Simple_Types loop
+                     Schema.Kind.Append (Kind);
+                  end loop;
+               end if;
+            end if;
+         end if;
+
+         for Item of Schema.All_Of loop
+            Prepare (Name, Item, False);
+         end loop;
+
+         for Item of Schema.Any_Of loop
+            Prepare (Name, Item, False);
+         end loop;
+
+         for Item of Schema.Items loop
+            Prepare (Name, Item, False);
+         end loop;
+
+         Prepare (Name, Schema.Additional_Properties, False);
+
+         for Property of Schema.Properties loop
+            Prepare (Name & "/" & Property.Name, Property.Schema, False);
+         end loop;
+      end Prepare;
+   begin
+      for Cursor in Map.Iterate loop
+         Prepare
+           (JSON_Schema.Readers.Schema_Maps.Key (Cursor),
+            JSON_Schema.Readers.Schema_Maps.Element (Cursor),
+            True);
+      end loop;
+
+      Prepare ("#", Root, True);
+   end Prepare_Unions;
+
+   -------------
+   -- Resolve --
+   -------------
+
+   function Resolve
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Schema_Access
+   is
+      Result : Schema_Access := Schema;
+   begin
+      while Result /= null and then not Result.Ref.Is_Empty loop
+         if not Map.Contains (Result.Ref) then
+            return null;
+         end if;
+
+         Result := Map (Result.Ref);
+      end loop;
+
+      return Result;
+   end Resolve;
+
    ------------------
    -- Variant_Name --
    ------------------
 
    function Variant_Name
-     (Map       : JSON_Schema.Readers.Schema_Map;
-      Schema    : Schema_Access) return VSS.Strings.Virtual_String
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access;
+      Key    : VSS.Strings.Virtual_String := "")
+      return VSS.Strings.Virtual_String
    is
+      use type VSS.Strings.Virtual_String;
       use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
 
    begin
-      if Schema.Ref.Is_Empty then
+      if not Key.Is_Empty then
+         declare
+            Property : constant Schema_Access :=
+              Find_Property (Resolve (Map, Schema), Key);
+         begin
+            if not Is_Numeric_Const (Property) then
+               return Const_Image (Property);
+            elsif not Schema.Ref.Is_Empty then
+               --  Numeric value is not an identifier, use the type name
+               return Ref_To_Type_Name (Schema.Ref) & "_Variant";
+            else
+               return Key & "_" & Const_Image (Property);
+            end if;
+         end;
+      elsif Schema.Ref.Is_Empty then
          for Property of Schema.Properties loop
             --  Look for the first string `const` property. A single-item
             --  `enum` is a widely used (e.g. by OpenAPI-flavored schemas)
@@ -906,5 +1126,22 @@ package body JSON_Schema.Writers is
          return Variant_Name (Map, Map (Schema.Ref));
       end if;
    end Variant_Name;
+
+   -------------------
+   -- Variant_Value --
+   -------------------
+
+   function Variant_Value
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access;
+      Key    : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+   is
+   begin
+      if Key.Is_Empty then
+         return Variant_Name (Map, Schema);
+      else
+         return Const_Image (Find_Property (Resolve (Map, Schema), Key));
+      end if;
+   end Variant_Value;
 
 end JSON_Schema.Writers;

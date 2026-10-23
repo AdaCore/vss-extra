@@ -118,14 +118,37 @@ package JSON_Schema.Writers is
    procedure Print_Vector (Header : VSS.String_Vectors.Virtual_String_Vector);
 
    function Variant_Name
-     (Map       : JSON_Schema.Readers.Schema_Map;
-      Schema    : Schema_Access) return VSS.Strings.Virtual_String;
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access;
+      Key    : VSS.Strings.Virtual_String := "")
+      return VSS.Strings.Virtual_String;
    --  Return a variant name for given Schema when schema is an element of
+   --  anyOf schema. Key is the discriminator property name (if known).
+   --  For a string discriminator the name is the constant value, for a
+   --  numeric one it's derived from the referenced type name.
+
+   function Variant_Value
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access;
+      Key    : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+   --  Return the image of the discriminator constant of the variant
+
+   function Has_Numeric_Discriminator
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Boolean;
+   --  Check if variants of anyOf Schema are distinguished by an integer
+
    function Const_Image
      (Schema : Schema_Access) return VSS.Strings.Virtual_String;
    --  Return image of string/integer `const` or single item `enum` of the
    --  Schema or an empty string if there is no such constant.
 
+   procedure Prepare_Unions
+     (Map  : JSON_Schema.Readers.Schema_Map;
+      Root : Schema_Access);
+   --  Find discriminator properties for anyOf schemas (X_Discriminator).
+   --  Replace anyOf schemas without a discriminator with "any value"
+   --  schemas and report them to the standard error.
 
    function Is_Holder_Field
      (Name     : Schema_Name;
