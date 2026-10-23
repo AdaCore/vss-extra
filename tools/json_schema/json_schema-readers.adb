@@ -595,7 +595,8 @@ package body JSON_Schema.Readers is
       elsif Value = "null" then
          return Definitions.A_Null;
       elsif Value = "number" then
-         return Definitions.A_Number;
+         return (if Numbers_As_Integers then Definitions.An_Integer
+                 else Definitions.A_Number);
       elsif Value = "object" then
          return Definitions.An_Object;
       elsif Value = "string" then

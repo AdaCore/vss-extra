@@ -20,6 +20,10 @@ package JSON_Schema.Readers is
 
    type Schema_Map is new Schema_Maps.Map with null record;
 
+   Numbers_As_Integers : Boolean := False;
+   --  Read "number" type as "integer". Useful for schemas generated from
+   --  TypeScript, where all numbers have "number" type.
+
    procedure Read
      (Reader  : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
       Schema  : out Schema_Access;

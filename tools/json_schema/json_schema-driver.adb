@@ -85,6 +85,8 @@ procedure JSON_Schema.Driver is
             Is_Root_Type := True;
          elsif Item = "--additional-properties" then
             Additional_Properties := True;
+         elsif Item = "--numbers-as-integers" then
+            JSON_Schema.Readers.Numbers_As_Integers := True;
          else
             Arg := Item;
          end if;
@@ -147,6 +149,8 @@ begin
         ("  --root-type <type> - A type for the root schema");
       Ada.Wide_Wide_Text_IO.Put_Line
         ("  --additional-properties - Keep additional properties (false)");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("  --numbers-as-integers - Map ""number"" type to Integer_64");
       return;
    end if;
 
