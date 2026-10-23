@@ -143,7 +143,9 @@ package body JSON_Schema.Writers.Inputs is
 
             Put ("package ");
             Put (Type_Name);
-            Put ("_Minimal_Perfect_Hash is new Minimal_Perfect_Hash ([");
+            Put ("_Minimal_Perfect_Hash is new ");
+            Put (Hash_Package);
+            Put (" ([");
 
             for Index in 1 .. List.Length loop
                if Index > 1 then
@@ -258,7 +260,9 @@ package body JSON_Schema.Writers.Inputs is
 
          Put ("package ");
          Put (Type_Name);
-         Put ("_Minimal_Perfect_Hash is new Minimal_Perfect_Hash ([");
+         Put ("_Minimal_Perfect_Hash is new ");
+         Put (Hash_Package);
+         Put (" ([");
 
          for Index in 1 .. Schema.Any_Of.Last_Index loop
             declare
@@ -315,7 +319,9 @@ package body JSON_Schema.Writers.Inputs is
       Print_Vector (Header);
       Put ("pragma Ada_2022;");
       New_Line;
-      Put ("with Minimal_Perfect_Hash;");
+      Put ("with ");
+      Put (Hash_Package);
+      Put (";");
       New_Line;
 
       if Union_Types_Count > 0 then
@@ -535,7 +541,9 @@ package body JSON_Schema.Writers.Inputs is
 
       Put ("package ");
       Put (Type_Name);
-      Put ("_Minimal_Perfect_Hash is new Minimal_Perfect_Hash ([");
+      Put ("_Minimal_Perfect_Hash is new ");
+      Put (Hash_Package);
+      Put (" ([");
 
       Writers.Each_Property
         (Map, "", Schema, Write_Quoted_Property_Name'Access);

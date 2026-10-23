@@ -56,6 +56,7 @@ procedure JSON_Schema.Driver is
       Is_Header_File  : Boolean := False;
       Is_Holder       : Boolean := False;
       Is_Root_Type    : Boolean := False;
+      Is_Hash_Package : Boolean := False;
    begin
       for Item of VSS.Application.Arguments loop
          if Is_Root_Package then
@@ -73,6 +74,11 @@ procedure JSON_Schema.Driver is
          elsif Is_Root_Type then
             Is_Root_Type := False;
             Root_Type := Item;
+         elsif Is_Hash_Package then
+            Is_Hash_Package := False;
+            JSON_Schema.Writers.Hash_Package := Item;
+         elsif Item = "--hash-package" then
+            Is_Hash_Package := True;
          elsif Item = "--root-package" then
             Is_Root_Package := True;
          elsif Item = "--enum-package" then
@@ -96,7 +102,8 @@ procedure JSON_Schema.Driver is
         and not Is_Header_File
         and not Is_Holder
         and not Is_Root_Package
-        and not Is_Enum_Package;
+        and not Is_Enum_Package
+        and not Is_Hash_Package;
    end Parse_Command_Line;
 
    procedure Read_File
@@ -151,6 +158,9 @@ begin
         ("  --additional-properties - Keep additional properties (false)");
       Ada.Wide_Wide_Text_IO.Put_Line
         ("  --numbers-as-integers - Map ""number"" type to Integer_64");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("  --hash-package <generic> - A generic for key lookups " &
+         "(Minimal_Perfect_Hash)");
       return;
    end if;
 

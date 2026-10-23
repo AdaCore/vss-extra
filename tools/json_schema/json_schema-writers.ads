@@ -133,6 +133,11 @@ package JSON_Schema.Writers is
    function Is_Union_Type (Schema : Schema_Access) return Boolean;
    --  Some of `anyOf` schema is not {} or has $ref
 
+   Hash_Package : VSS.Strings.Virtual_String := "Minimal_Perfect_Hash";
+
+   --  Name of a generic package to find index of a key name, see
+   --  testsuite/json_schema/minimal_perfect_hash.ads for its specification.
+
    function Is_Enum (Schema : Schema_Access) return Boolean is
      (not Schema.Enum.Is_Empty or not Schema.X_Enum.Is_Empty);
    --  Check for enumeration schema
