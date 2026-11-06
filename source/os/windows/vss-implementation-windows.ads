@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2022, AdaCore
+--  Copyright (C) 2022-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -13,6 +13,10 @@ with System.Win32;
 package VSS.Implementation.Windows is
 
    type HANDLE is new System.Win32.HANDLE;
+
+   NULL_HANDLE_VALUE    : constant HANDLE := 0;
+   INVALID_HANDLE_VALUE : constant HANDLE :=
+     HANDLE (System.Win32.INVALID_HANDLE_VALUE);
 
    type HWND is new HANDLE;
 

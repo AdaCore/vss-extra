@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2022-2023, AdaCore
+--  Copyright (C) 2022-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -36,6 +36,16 @@ package VSS.Implementation.Windows.Kernel32 is
 
    STARTF_USESTDHANDLES : constant DWORD := 16#0000_0100#;
 
+   STD_INPUT_HANDLE  : constant DWORD := 16#FFFFFFF6#;
+   STD_OUTPUT_HANDLE : constant DWORD := 16#FFFFFFF5#;
+   STD_ERROR_HANDLE  : constant DWORD := 16#FFFFFFF4#;
+
+   FILE_TYPE_UNKNOWN : constant DWORD := 0;
+   FILE_TYPE_DISK    : constant DWORD := 1;
+   FILE_TYPE_CHAR    : constant DWORD := 2;
+   FILE_TYPE_PIPE    : constant DWORD := 3;
+   FILE_TYPE_REMOTE  : constant DWORD := 16#8000#;
+
    function CloseHandle (hObject : HANDLE) return BOOL
      with Import, Convention => Stdcall, External_Name => "CloseHandle";
 
@@ -48,9 +58,6 @@ package VSS.Implementation.Windows.Kernel32 is
    function GetCurrentProcess return HANDLE
      with Import, Convention => Stdcall, External_Name => "GetCurrentProcess";
 
-   function GetLastError return DWORD
-     with Import, Convention => Stdcall, External_Name => "GetLastError";
-
    function GetEnvironmentVariable
      (lpName   : LPCWSTR;
       lpBuffer : LPWSTR;
@@ -59,9 +66,20 @@ package VSS.Implementation.Windows.Kernel32 is
           Convention => Stdcall,
           External_Name  => "GetEnvironmentVariableW";
 
+   function GetFileType
+     (hFile : HANDLE) return DWORD
+     with Import, Convention => Stdcall, External_Name => "GetFileType";
+
+   function GetLastError return DWORD
+     with Import, Convention => Stdcall, External_Name => "GetLastError";
+
    procedure GetStartupInfo
      (lpStartupInfo : Kernel32.LPSTARTUPINFO)
      with Import, Convention => StdCall, External_Name => "GetStartupInfoW";
+
+   function GetStdHandle
+     (nStdHandle : DWORD) return HANDLE
+     with Import, Convention => Stdcall, External_Name => "GetStdHandle";
 
    function GetTempPath
      (nBufferLength : DWORD;
