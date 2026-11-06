@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2022-2023, AdaCore
+--  Copyright (C) 2022-2026, AdaCore
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -105,34 +105,80 @@ package body Platform is
 
    function Use_Message_Box return Boolean is
       use type VSS.Implementation.Windows.DWORD;
+      use type VSS.Implementation.Windows.HANDLE;
       use type VSS.Implementation.Windows.HWND;
 
-      Info : aliased VSS.Implementation.Windows.Kernel32.STARTUPINFO;
+      Info       : aliased VSS.Implementation.Windows.Kernel32.STARTUPINFO;
+      Out_Handle : VSS.Implementation.Windows.HANDLE;
+      Err_Handle : VSS.Implementation.Windows.HANDLE;
+      Out_Valid  : Boolean;
+      Err_Valid  : Boolean;
 
    begin
-      if VSS.Implementation.Windows.Kernel32.GetConsoleWindow /= 0 then
-         --  Application has associated console window.
-
-         return False;
-      end if;
-
       --  Initialize STARTUPINFO record
 
       Info.cb :=
         VSS.Implementation.Windows.Kernel32
           .STARTUPINFO'Max_Size_In_Storage_Elements;
 
-      --  Obtain startup information
+      --  1. Obtain startup information and check for STARTF_USESTDHANDLES
 
       VSS.Implementation.Windows.Kernel32.GetStartupInfo
         (Info'Unchecked_Access);
 
       if (Info.dwFlags
-            and VSS.Implementation.Windows.Kernel32.STARTF_USESTDHANDLES)
+          and VSS.Implementation.Windows.Kernel32.STARTF_USESTDHANDLES)
         /= 0
       then
          --  Standard IO streams was specified for the application.
 
+         return False;
+      end if;
+
+      --  2. Check for associated console window
+
+      if VSS.Implementation.Windows.Kernel32.GetConsoleWindow /= 0 then
+         --  Application has associated console window.
+
+         return False;
+      end if;
+
+      --  3. Handles of both standard output and standard error is not
+      --  valid...
+
+      Out_Handle :=
+        VSS.Implementation.Windows.Kernel32.GetStdHandle
+          (VSS.Implementation.Windows.Kernel32.STD_OUTPUT_HANDLE);
+      Err_Handle :=
+        VSS.Implementation.Windows.Kernel32.GetStdHandle
+          (VSS.Implementation.Windows.Kernel32.STD_ERROR_HANDLE);
+
+      Out_Valid :=
+        Out_Handle /= VSS.Implementation.Windows.INVALID_HANDLE_VALUE
+        and Out_Handle /= VSS.Implementation.Windows.NULL_HANDLE_VALUE;
+      Err_Valid :=
+        Err_Handle /= VSS.Implementation.Windows.INVALID_HANDLE_VALUE
+        and Err_Handle /= VSS.Implementation.Windows.NULL_HANDLE_VALUE;
+
+      --  4. ... or not a character device, pipe, or disk.
+
+      if Out_Valid
+        and then
+          (VSS.Implementation.Windows.Kernel32.GetFileType (Out_Handle)
+           in VSS.Implementation.Windows.Kernel32.FILE_TYPE_CHAR
+            | VSS.Implementation.Windows.Kernel32.FILE_TYPE_PIPE
+            | VSS.Implementation.Windows.Kernel32.FILE_TYPE_DISK)
+      then
+         return False;
+      end if;
+
+      if Err_Valid
+        and then
+          (VSS.Implementation.Windows.Kernel32.GetFileType (Err_Handle)
+           in VSS.Implementation.Windows.Kernel32.FILE_TYPE_CHAR
+            | VSS.Implementation.Windows.Kernel32.FILE_TYPE_PIPE
+            | VSS.Implementation.Windows.Kernel32.FILE_TYPE_DISK)
+      then
          return False;
       end if;
 
