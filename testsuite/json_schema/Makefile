@@ -1,4 +1,4 @@
-DIRECTORIES := dap lsp sarif
+DIRECTORIES := dap lsp sarif boolean_defaults
 JSON_GEN := $(abspath ../../.objs/development/tools/gen_json)
 GOT_FILE := $(shell mktemp -t got-XXXXXX.txt)
 

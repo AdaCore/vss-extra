@@ -8,7 +8,7 @@ From the repository root, build and run with Alire:
 ```sh
 alr -C tools/json_schema build
 alr -C tools/json_schema exec -- make -C "$(pwd)/testsuite/json_schema" \
-    boolean_defaults-run boolean-defaults-check \
+    boolean_defaults-run boolean_defaults-compile \
     JSON_GEN="$(pwd)/.objs/release/tools/gen_json"
 ```
 

@@ -2473,14 +2473,21 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  extends
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.extends.Clear (Is_Null => False);
@@ -2488,7 +2495,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Item, Success);
+end if;
 Value.extends.Append (Item);
 end;
 end loop;
@@ -2498,8 +2509,12 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  mixins
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.mixins.Clear (Is_Null => False);
@@ -2507,7 +2522,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Item, Success);
+end if;
 Value.mixins.Append (Item);
 end;
 end loop;
@@ -2517,16 +2536,24 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  properties
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.properties.Clear (Is_Null => False);
@@ -2534,7 +2561,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : Property;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_Property (Reader, Item, Success);
+end if;
 Value.properties.Append (Item);
 end;
 end loop;
@@ -2544,21 +2575,30 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 6 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 7 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -2598,47 +2638,71 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  optional
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.optional := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 6 =>  --  type
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.a_type, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
@@ -2677,47 +2741,71 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  value
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Value.value := (False, Integer => <>);
 if Reader.Is_String_Value then
 Value.value := (True, Reader.String_Value);
 Reader.Read_Next;
-elsif Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+elsif Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.value.Integer := Reader.Number_Value.Integer_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -2757,6 +2845,9 @@ begin
 case Index is
    when 1 =>  --  items
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.items.Clear (Is_Null => False);
@@ -2764,7 +2855,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Item, Success);
+end if;
 Value.items.Append (Item);
 end;
 end loop;
@@ -2773,6 +2868,7 @@ Reader.Read_Next;  --  skip End_Array
 end if;
 else
 Success := False;
+end if;
 end if;
    when 2 =>  --  kind
 Reader.Read_Next;
@@ -2819,43 +2915,67 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  method
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.method := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  params
 Reader.Read_Next;
 Value.params := (Is_Set => True, Value => <>);
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.params.Value, Success);
+end if;
    when 4 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  registrationOptions
 Reader.Read_Next;
 Value.registrationOptions := (Is_Set => True, Value => <>);
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.registrationOptions.Value, Success);
+end if;
    when 6 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -2906,7 +3026,11 @@ Success := False;
 end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_MapKeyType_name (Reader, Value.name, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
@@ -2997,49 +3121,76 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  supportsCustomValues
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.supportsCustomValues := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 6 =>  --  type
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_EnumerationType (Reader, Value.a_type, Success);
+end if;
    when 7 =>  --  values
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.values.Clear (Is_Null => False);
@@ -3047,7 +3198,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : EnumerationEntry;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_EnumerationEntry (Reader, Item, Success);
+end if;
 Value.values.Append (Item);
 end;
 end loop;
@@ -3056,6 +3211,7 @@ Reader.Read_Next;  --  skip End_Array
 end if;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3095,6 +3251,9 @@ begin
 case Index is
    when 1 =>  --  items
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.items.Clear (Is_Null => False);
@@ -3102,7 +3261,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Item, Success);
+end if;
 Value.items.Append (Item);
 end;
 end loop;
@@ -3111,6 +3274,7 @@ Reader.Read_Next;  --  skip End_Array
 end if;
 else
 Success := False;
+end if;
 end if;
    when 2 =>  --  kind
 Reader.Read_Next;
@@ -3157,6 +3321,9 @@ begin
 case Index is
    when 1 =>  --  enumerations
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.enumerations.Clear (Is_Null => False);
@@ -3164,7 +3331,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : Enumeration;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_Enumeration (Reader, Item, Success);
+end if;
 Value.enumerations.Append (Item);
 end;
 end loop;
@@ -3174,8 +3345,12 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  notifications
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.notifications.Clear (Is_Null => False);
@@ -3183,7 +3358,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : Notification;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_Notification (Reader, Item, Success);
+end if;
 Value.notifications.Append (Item);
 end;
 end loop;
@@ -3193,8 +3372,12 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  requests
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.requests.Clear (Is_Null => False);
@@ -3202,7 +3385,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : Request;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_Request (Reader, Item, Success);
+end if;
 Value.requests.Append (Item);
 end;
 end loop;
@@ -3212,8 +3399,12 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  structures
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.structures.Clear (Is_Null => False);
@@ -3221,7 +3412,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : Structure;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_Structure (Reader, Item, Success);
+end if;
 Value.structures.Append (Item);
 end;
 end loop;
@@ -3231,8 +3426,12 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  typeAliases
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.typeAliases.Clear (Is_Null => False);
@@ -3240,7 +3439,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : TypeAlias;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_TypeAlias (Reader, Item, Success);
+end if;
 Value.typeAliases.Append (Item);
 end;
 end loop;
@@ -3249,6 +3452,7 @@ Reader.Read_Next;  --  skip End_Array
 end if;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3295,7 +3499,11 @@ Success := False;
 end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_EnumerationType_name (Reader, Value.name, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
@@ -3334,14 +3542,21 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  properties
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.properties.Clear (Is_Null => False);
@@ -3349,7 +3564,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : Property;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_Property (Reader, Item, Success);
+end if;
 Value.properties.Append (Item);
 end;
 end loop;
@@ -3359,21 +3578,30 @@ end if;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3413,6 +3641,9 @@ begin
 case Index is
    when 1 =>  --  items
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Success and Reader.Is_Start_Array then
 Reader.Read_Next;
 Value.items.Clear (Is_Null => False);
@@ -3420,7 +3651,11 @@ while Success and not Reader.Is_End_Array loop
 declare
 Item : AType;
 begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Item, Success);
+end if;
 Value.items.Append (Item);
 end;
 end loop;
@@ -3429,6 +3664,7 @@ Reader.Read_Next;  --  skip End_Array
 end if;
 else
 Success := False;
+end if;
 end if;
    when 2 =>  --  kind
 Reader.Read_Next;
@@ -3475,39 +3711,59 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 3 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 5 =>  --  type
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.a_type, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
@@ -3553,6 +3809,9 @@ Success := False;
 end if;
    when 2 =>  --  value
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Number_Value then
 if Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
 Value.value := Float_64 (Reader.Number_Value.Integer_Value);
@@ -3564,6 +3823,7 @@ end if;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3603,54 +3863,90 @@ begin
 case Index is
    when 1 =>  --  documentation
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.documentation := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 2 =>  --  errorData
 Reader.Read_Next;
 Value.errorData := (Is_Set => True, Value => <>);
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.errorData.Value, Success);
+end if;
    when 3 =>  --  method
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.method := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 4 =>  --  params
 Reader.Read_Next;
 Value.params := (Is_Set => True, Value => <>);
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.params.Value, Success);
+end if;
    when 5 =>  --  partialResult
 Reader.Read_Next;
 Value.partialResult := (Is_Set => True, Value => <>);
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.partialResult.Value, Success);
+end if;
    when 6 =>  --  proposed
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.proposed := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
    when 7 =>  --  registrationOptions
 Reader.Read_Next;
 Value.registrationOptions := (Is_Set => True, Value => <>);
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.registrationOptions.Value, Success);
+end if;
    when 8 =>  --  result
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.result, Success);
+end if;
    when 9 =>  --  since
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.since := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3690,7 +3986,11 @@ begin
 case Index is
    when 1 =>  --  element
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.element.Element, Success);
+end if;
    when 2 =>  --  kind
 Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "array" then
@@ -3743,11 +4043,15 @@ Success := False;
 end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.name := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3794,11 +4098,15 @@ Success := False;
 end if;
    when 2 =>  --  value
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_Boolean_Value then
 Value.value := Reader.Boolean_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3845,7 +4153,11 @@ Success := False;
 end if;
    when 2 =>  --  name
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_BaseTypes (Reader, Value.name, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
@@ -3891,7 +4203,11 @@ Success := False;
 end if;
    when 2 =>  --  value
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_StructureLiteral (Reader, Value.value, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
@@ -3937,11 +4253,15 @@ Success := False;
 end if;
    when 2 =>  --  value
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 if Reader.Is_String_Value then
 Value.value := Reader.String_Value;
 Reader.Read_Next;
 else
 Success := False;
+end if;
 end if;
 when others =>
 Reader.Read_Next;
@@ -3981,7 +4301,11 @@ begin
 case Index is
    when 1 =>  --  key
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_MapKeyType (Reader, Value.key, Success);
+end if;
    when 2 =>  --  kind
 Reader.Read_Next;
 if Reader.Is_String_Value and then Reader.String_Value = "map" then
@@ -3991,7 +4315,11 @@ Success := False;
 end if;
    when 3 =>  --  value
 Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
 Input_AType (Reader, Value.value.Element, Success);
+end if;
 when others =>
 Reader.Read_Next;
 Reader.Skip_Current_Value;
