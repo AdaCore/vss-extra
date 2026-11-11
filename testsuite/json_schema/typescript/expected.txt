@@ -702,7 +702,7 @@ Handler.Key_Name ("shape");
 Output_Shape (Handler, Value.shape);
 if Value.layout.Is_Set then
 Handler.Key_Name ("layout");
-Handler.Integer_Value(Value.layout.Value);
+Handler.Integer_Value (1);
 end if;
 if Value.scope.Is_Set then
 Handler.Key_Name ("scope");
@@ -1274,6 +1274,7 @@ Input_Shape (Reader, Value.shape, Success);
 end if;
    when 5 =>  --  layout
 Reader.Read_Next;
+if Reader.Is_Number_Value and then Reader.Number_Value.String_Value = "1" then
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
@@ -1284,6 +1285,9 @@ Reader.Read_Next;
 else
 Success := False;
 end if;
+end if;
+else
+Success := False;
 end if;
    when 6 =>  --  scope
 Reader.Read_Next;

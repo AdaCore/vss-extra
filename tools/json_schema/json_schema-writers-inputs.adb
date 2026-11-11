@@ -794,6 +794,10 @@ package body JSON_Schema.Writers.Inputs is
       use type VSS.Strings.Virtual_String;
       use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
 
+      Target : constant Schema_Access := Resolve_Alias (Map, Property.Schema);
+      Alias_Constant : constant Boolean :=
+        Target /= Property.Schema and then not Target.Const.Is_Empty;
+
       procedure Write_Value
         (Field_Name  : VSS.Strings.Virtual_String;
          Type_Name   : VSS.Strings.Virtual_String;
@@ -810,6 +814,21 @@ package body JSON_Schema.Writers.Inputs is
          Type_Name   : VSS.Strings.Virtual_String;
          Set_Field   : VSS.Strings.Virtual_String := "") is
       begin
+         if Alias_Constant then
+            if Target.Const.First_Element.Kind = Number_Value then
+               Put ("if Reader.Is_Number_Value and then ");
+               Put ("Reader.Number_Value.String_Value = """);
+               Put (Const_Image (Target));
+            else
+               pragma Assert (Target.Const.First_Element.Kind = String_Value);
+               Put ("if Reader.Is_String_Value and then ");
+               Put ("Reader.String_Value = """);
+               Put (Target.Const.First_Element.String_Value);
+            end if;
+
+            Put (""" then"); New_Line;
+         end if;
+
          --  OpenAPI-style schemas routinely use `nullable: true` properties
          --  that are still listed as required, so the value is present but
          --  can be JSON null. Tolerate null here for any type by leaving the
@@ -928,6 +947,11 @@ package body JSON_Schema.Writers.Inputs is
          end if;
 
          Put ("end if;"); New_Line;
+         if Alias_Constant then
+            Put ("else"); New_Line;
+            Put ("Success := False;"); New_Line;
+            Put ("end if;"); New_Line;
+         end if;
       end Write_Value;
 
       Fallback : constant VSS.Strings.Virtual_String :=

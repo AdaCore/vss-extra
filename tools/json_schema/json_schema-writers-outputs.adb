@@ -539,6 +539,10 @@ package body JSON_Schema.Writers.Outputs is
       use type VSS.Strings.Virtual_String;
       use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
 
+      Target : constant Schema_Access := Resolve_Alias (Map, Property.Schema);
+      Alias_Constant : constant Boolean :=
+        Target /= Property.Schema and then not Target.Const.Is_Empty;
+
       procedure Write_Key_And_Value
         (Field_Name : VSS.Strings.Virtual_String;
          Type_Name  : VSS.Strings.Virtual_String;
@@ -576,7 +580,19 @@ package body JSON_Schema.Writers.Outputs is
          Type_Name  : VSS.Strings.Virtual_String;
          Suffix     : VSS.Strings.Virtual_String) is
       begin
-         if Type_Name.Ends_With ("_Vector") then
+         if Alias_Constant then
+            if Target.Const.First_Element.Kind = Number_Value then
+               Put ("Handler.Integer_Value (");
+               Put (Const_Image (Target));
+               Put (");"); New_Line;
+            else
+               pragma Assert (Target.Const.First_Element.Kind = String_Value);
+               Put ("Handler.String_Value (""");
+               Put (Target.Const.First_Element.String_Value);
+               Put (""");"); New_Line;
+            end if;
+
+         elsif Type_Name.Ends_With ("_Vector") then
             declare
                Item_Type   : VSS.Strings.Virtual_String;
                Type_Prefix : VSS.Strings.Virtual_String;

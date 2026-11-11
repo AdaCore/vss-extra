@@ -1,0 +1,17 @@
+{
+  "definitions": {
+    "Layout": { "type": "number", "const": 1 },
+    "LayoutAlias": { "$ref": "#/definitions/Layout" },
+    "Label": { "type": "string", "const": "fixed" },
+    "LabelAlias": { "$ref": "#/definitions/Label" }
+  },
+  "type": "object",
+  "properties": {
+    "required_number": { "$ref": "#/definitions/Layout" },
+    "required_string": { "$ref": "#/definitions/LabelAlias" },
+    "optional_number": { "$ref": "#/definitions/LayoutAlias" },
+    "optional_string": { "$ref": "#/definitions/Label" }
+  },
+  "required": ["required_number", "required_string"],
+  "additionalProperties": false
+}

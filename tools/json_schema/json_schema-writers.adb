@@ -586,8 +586,8 @@ package body JSON_Schema.Writers is
             Target : constant Schema_Access := Resolve_Alias (Map, Schema);
          begin
             if Is_Numeric_Const (Target) then
-               --  An alias of a single value enum. Unlike a constant
-               --  property it isn't skipped, but kept as a number.
+               --  Keep referenced constants as fields. Property readers and
+               --  writers enforce the constant from the aliased schema.
                if Target.Kind.Contains (Definitions.A_Number) then
                   Result.Append ("Float_64");
                else
@@ -595,6 +595,11 @@ package body JSON_Schema.Writers is
                end if;
 
                Type_Name := Result;
+            elsif not Target.Const.Is_Empty
+              and then Target.Kind.Contains (Definitions.A_String)
+            then
+               Type_Name := "Virtual_String";
+               Prefix := "VSS.Strings.";
             else
                Get_Field_Type
                  (Map, Target, Required, Fallback, Enum_Package,
