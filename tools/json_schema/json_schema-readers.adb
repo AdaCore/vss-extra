@@ -118,6 +118,7 @@ package body JSON_Schema.Readers is
       Prefix  : VSS.Strings.Virtual_String;
       Version : Schema_Version)
    is
+      use type VSS.JSON.JSON_Number_Kind;
       use type VSS.Strings.Virtual_String;
       Key    : VSS.Strings.Virtual_String;
       Nested : Schema_Access;
@@ -354,6 +355,18 @@ package body JSON_Schema.Readers is
             Read (Reader, Value.Property_Names, Other, Prefix, Version);
 
          elsif Key = "const" then
+            --  Numeric constants are emitted as Integer_Value calls. Reject
+            --  other representations before generating any Ada sources.
+            if Reader.Is_Number_Value
+              and then Reader.Number_Value.Kind /= VSS.JSON.JSON_Integer
+            then
+               raise Constraint_Error with
+                 "Unsupported numeric const: "
+                 & VSS.Strings.Conversions.To_UTF_8_String
+                     (Reader.Number_Value.String_Value)
+                 & " (only 64-bit integer constants are supported)";
+            end if;
+
             Read_Any_JSON_Value (Reader, Value.Const);
 
          elsif Key = "enum" then

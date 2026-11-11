@@ -1,5 +1,5 @@
 DIRECTORIES := dap lsp sarif boolean_defaults typescript
-CHECKS := boolean_defaults typescript
+CHECKS := boolean_defaults typescript numeric_constants
 JSON_GEN := $(abspath ../../.objs/development/tools/gen_json)
 GOT_FILE := $(shell mktemp -t got-XXXXXX.txt)
 

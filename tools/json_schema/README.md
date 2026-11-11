@@ -37,6 +37,10 @@ Run `gen_json` with JSON Schema file as an argument.
 Generated code will be printed to `stdout`.
 Use `gnatchop` and `gnatpp` to get compilable sources.
 
+Numeric `const` values must be parsed as signed 64-bit integers. Floating-point
+literals (including `1.0` and `1e0`) and out-of-range numeric constants are
+rejected before code generation, including with `--numbers-as-integers`.
+
 Option `--enum-package` is optional. If presented it make `gen_json` create
 a nested package with all enumeration types. It may prevents name collisions
 between types, subprograms and enumeration literals.
