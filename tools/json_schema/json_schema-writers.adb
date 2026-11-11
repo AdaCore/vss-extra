@@ -40,25 +40,48 @@ package body JSON_Schema.Writers is
       Name   : VSS.Strings.Virtual_String) return Schema_Access;
    --  Return schema of the property with given Name or null
 
-   -------------------
-   -- Resolve_Alias --
-   -------------------
+   -----------------
+   -- Const_Image --
+   -----------------
 
-   function Resolve_Alias
-     (Map    : JSON_Schema.Readers.Schema_Map;
-      Schema : Schema_Access) return Schema_Access
+   function Const_Image
+     (Schema : Schema_Access) return VSS.Strings.Virtual_String
    is
-      Result : Schema_Access := Schema;
+      use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
+      use type VSS.JSON.JSON_Number_Kind;
    begin
-      while not Result.Ref.Is_Empty
-        and then Map.Contains (Result.Ref)
-        and then Is_Alias (Map (Result.Ref))
-      loop
-         Result := Map (Result.Ref);
-      end loop;
+      if Schema = null then
+         return VSS.Strings.Empty_Virtual_String;
+      elsif not Schema.Const.Is_Empty then
+         declare
+            Item : constant VSS.JSON.Streams.JSON_Stream_Element :=
+              Schema.Const.First_Element;
+         begin
+            case Item.Kind is
+               when String_Value =>
+                  return Item.String_Value;
+               when Number_Value =>
+                  if Item.Number_Value.Kind = VSS.JSON.JSON_Integer then
+                     declare
+                        Image : constant Wide_Wide_String :=
+                          Item.Number_Value.Integer_Value'Wide_Wide_Image;
+                     begin
+                        return VSS.Strings.To_Virtual_String
+                          (if Image (Image'First) = ' '
+                           then Image (Image'First + 1 .. Image'Last)
+                           else Image);
+                     end;
+                  end if;
+               when others =>
+                  null;
+            end case;
+         end;
+      elsif Schema.Enum.Length = 1 then
+         return Schema.Enum.First_Element;
+      end if;
 
-      return Result;
-   end Resolve_Alias;
+      return VSS.Strings.Empty_Virtual_String;
+   end Const_Image;
 
    function Is_Numeric_Const (Schema : Schema_Access) return Boolean is
      (Schema /= null
@@ -509,6 +532,27 @@ package body JSON_Schema.Writers is
       end if;
    end Escape_Keywords;
 
+   -------------------
+   -- Find_Property --
+   -------------------
+
+   function Find_Property
+     (Schema : Schema_Access;
+      Name   : VSS.Strings.Virtual_String) return Schema_Access
+   is
+      use type VSS.Strings.Virtual_String;
+   begin
+      if Schema /= null then
+         for Property of Schema.Properties loop
+            if Property.Name = Name then
+               return Property.Schema;
+            end if;
+         end loop;
+      end if;
+
+      return null;
+   end Find_Property;
+
    ----------------------
    -- Get_Element_Type --
    ----------------------
@@ -749,6 +793,22 @@ package body JSON_Schema.Writers is
       Type_Name := Result;
    end Get_Field_Type;
 
+   -------------------------------
+   -- Has_Numeric_Discriminator --
+   -------------------------------
+
+   function Has_Numeric_Discriminator
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Boolean is
+   begin
+      return not Schema.X_Discriminator.Is_Empty
+        and then not Schema.Any_Of.Is_Empty
+        and then Is_Numeric_Const
+          (Find_Property
+             (Resolve (Map, Schema.Any_Of.First_Element),
+              Schema.X_Discriminator));
+   end Has_Numeric_Discriminator;
+
    ---------------------
    -- Is_Holder_Field --
    ---------------------
@@ -778,158 +838,6 @@ package body JSON_Schema.Writers is
    begin
       Ada.Wide_Wide_Text_IO.New_Line;
    end New_Line;
-
-   ------------------
-   -- Print_Vector --
-   ------------------
-
-   procedure Print_Vector
-     (Header : VSS.String_Vectors.Virtual_String_Vector) is
-   begin
-      for Item of Header loop
-         Put (Item);
-         New_Line;
-      end loop;
-   end Print_Vector;
-
-   ---------
-   -- Put --
-   ---------
-
-   procedure Put (Text : VSS.Strings.Virtual_String) is
-   begin
-      Ada.Wide_Wide_Text_IO.Put
-        (VSS.Strings.Conversions.To_Wide_Wide_String (Text));
-   end Put;
-
-   ----------------------
-   -- Ref_To_Type_Name --
-   ----------------------
-
-   function Ref_To_Type_Name (Subschema : Schema_Name)
-     return VSS.Strings.Virtual_String
-   is
-      function To_Identifier
-        (Name : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
-      --  Replace any sequence of characters that is not allowed in Ada
-      --  identifier with a single underscore (schemas generated from
-      --  TypeScript have names like `Omit<Type,"key">`).
-
-      -------------------
-      -- To_Identifier --
-      -------------------
-
-      function To_Identifier
-        (Name : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
-      is
-         Result  : VSS.Strings.Virtual_String;
-         Pending : Boolean := False;
-         Char    : VSS.Characters.Virtual_Character'Base;
-         Cursor  : VSS.Strings.Character_Iterators.Character_Iterator :=
-           Name.Before_First_Character;
-      begin
-         while Cursor.Forward (Char) loop
-            if Char in 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' then
-               if Pending and not Result.Is_Empty then
-                  Result.Append ('_');
-               end if;
-
-               Pending := False;
-               Result.Append (Char);
-            else
-               Pending := True;
-            end if;
-         end loop;
-
-         return Result;
-      end To_Identifier;
-
-      List : constant VSS.String_Vectors.Virtual_String_Vector :=
-        Subschema.Split ('/');
-   begin
-      return Escape_Keywords (To_Identifier (List.Element (List.Length)));
-   end Ref_To_Type_Name;
-
-
-   -----------------
-   -- Const_Image --
-   -----------------
-
-   function Const_Image
-     (Schema : Schema_Access) return VSS.Strings.Virtual_String
-   is
-      use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
-      use type VSS.JSON.JSON_Number_Kind;
-   begin
-      if Schema = null then
-         return VSS.Strings.Empty_Virtual_String;
-      elsif not Schema.Const.Is_Empty then
-         declare
-            Item : constant VSS.JSON.Streams.JSON_Stream_Element :=
-              Schema.Const.First_Element;
-         begin
-            case Item.Kind is
-               when String_Value =>
-                  return Item.String_Value;
-               when Number_Value =>
-                  if Item.Number_Value.Kind = VSS.JSON.JSON_Integer then
-                     declare
-                        Image : constant Wide_Wide_String :=
-                          Item.Number_Value.Integer_Value'Wide_Wide_Image;
-                     begin
-                        return VSS.Strings.To_Virtual_String
-                          (if Image (Image'First) = ' '
-                           then Image (Image'First + 1 .. Image'Last)
-                           else Image);
-                     end;
-                  end if;
-               when others =>
-                  null;
-            end case;
-         end;
-      elsif Schema.Enum.Length = 1 then
-         return Schema.Enum.First_Element;
-      end if;
-
-      return VSS.Strings.Empty_Virtual_String;
-   end Const_Image;
-
-   -------------------
-   -- Find_Property --
-   -------------------
-
-   function Find_Property
-     (Schema : Schema_Access;
-      Name   : VSS.Strings.Virtual_String) return Schema_Access
-   is
-      use type VSS.Strings.Virtual_String;
-   begin
-      if Schema /= null then
-         for Property of Schema.Properties loop
-            if Property.Name = Name then
-               return Property.Schema;
-            end if;
-         end loop;
-      end if;
-
-      return null;
-   end Find_Property;
-
-   -------------------------------
-   -- Has_Numeric_Discriminator --
-   -------------------------------
-
-   function Has_Numeric_Discriminator
-     (Map    : JSON_Schema.Readers.Schema_Map;
-      Schema : Schema_Access) return Boolean is
-   begin
-      return not Schema.X_Discriminator.Is_Empty
-        and then not Schema.Any_Of.Is_Empty
-        and then Is_Numeric_Const
-          (Find_Property
-             (Resolve (Map, Schema.Any_Of.First_Element),
-              Schema.X_Discriminator));
-   end Has_Numeric_Discriminator;
 
    --------------------
    -- Prepare_Unions --
@@ -1063,6 +971,77 @@ package body JSON_Schema.Writers is
       Prepare ("#", Root, True);
    end Prepare_Unions;
 
+   ------------------
+   -- Print_Vector --
+   ------------------
+
+   procedure Print_Vector
+     (Header : VSS.String_Vectors.Virtual_String_Vector) is
+   begin
+      for Item of Header loop
+         Put (Item);
+         New_Line;
+      end loop;
+   end Print_Vector;
+
+   ---------
+   -- Put --
+   ---------
+
+   procedure Put (Text : VSS.Strings.Virtual_String) is
+   begin
+      Ada.Wide_Wide_Text_IO.Put
+        (VSS.Strings.Conversions.To_Wide_Wide_String (Text));
+   end Put;
+
+   ----------------------
+   -- Ref_To_Type_Name --
+   ----------------------
+
+   function Ref_To_Type_Name (Subschema : Schema_Name)
+     return VSS.Strings.Virtual_String
+   is
+      function To_Identifier
+        (Name : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+      --  Replace any sequence of characters that is not allowed in Ada
+      --  identifier with a single underscore (schemas generated from
+      --  TypeScript have names like `Omit<Type,"key">`).
+
+      -------------------
+      -- To_Identifier --
+      -------------------
+
+      function To_Identifier
+        (Name : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+      is
+         Result  : VSS.Strings.Virtual_String;
+         Pending : Boolean := False;
+         Char    : VSS.Characters.Virtual_Character'Base;
+         Cursor  : VSS.Strings.Character_Iterators.Character_Iterator :=
+           Name.Before_First_Character;
+      begin
+         while Cursor.Forward (Char) loop
+            if Char in 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' then
+               if Pending and not Result.Is_Empty then
+                  Result.Append ('_');
+               end if;
+
+               Pending := False;
+               Result.Append (Char);
+            else
+               Pending := True;
+            end if;
+         end loop;
+
+         return Result;
+      end To_Identifier;
+
+      List : constant VSS.String_Vectors.Virtual_String_Vector :=
+        Subschema.Split ('/');
+   begin
+      return Escape_Keywords (To_Identifier (List.Element (List.Length)));
+   end Ref_To_Type_Name;
+
    -------------
    -- Resolve --
    -------------
@@ -1083,6 +1062,26 @@ package body JSON_Schema.Writers is
 
       return Result;
    end Resolve;
+
+   -------------------
+   -- Resolve_Alias --
+   -------------------
+
+   function Resolve_Alias
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Schema_Access
+   is
+      Result : Schema_Access := Schema;
+   begin
+      while not Result.Ref.Is_Empty
+        and then Map.Contains (Result.Ref)
+        and then Is_Alias (Map (Result.Ref))
+      loop
+         Result := Map (Result.Ref);
+      end loop;
+
+      return Result;
+   end Resolve_Alias;
 
    ------------------
    -- Variant_Name --
