@@ -41,6 +41,11 @@ Numeric `const` values must be parsed as signed 64-bit integers. Floating-point
 literals (including `1.0` and `1e0`) and out-of-range numeric constants are
 rejected before code generation, including with `--numbers-as-integers`.
 
+Null-only properties (`"type": "null"`), including references to null-only
+aliases, have no Ada record component. Readers accept only `null` for these
+properties. Writers emit required properties as `null` and omit optional ones,
+so an optional null-only property's presence is not preserved.
+
 Option `--enum-package` is optional. If presented it make `gen_json` create
 a nested package with all enumeration types. It may prevents name collisions
 between types, subprograms and enumeration literals.

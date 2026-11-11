@@ -104,7 +104,8 @@ package JSON_Schema.Writers is
    --  Return an Ada type name for given Schema. Fallback if a type name for
    --  properties with nested schema declaration.
    --  Return an empty string for string properties with just one enumeration
-   --  literal defined, so we can skip such properties in the type declaration.
+   --  literal defined and null-only properties, so we can skip such properties
+   --  in the type declaration.
    --  If type is defined in a package, then return package name in Prefix.
 
    procedure Get_Element_Type
@@ -208,6 +209,11 @@ package JSON_Schema.Writers is
       and then Schema.Kind.First_Element in Definitions.An_Object);
    --  Check if Schema is an object without known properties. Such a named
    --  schema is declared as a tagged type derived from Any_Object.
+
+   function Is_Null_Only (Schema : Schema_Access) return Boolean is
+     (Schema.Kind.Last_Index = 1
+      and then Schema.Kind.First_Element in Definitions.A_Null);
+   --  Check if Schema permits only JSON null. Resolve aliases before calling.
 
    function Is_Enum (Schema : Schema_Access) return Boolean is
      (not Schema.Enum.Is_Empty or not Schema.X_Enum.Is_Empty);

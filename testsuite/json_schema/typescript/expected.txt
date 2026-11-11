@@ -117,7 +117,6 @@ end record;
 
 type DMChannel is record
 id : VSS.Strings.Virtual_String;
-name : Any_Value;
 recipients : User_Vector;
 end record;
 
@@ -1483,7 +1482,7 @@ Reader.Read_Next;
 if Reader.Is_Null_Value then
 Reader.Read_Next;
 else
-Input_Any_Value (Reader, Value.name, Success);
+Success := False;
 end if;
    when 4 =>  --  recipients
 Reader.Read_Next;

@@ -634,6 +634,19 @@ package body JSON_Schema.Writers.Outputs is
       Type_Name   : VSS.Strings.Virtual_String;
       Type_Prefix : VSS.Strings.Virtual_String;
    begin
+      if Is_Null_Only (Target) then
+         --  Null-only properties have no record component. Optional ones
+         --  are omitted; required ones are always emitted as null.
+         if Required then
+            Put ("Handler.Key_Name (""");
+            Put (Property.Name);
+            Put (""");"); New_Line;
+            Put ("Handler.Null_Value;"); New_Line;
+         end if;
+
+         return;
+      end if;
+
       Get_Field_Type
         (Map, Property.Schema, True, Fallback, Enum_Package,
          Type_Name, Type_Prefix);
@@ -733,19 +746,6 @@ package body JSON_Schema.Writers.Outputs is
 
          Put ("end if;");
          New_Line;
-      elsif Resolve_Alias (Map, Property.Schema).Kind.Last_Index = 1
-        and then Resolve_Alias (Map, Property.Schema).Kind.First_Element
-          in Definitions.A_Null
-      then
-         --  A property that is always `null`
-         if Required then
-            Put ("Handler.Key_Name (""");
-            Put (Property.Name);
-            Put (""");");
-            New_Line;
-            Put ("Handler.Null_Value;");
-            New_Line;
-         end if;
       elsif Required
         and then Type_Name = "Virtual_String"
         and then Resolve_Alias (Map, Property.Schema).Kind.Contains

@@ -971,6 +971,16 @@ package body JSON_Schema.Writers.Inputs is
       Type_Name   : VSS.Strings.Virtual_String;
       Type_Prefix : VSS.Strings.Virtual_String;
    begin
+      if Is_Null_Only (Target) then
+         --  There is no record component, but the input must still be null.
+         Put ("if Reader.Is_Null_Value then"); New_Line;
+         Put ("Reader.Read_Next;"); New_Line;
+         Put ("else"); New_Line;
+         Put ("Success := False;"); New_Line;
+         Put ("end if;"); New_Line;
+         return;
+      end if;
+
       Get_Field_Type
         (Map, Property.Schema, True, Fallback, Enum_Package,
          Type_Name, Type_Prefix);

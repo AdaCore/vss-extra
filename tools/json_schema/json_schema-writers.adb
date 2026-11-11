@@ -615,6 +615,10 @@ package body JSON_Schema.Writers is
             Prefix := Enum_Prefix;
          end if;
 
+      elsif Is_Null_Only (Schema) then
+         --  Null-only properties carry no data and need no record component.
+         Result := VSS.Strings.Empty_Virtual_String;
+
       elsif Is_Enum (Schema) then
 
          if Schema.Enum.Length = 1 then
@@ -654,8 +658,7 @@ package body JSON_Schema.Writers is
                end if;
 
             when Definitions.A_Null =>
-               --  A property that is always `null`
-               Result := "Any_Value";
+               raise Program_Error;  --  Handled above
 
             when Definitions.A_Number =>
                if Required and Is_Numeric_Const (Schema) then
