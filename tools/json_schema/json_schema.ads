@@ -141,6 +141,10 @@ package JSON_Schema is
 
       X_Enum_Descriptions : Definitions.String_Array;
       --  enumDescriptions property of DAP
+
+      X_Discriminator : VSS.Strings.Virtual_String;
+      --  Name of a property with constant values to distinguish anyOf
+      --  variants. Computed by JSON_Schema.Writers.Prepare_Unions.
    end record;
    --  Default: `{}` or `True`
 

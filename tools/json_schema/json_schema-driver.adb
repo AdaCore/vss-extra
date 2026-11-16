@@ -56,6 +56,7 @@ procedure JSON_Schema.Driver is
       Is_Header_File  : Boolean := False;
       Is_Holder       : Boolean := False;
       Is_Root_Type    : Boolean := False;
+      Is_Hash_Package : Boolean := False;
    begin
       for Item of VSS.Application.Arguments loop
          if Is_Root_Package then
@@ -73,6 +74,11 @@ procedure JSON_Schema.Driver is
          elsif Is_Root_Type then
             Is_Root_Type := False;
             Root_Type := Item;
+         elsif Is_Hash_Package then
+            Is_Hash_Package := False;
+            JSON_Schema.Writers.Hash_Package := Item;
+         elsif Item = "--hash-package" then
+            Is_Hash_Package := True;
          elsif Item = "--root-package" then
             Is_Root_Package := True;
          elsif Item = "--enum-package" then
@@ -85,6 +91,8 @@ procedure JSON_Schema.Driver is
             Is_Root_Type := True;
          elsif Item = "--additional-properties" then
             Additional_Properties := True;
+         elsif Item = "--numbers-as-integers" then
+            JSON_Schema.Readers.Numbers_As_Integers := True;
          else
             Arg := Item;
          end if;
@@ -94,7 +102,8 @@ procedure JSON_Schema.Driver is
         and not Is_Header_File
         and not Is_Holder
         and not Is_Root_Package
-        and not Is_Enum_Package;
+        and not Is_Enum_Package
+        and not Is_Hash_Package;
    end Parse_Command_Line;
 
    procedure Read_File
@@ -129,7 +138,9 @@ procedure JSON_Schema.Driver is
    Schema : JSON_Schema.Schema_Access;
    Other  : JSON_Schema.Readers.Schema_Map;
 begin
-   if not Parse_Command_Line then
+   if Parse_Command_Line then
+      JSON_Schema.Writers.Has_Enum_Package := not Enum_Package.Is_Empty;
+   else
       Ada.Wide_Wide_Text_IO.Put_Line
        ("Usage: gen_json [options] <json_schema>.json");
       Ada.Wide_Wide_Text_IO.New_Line;
@@ -147,6 +158,11 @@ begin
         ("  --root-type <type> - A type for the root schema");
       Ada.Wide_Wide_Text_IO.Put_Line
         ("  --additional-properties - Keep additional properties (false)");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("  --numbers-as-integers - Map ""number"" type to Integer_64");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("  --hash-package <generic> - A generic for key lookups " &
+         "(Minimal_Perfect_Hash)");
       return;
    end if;
 
@@ -179,6 +195,7 @@ begin
    Reader.Read_Next;
 
    JSON_Schema.Readers.Read (Reader, Schema, Other);
+   JSON_Schema.Writers.Prepare_Unions (Other, Schema);
 
    if not Root_Type.Is_Empty then
       Other.Insert (Root_Type, Schema);

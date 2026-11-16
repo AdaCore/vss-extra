@@ -104,7 +104,8 @@ package JSON_Schema.Writers is
    --  Return an Ada type name for given Schema. Fallback if a type name for
    --  properties with nested schema declaration.
    --  Return an empty string for string properties with just one enumeration
-   --  literal defined, so we can skip such properties in the type declaration.
+   --  literal defined and null-only properties, so we can skip such properties
+   --  in the type declaration.
    --  If type is defined in a package, then return package name in Prefix.
 
    procedure Get_Element_Type
@@ -118,10 +119,37 @@ package JSON_Schema.Writers is
    procedure Print_Vector (Header : VSS.String_Vectors.Virtual_String_Vector);
 
    function Variant_Name
-     (Map       : JSON_Schema.Readers.Schema_Map;
-      Schema    : Schema_Access) return VSS.Strings.Virtual_String;
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access;
+      Key    : VSS.Strings.Virtual_String := "")
+      return VSS.Strings.Virtual_String;
    --  Return a variant name for given Schema when schema is an element of
-   --  anyOf schema
+   --  anyOf schema. Key is the discriminator property name (if known).
+   --  For a string discriminator the name is the constant value, for a
+   --  numeric one it's derived from the referenced type name.
+
+   function Variant_Value
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access;
+      Key    : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+   --  Return the image of the discriminator constant of the variant
+
+   function Has_Numeric_Discriminator
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Boolean;
+   --  Check if variants of anyOf Schema are distinguished by an integer
+
+   function Const_Image
+     (Schema : Schema_Access) return VSS.Strings.Virtual_String;
+   --  Return image of string/integer `const` or single item `enum` of the
+   --  Schema or an empty string if there is no such constant.
+
+   procedure Prepare_Unions
+     (Map  : JSON_Schema.Readers.Schema_Map;
+      Root : Schema_Access);
+   --  Find discriminator properties for anyOf schemas (X_Discriminator).
+   --  Replace anyOf schemas without a discriminator with "any value"
+   --  schemas and report them to the standard error.
 
    function Is_Holder_Field
      (Name     : Schema_Name;
@@ -132,6 +160,60 @@ package JSON_Schema.Writers is
 
    function Is_Union_Type (Schema : Schema_Access) return Boolean;
    --  Some of `anyOf` schema is not {} or has $ref
+
+   Hash_Package : VSS.Strings.Virtual_String := "Minimal_Perfect_Hash";
+
+   Has_Enum_Package : Boolean := False;
+   --  Enumeration types are declared in a separate package, so their
+   --  literals can't conflict with type names.
+   --  Name of a generic package to find index of a key name, see
+   --  testsuite/json_schema/minimal_perfect_hash.ads for its specification.
+
+   function Is_Simple_Alias (Schema : Schema_Access) return Boolean is
+     (Schema.Ref.Is_Empty
+      and then Schema.Properties.Is_Empty
+      and then Schema.All_Of.Is_Empty
+      and then Schema.Any_Of.Is_Empty
+      and then Schema.Enum.Is_Empty
+      and then Schema.X_Enum.Is_Empty
+      and then Schema.Additional_Properties = null
+      and then not (Schema.Kind.Last_Index = 1
+                    and then Schema.Kind.First_Element in
+                      Definitions.An_Object));
+   --  Check if a named Schema is just an alias of a simple type (string,
+   --  integer, array, etc) and has no Ada type declaration for itself.
+
+   function Is_Reference_Alias (Schema : Schema_Access) return Boolean is
+     (not Schema.Ref.Is_Empty
+      and then Schema.Properties.Is_Empty
+      and then Schema.All_Of.Is_Empty
+      and then Schema.Any_Of.Is_Empty);
+   --  Check if a named Schema is just a reference to another schema
+
+   function Is_Alias (Schema : Schema_Access) return Boolean is
+     (Is_Simple_Alias (Schema) or else Is_Reference_Alias (Schema));
+   --  Check if a named Schema has no Ada type declaration for itself
+
+   function Resolve_Alias
+     (Map    : JSON_Schema.Readers.Schema_Map;
+      Schema : Schema_Access) return Schema_Access;
+   --  If Schema refers to an alias, return the aliased schema (following
+   --  alias chains), otherwise return Schema.
+
+   function Is_Untyped_Object (Schema : Schema_Access) return Boolean is
+     (Schema.Ref.Is_Empty
+      and then Schema.Properties.Is_Empty
+      and then Schema.All_Of.Is_Empty
+      and then Schema.Any_Of.Is_Empty
+      and then Schema.Kind.Last_Index = 1
+      and then Schema.Kind.First_Element in Definitions.An_Object);
+   --  Check if Schema is an object without known properties. Such a named
+   --  schema is declared as a tagged type derived from Any_Object.
+
+   function Is_Null_Only (Schema : Schema_Access) return Boolean is
+     (Schema.Kind.Last_Index = 1
+      and then Schema.Kind.First_Element in Definitions.A_Null);
+   --  Check if Schema permits only JSON null. Resolve aliases before calling.
 
    function Is_Enum (Schema : Schema_Access) return Boolean is
      (not Schema.Enum.Is_Empty or not Schema.X_Enum.Is_Empty);

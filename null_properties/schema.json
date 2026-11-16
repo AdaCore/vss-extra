@@ -1,0 +1,15 @@
+{
+  "definitions": {
+    "NullValue": { "type": "null" },
+    "NullAlias": { "$ref": "#/definitions/NullValue" }
+  },
+  "type": "object",
+  "properties": {
+    "required_null": { "type": "null" },
+    "required_ref": { "$ref": "#/definitions/NullAlias" },
+    "optional_null": { "type": "null" },
+    "optional_ref": { "$ref": "#/definitions/NullAlias" }
+  },
+  "required": ["required_null", "required_ref"],
+  "additionalProperties": false
+}

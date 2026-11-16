@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
 
+with VSS.Strings.Conversions;
+
 package body JSON_Schema.Readers is
 
    function To_Simple_Type (Value : VSS.Strings.Virtual_String)
@@ -31,6 +33,66 @@ package body JSON_Schema.Readers is
      (Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
       Result : in out JSON_Event_Vectors.Vector'Class);
 
+   function Decode_Reference
+     (Text : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String;
+   --  Decode %XX escapes in the URI fragment of a JSON pointer, because
+   --  names of definitions are stored unescaped in the schema map.
+
+   procedure Remove_Null_Variant (Value : Schema_Access);
+   --  Drop `{"type": "null"}` from anyOf/oneOf. If only one variant is left,
+   --  replace the union with it, so a nullable reference becomes a plain
+   --  (optional) reference. `null` is tolerated by generated readers anyway.
+
+   ----------------------
+   -- Decode_Reference --
+   ----------------------
+
+   function Decode_Reference
+     (Text : VSS.Strings.Virtual_String) return VSS.Strings.Virtual_String
+   is
+      function Hex (Item : Character) return Natural;
+
+      ---------
+      -- Hex --
+      ---------
+
+      function Hex (Item : Character) return Natural is
+      begin
+         case Item is
+            when '0' .. '9' =>
+               return Character'Pos (Item) - Character'Pos ('0');
+            when 'a' .. 'f' =>
+               return Character'Pos (Item) - Character'Pos ('a') + 10;
+            when 'A' .. 'F' =>
+               return Character'Pos (Item) - Character'Pos ('A') + 10;
+            when others =>
+               raise Constraint_Error with "Bad escape in $ref";
+         end case;
+      end Hex;
+
+      Source : constant String :=
+        VSS.Strings.Conversions.To_UTF_8_String (Text);
+      Result : String (Source'Range);
+      Last   : Natural := Result'First - 1;
+      Index  : Positive := Source'First;
+   begin
+      while Index <= Source'Last loop
+         Last := Last + 1;
+
+         if Source (Index) = '%' and then Index + 2 <= Source'Last then
+            Result (Last) := Character'Val
+              (Hex (Source (Index + 1)) * 16 + Hex (Source (Index + 2)));
+            Index := Index + 3;
+         else
+            Result (Last) := Source (Index);
+            Index := Index + 1;
+         end if;
+      end loop;
+
+      return VSS.Strings.Conversions.To_Virtual_String
+        (Result (Result'First .. Last));
+   end Decode_Reference;
+
    ------------
    -- Id_Key --
    ------------
@@ -56,6 +118,7 @@ package body JSON_Schema.Readers is
       Prefix  : VSS.Strings.Virtual_String;
       Version : Schema_Version)
    is
+      use type VSS.JSON.JSON_Number_Kind;
       use type VSS.Strings.Virtual_String;
       Key    : VSS.Strings.Virtual_String;
       Nested : Schema_Access;
@@ -292,6 +355,18 @@ package body JSON_Schema.Readers is
             Read (Reader, Value.Property_Names, Other, Prefix, Version);
 
          elsif Key = "const" then
+            --  Numeric constants are emitted as Integer_Value calls. Reject
+            --  other representations before generating any Ada sources.
+            if Reader.Is_Number_Value
+              and then Reader.Number_Value.Kind /= VSS.JSON.JSON_Integer
+            then
+               raise Constraint_Error with
+                 "Unsupported numeric const: "
+                 & VSS.Strings.Conversions.To_UTF_8_String
+                     (Reader.Number_Value.String_Value)
+                 & " (only 64-bit integer constants are supported)";
+            end if;
+
             Read_Any_JSON_Value (Reader, Value.Const);
 
          elsif Key = "enum" then
@@ -300,9 +375,15 @@ package body JSON_Schema.Readers is
             Reader.Read_Next;
 
             while not Reader.At_End and then not Reader.Is_End_Array loop
-               pragma Assert (Reader.Is_String_Value);
-               Value.Enum.Append (Reader.String_Value);
-               Reader.Read_Next;
+               --  Only string enumerations are mapped to Ada enumeration
+               --  types. Numeric enumerations (and other values) are
+               --  ignored, so such a schema is just a number/integer.
+               if Reader.Is_String_Value then
+                  Value.Enum.Append (Reader.String_Value);
+                  Reader.Read_Next;
+               else
+                  Reader.Skip_Current_Value;
+               end if;
             end loop;
 
             pragma Assert (Reader.Is_End_Array);
@@ -406,7 +487,7 @@ package body JSON_Schema.Readers is
 
          elsif Key = "$ref" then
             pragma Assert (Reader.Is_String_Value);
-            Value.Ref := Reader.String_Value;
+            Value.Ref := Decode_Reference (Reader.String_Value);
             Reader.Read_Next;
 
          elsif Key = "default" then
@@ -462,6 +543,8 @@ package body JSON_Schema.Readers is
       pragma Assert (Reader.Is_End_Object);
       Reader.Read_Next;
 
+      Remove_Null_Variant (Value);
+
       if Exclusive_Maximum then
          Value.Exclusive_Maximum := Value.Maximum;
          Value.Maximum := (Kind => VSS.JSON.None);
@@ -514,6 +597,75 @@ package body JSON_Schema.Readers is
       end loop;
    end Read_Any_JSON_Value;
 
+   -------------------------
+   -- Remove_Null_Variant --
+   -------------------------
+
+   procedure Remove_Null_Variant (Value : Schema_Access) is
+      use type Definitions.Simple_Types;
+
+      function Is_Null (Item : Schema_Access) return Boolean is
+        (Item.Kind.Last_Index = 1
+         and then Item.Kind.First_Element = Definitions.A_Null
+         and then Item.Ref.Is_Empty
+         and then Item.Properties.Is_Empty
+         and then Item.Any_Of.Is_Empty
+         and then Item.All_Of.Is_Empty);
+
+      procedure Remove (List : in out Definitions.Schema_Array);
+
+      Has_Null : Boolean := False;
+
+      ------------
+      -- Remove --
+      ------------
+
+      procedure Remove (List : in out Definitions.Schema_Array) is
+      begin
+         for Index in reverse 1 .. List.Last_Index loop
+            if Is_Null (List (Index)) then
+               List.Delete (Index);
+               Has_Null := True;
+            end if;
+         end loop;
+      end Remove;
+   begin
+      Remove (Value.Any_Of);
+      Remove (Value.One_Of);
+
+      if Has_Null
+        and then Value.Any_Of.Last_Index = 1
+        and then Value.Ref.Is_Empty
+        and then Value.Kind.Is_Empty
+        and then Value.Properties.Is_Empty
+        and then Value.All_Of.Is_Empty
+      then
+         declare
+            --  Schema is limited, so copy fields used by the generator
+            Item : constant Schema_Access := Value.Any_Of.First_Element;
+         begin
+            if Value.Description.Is_Empty then
+               Value.Description := Item.Description;
+            end if;
+
+            Value.Ref := Item.Ref;
+            Value.Kind := Item.Kind;
+            Value.Format := Item.Format;
+            Value.Items := Item.Items;
+            Value.Required := Item.Required;
+            Value.Additional_Properties := Item.Additional_Properties;
+            Value.Properties := Item.Properties;
+            Value.Const := Item.Const;
+            Value.Enum := Item.Enum;
+            Value.X_Enum := Item.X_Enum;
+            Value.X_Enum_Descriptions := Item.X_Enum_Descriptions;
+            Value.All_Of := Item.All_Of;
+            Value.One_Of := Item.One_Of;
+            Value.Any_Of := Item.Any_Of;
+         end;
+      end if;
+   end Remove_Null_Variant;
+
    --------------------
    -- To_Simple_Type --
    --------------------
@@ -532,7 +684,8 @@ package body JSON_Schema.Readers is
       elsif Value = "null" then
          return Definitions.A_Null;
       elsif Value = "number" then
-         return Definitions.A_Number;
+         return (if Numbers_As_Integers then Definitions.An_Integer
+                 else Definitions.A_Number);
       elsif Value = "object" then
          return Definitions.An_Object;
       elsif Value = "string" then

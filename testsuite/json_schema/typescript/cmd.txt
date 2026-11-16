@@ -1,0 +1,5 @@
+--root-package TypeScript.Types
+--numbers-as-integers
+--hash-package Key_Lookups
+--holder #/definitions/Message:referenced_message
+schema.json

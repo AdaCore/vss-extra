@@ -1,0 +1,1653 @@
+pragma Ada_2022;
+pragma Style_Checks ("M999");  --  suppress style warning unitl gnatpp is fixed
+with Ada.Containers.Doubly_Linked_Lists;
+with Ada.Finalization;
+with Interfaces;
+with VSS.JSON.Streams;
+with VSS.Strings;
+with VSS.String_Vectors;
+
+package TypeScript.Types is
+subtype Integer_64 is Interfaces.Integer_64;
+subtype Float_64 is Interfaces.IEEE_Float_64;
+package JSON_Event_Lists is new Ada.Containers.Doubly_Linked_Lists
+(VSS.JSON.Streams.JSON_Stream_Element, VSS.JSON.Streams."=");
+
+type Any_Value is new JSON_Event_Lists.List with null record;
+type Any_Object is new Any_Value with null record;
+
+type Optional_Integer_64 (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Integer_64;
+when False => null;
+end case; end record;
+
+type Optional_Float_64 (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Float_64;
+when False => null;
+end case; end record;
+
+type Integer_Or_String (Is_String : Boolean := False) is record
+case Is_String is
+when False =>
+Integer : Integer_64;
+when True =>
+String : VSS.Strings.Virtual_String;
+end case;
+end record;
+
+type Optional_Integer_Or_String (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Integer_Or_String;
+when False => null;
+end case; end record;
+
+
+type User_Vector is tagged private
+with Variable_Indexing => Get_User_Variable_Reference,
+Constant_Indexing => Get_User_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+type Message_Vector is tagged private
+with Variable_Indexing => Get_Message_Variable_Reference,
+Constant_Indexing => Get_Message_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+type Integer_64_Vector is tagged private
+with Variable_Indexing => Get_Integer_64_Variable_Reference,
+Constant_Indexing => Get_Integer_64_Constant_Reference,
+Aggregate => (Empty => Empty, Add_Unnamed => Append);
+
+type Message_Holder is tagged private;
+
+
+type Scope is (messages_read, guilds_join);
+
+type Optional_Scope (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Scope;
+when False => null;
+end case; end record;
+
+type Shape_Variant is (circle_Variant, square_Variant);
+
+type Channel_Variant is (TextChannel_Variant, DMChannel_Variant);
+
+type Circle is record
+radius : Integer_64;
+end record;
+
+type Square is record
+side : Integer_64;
+end record;
+
+type Shape_Union (Kind : Shape_Variant := Shape_Variant'First) is record
+case Kind is
+when circle_Variant =>
+circle_Variant : Circle;
+when square_Variant =>
+square_Variant : Square;
+end case;
+end record;
+
+type Shape is record
+Union : Shape_Union;
+end record;
+
+--  Left:#/definitions/Snowflake
+--  Left:#/definitions/Layout
+--  Left:#/definitions/Level
+type User is record
+id : VSS.Strings.Virtual_String;
+avatar : VSS.Strings.Virtual_String;
+level : Optional_Integer_64;
+end record;
+
+type Optional_User (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : User;
+when False => null;
+end case; end record;
+
+type BaseChannel_0 is record
+id : VSS.Strings.Virtual_String;
+topic : VSS.Strings.Virtual_String;
+end record;
+
+type DMChannel is record
+id : VSS.Strings.Virtual_String;
+recipients : User_Vector;
+end record;
+
+type Channel_Union (Kind : Channel_Variant := Channel_Variant'First) is record
+case Kind is
+when TextChannel_Variant =>
+TextChannel_Variant : BaseChannel_0;
+when DMChannel_Variant =>
+DMChannel_Variant : DMChannel;
+end case;
+end record;
+
+type Channel is record
+Union : Channel_Union;
+end record;
+
+type Message_application is record
+id : VSS.Strings.Virtual_String;
+end record;
+
+type Optional_Message_application (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Message_application;
+when False => null;
+end case; end record;
+
+type Message is record
+id : VSS.Strings.Virtual_String;
+author : Optional_User;
+channel : TypeScript.Types.Channel;
+shape : TypeScript.Types.Shape;
+layout : Optional_Integer_64;
+scope : Optional_Scope;
+count : Optional_Integer_64;
+nonce : Any_Value;
+mentions : VSS.String_Vectors.Virtual_String_Vector;
+levels : Integer_64_Vector;
+extras : Any_Value;
+Item_0 : VSS.Strings.Virtual_String;
+application : Optional_Message_application;
+referenced_message : Message_Holder;
+end record;
+
+type Optional_Message (Is_Set : Boolean := False) is record
+case Is_Set is
+when True => Value : Message;
+when False => null;
+end case; end record;
+
+type Mixed is new Any_Object with null record;
+function Empty return User_Vector;
+
+function Is_Null (Self : User_Vector) return Boolean;
+
+function Length (Self : User_Vector) return Natural;
+
+procedure Clear (Self : in out User_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out User_Vector;
+Value : User);
+
+type User_Variable_Reference
+(Element : not null access User) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_User_Variable_Reference
+(Self : aliased in out User_Vector;
+Index : Positive)
+return User_Variable_Reference
+with Inline;
+
+type User_Constant_Reference
+(Element : not null access constant User) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_User_Constant_Reference
+(Self : aliased User_Vector;
+Index : Positive)
+return User_Constant_Reference
+with Inline;
+
+function Empty return Message_Vector;
+
+function Is_Null (Self : Message_Vector) return Boolean;
+
+function Length (Self : Message_Vector) return Natural;
+
+procedure Clear (Self : in out Message_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out Message_Vector;
+Value : Message);
+
+type Message_Variable_Reference
+(Element : not null access Message) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Message_Variable_Reference
+(Self : aliased in out Message_Vector;
+Index : Positive)
+return Message_Variable_Reference
+with Inline;
+
+type Message_Constant_Reference
+(Element : not null access constant Message) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Message_Constant_Reference
+(Self : aliased Message_Vector;
+Index : Positive)
+return Message_Constant_Reference
+with Inline;
+
+function Empty return Integer_64_Vector;
+
+function Is_Null (Self : Integer_64_Vector) return Boolean;
+
+function Length (Self : Integer_64_Vector) return Natural;
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True);
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64);
+
+type Integer_64_Variable_Reference
+(Element : not null access Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+with Inline;
+
+type Integer_64_Constant_Reference
+(Element : not null access constant Integer_64) is null record
+with Implicit_Dereference => Element;
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+with Inline;
+
+not overriding function Element
+(Self  : aliased in out Message_Holder)
+ return Message_Variable_Reference with Inline;
+
+not overriding function Is_Set
+(Self : Message_Holder) return Boolean with Inline;
+--  Check if the holder contains a value
+
+not overriding function Value
+(Self  : aliased Message_Holder)
+ return Message_Constant_Reference with Inline;
+
+private
+type User_Array is array (Positive range <>) of aliased User;
+type User_Array_Access is access User_Array;
+type User_Vector is new Ada.Finalization.Controlled with record
+Data   : User_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out User_Vector);
+
+overriding procedure Finalize (Self : in out User_Vector);
+
+type Message_Array is array (Positive range <>) of aliased Message;
+type Message_Array_Access is access Message_Array;
+type Message_Vector is new Ada.Finalization.Controlled with record
+Data   : Message_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out Message_Vector);
+
+overriding procedure Finalize (Self : in out Message_Vector);
+
+type Integer_64_Array is array (Positive range <>) of aliased Integer_64;
+type Integer_64_Array_Access is access Integer_64_Array;
+type Integer_64_Vector is new Ada.Finalization.Controlled with record
+Data   : Integer_64_Array_Access;
+Length : Natural := 0;
+Is_Null : Boolean := True;
+end record;
+
+overriding procedure Adjust (Self : in out Integer_64_Vector);
+
+overriding procedure Finalize (Self : in out Integer_64_Vector);
+
+type Message_Holder is new Message_Vector with null record;
+
+end TypeScript.Types;
+pragma Style_Checks ("M99");  --  suppress style warning unitl gnatpp is fixed
+with Ada.Unchecked_Deallocation;
+
+package body TypeScript.Types is
+procedure Free is new Ada.Unchecked_Deallocation
+(User_Array, User_Array_Access);
+
+overriding procedure Adjust (Self : in out User_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new User_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out User_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return User_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : User_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : User_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out User_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out User_Vector;
+Value : User) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / User'Size);
+Self_Data_Saved : User_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new User_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new User_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_User_Variable_Reference
+(Self : aliased in out User_Vector;
+Index : Positive)
+return User_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_User_Constant_Reference
+(Self : aliased User_Vector;
+Index : Positive)
+return User_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+procedure Free is new Ada.Unchecked_Deallocation
+(Message_Array, Message_Array_Access);
+
+overriding procedure Adjust (Self : in out Message_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new Message_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out Message_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return Message_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Message_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : Message_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out Message_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out Message_Vector;
+Value : Message) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / Message'Size);
+Self_Data_Saved : Message_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new Message_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new Message_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_Message_Variable_Reference
+(Self : aliased in out Message_Vector;
+Index : Positive)
+return Message_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_Message_Constant_Reference
+(Self : aliased Message_Vector;
+Index : Positive)
+return Message_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+procedure Free is new Ada.Unchecked_Deallocation
+(Integer_64_Array, Integer_64_Array_Access);
+
+overriding procedure Adjust (Self : in out Integer_64_Vector) is
+begin
+if Self.Length > 0 then
+Self.Data :=
+new Integer_64_Array'(Self.Data (1 .. Self.Length));
+end if;
+end Adjust;
+
+overriding procedure Finalize (Self : in out Integer_64_Vector) is
+begin
+Free (Self.Data);
+Self.Length := 0;
+end Finalize;
+
+function Empty return Integer_64_Vector is (Ada.Finalization.Controlled with others => <>);
+
+function Is_Null (Self : Integer_64_Vector) return Boolean is (Self.Is_Null);
+
+function Length (Self : Integer_64_Vector) return Natural is (Self.Length);
+
+procedure Clear (Self : in out Integer_64_Vector; Is_Null : Boolean := True) is
+begin
+   Self.Length := 0;
+   Self.Is_Null := Is_Null;
+end Clear;
+
+procedure Append
+(Self : in out Integer_64_Vector;
+Value : Integer_64) is
+Init_Length : constant Positive :=
+Positive'Max (2, 256 / Integer_64'Size);
+Self_Data_Saved : Integer_64_Array_Access := Self.Data;
+begin
+if Self.Length = 0 then
+Self.Is_Null := False;
+Self.Data := new Integer_64_Array (1 .. Init_Length);
+elsif Self.Length = Self.Data'Last then
+Self.Data :=
+new Integer_64_Array (1 .. 3 * Self.Length / 2 + 1);
+Self.Data (1 .. Self.Length) := Self_Data_Saved.all;
+Free (Self_Data_Saved);
+end if;
+Self.Length := Self.Length + 1;
+Self.Data (Self.Length) := Value;
+end Append;
+
+not overriding function Get_Integer_64_Variable_Reference
+(Self : aliased in out Integer_64_Vector;
+Index : Positive)
+return Integer_64_Variable_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Get_Integer_64_Constant_Reference
+(Self : aliased Integer_64_Vector;
+Index : Positive)
+return Integer_64_Constant_Reference
+is (Element => Self.Data (Index)'Access);
+
+not overriding function Element
+(Self  : aliased in out Message_Holder)
+ return Message_Variable_Reference is
+begin
+if Self.Length = 0 then
+Self.Append ((others => <>));
+end if;
+return (Element => Self.Data (1)'Access);
+end Element;
+
+not overriding function Is_Set
+(Self : Message_Holder) return Boolean is (Self.Length > 0);
+
+not overriding function Value
+(Self  : aliased Message_Holder)
+ return Message_Constant_Reference is (Element => Self.Data (1)'Access);
+
+end TypeScript.Types;
+
+with VSS.JSON.Content_Handlers;
+
+package TypeScript.Types.Outputs is
+
+procedure Output_Scope
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Scope);
+
+procedure Output_Shape
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Shape);
+
+procedure Output_Circle
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Circle);
+
+procedure Output_Square
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Square);
+
+procedure Output_User
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : User);
+
+procedure Output_Message
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Message);
+
+procedure Output_Mixed
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Mixed);
+
+procedure Output_DMChannel
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : DMChannel);
+
+procedure Output_Channel
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Channel);
+
+procedure Output_BaseChannel_0
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : BaseChannel_0);
+
+end TypeScript.Types.Outputs;
+package body TypeScript.Types.Outputs is
+pragma Style_Checks (Off);
+procedure Output_Any_Value
+  (Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+   Value   : Any_Value'Class) is
+begin
+   for Item of Value loop
+      case Item.Kind is
+         when VSS.JSON.Streams.Start_Array =>
+            Handler.Start_Array;
+         when VSS.JSON.Streams.End_Array =>
+            Handler.End_Array;
+         when VSS.JSON.Streams.Start_Object =>
+            Handler.Start_Object;
+         when VSS.JSON.Streams.End_Object =>
+            Handler.End_Object;
+         when VSS.JSON.Streams.Key_Name =>
+            Handler.Key_Name (Item.Key_Name);
+         when VSS.JSON.Streams.String_Value =>
+            Handler.String_Value (Item.String_Value);
+         when VSS.JSON.Streams.Number_Value =>
+            Handler.Number_Value (Item.Number_Value);
+         when VSS.JSON.Streams.Boolean_Value =>
+            Handler.Boolean_Value (Item.Boolean_Value);
+         when VSS.JSON.Streams.Null_Value =>
+            Handler.Null_Value;
+         when VSS.JSON.Streams.None =>
+            null;
+         when VSS.JSON.Streams.Invalid =>
+            raise Program_Error;
+         when VSS.JSON.Streams.Start_Document =>
+            raise Program_Error;
+         when VSS.JSON.Streams.End_Document =>
+            raise Program_Error;
+         when VSS.JSON.Streams.Comment =>
+            raise Program_Error;
+      end case;
+   end loop;
+end Output_Any_Value;
+
+procedure Output_Scope
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Scope) is
+begin
+case Value is
+when messages_read =>
+Handler.String_Value ("messages.read");
+when guilds_join =>
+Handler.String_Value ("guilds.join");
+end case;
+end Output_Scope;
+
+procedure Output_Shape
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Shape) is
+begin
+case Value.Union.Kind is
+when circle_Variant =>
+Output_Circle (Handler, Value.Union.circle_Variant);
+when square_Variant =>
+Output_Square (Handler, Value.Union.square_Variant);
+end case;
+end Output_Shape;
+
+procedure Output_Circle
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Circle) is
+begin
+Handler.Start_Object;
+Handler.Key_Name ("shape");Handler.String_Value ("circle");
+Handler.Key_Name ("radius");
+Handler.Integer_Value(Value.radius);
+Handler.End_Object;
+end Output_Circle;
+
+procedure Output_Square
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Square) is
+begin
+Handler.Start_Object;
+Handler.Key_Name ("shape");Handler.String_Value ("square");
+Handler.Key_Name ("side");
+Handler.Integer_Value(Value.side);
+Handler.End_Object;
+end Output_Square;
+
+procedure Output_User
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : User) is
+begin
+Handler.Start_Object;
+Handler.Key_Name ("id");
+Handler.String_Value (Value.id);
+Handler.Key_Name ("avatar");
+if Value.avatar.Is_Null then
+Handler.Null_Value;
+else
+Handler.String_Value (Value.avatar);
+end if;
+if Value.level.Is_Set then
+Handler.Key_Name ("level");
+Handler.Integer_Value(Value.level.Value);
+end if;
+Handler.End_Object;
+end Output_User;
+
+procedure Output_Message
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Message) is
+procedure Output_Message_application
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Message_application) is
+begin
+Handler.Start_Object;
+if not Value.id.Is_Null then
+Handler.Key_Name ("id");
+Handler.String_Value (Value.id);
+end if;
+Handler.End_Object;
+end Output_Message_application;
+
+begin
+Handler.Start_Object;
+Handler.Key_Name ("id");
+Handler.String_Value (Value.id);
+if Value.author.Is_Set then
+Handler.Key_Name ("author");
+Output_User (Handler, Value.author.Value);
+end if;
+Handler.Key_Name ("channel");
+Output_Channel (Handler, Value.channel);
+Handler.Key_Name ("shape");
+Output_Shape (Handler, Value.shape);
+if Value.layout.Is_Set then
+Handler.Key_Name ("layout");
+Handler.Integer_Value (1);
+end if;
+if Value.scope.Is_Set then
+Handler.Key_Name ("scope");
+Output_Scope (Handler, Value.scope.Value);
+end if;
+if Value.count.Is_Set then
+Handler.Key_Name ("count");
+Handler.Integer_Value(Value.count.Value);
+end if;
+if not Value.nonce.Is_Empty then
+Handler.Key_Name ("nonce");
+Output_Any_Value (Handler, Value.nonce);
+end if;
+if not Value.mentions.Is_Empty then
+Handler.Key_Name ("mentions");
+Handler.Start_Array;
+for J in 1 .. Value.mentions.Length loop
+Handler.String_Value (Value.mentions (J));
+end loop;
+Handler.End_Array;
+end if;
+if not Value.levels.Is_Null then
+Handler.Key_Name ("levels");
+Handler.Start_Array;
+for J in 1 .. Value.levels.Length loop
+Handler.Integer_Value(Value.levels (J));
+end loop;
+Handler.End_Array;
+end if;
+if not Value.extras.Is_Empty then
+Handler.Key_Name ("extras");
+Output_Any_Value (Handler, Value.extras);
+end if;
+if not Value.Item_0.Is_Null then
+Handler.Key_Name ("0");
+Handler.String_Value (Value.Item_0);
+end if;
+if Value.application.Is_Set then
+Handler.Key_Name ("application");
+Output_Message_application (Handler, Value.application.Value);
+end if;
+if Value.referenced_message.Length > 0 then
+Handler.Key_Name ("referenced_message");
+Output_Message (Handler, Value.referenced_message.Value);
+end if;
+Handler.End_Object;
+end Output_Message;
+
+procedure Output_Mixed
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Mixed) is
+begin
+Output_Any_Value (Handler, Value);
+end Output_Mixed;
+
+procedure Output_DMChannel
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : DMChannel) is
+begin
+Handler.Start_Object;
+Handler.Key_Name ("type");Handler.Integer_Value (1);
+Handler.Key_Name ("id");
+Handler.String_Value (Value.id);
+Handler.Key_Name ("name");
+Handler.Null_Value;
+if not Value.recipients.Is_Null then
+Handler.Key_Name ("recipients");
+Handler.Start_Array;
+for J in 1 .. Value.recipients.Length loop
+Output_User (Handler, Value.recipients (J));
+end loop;
+Handler.End_Array;
+end if;
+Handler.End_Object;
+end Output_DMChannel;
+
+procedure Output_Channel
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : Channel) is
+begin
+case Value.Union.Kind is
+when TextChannel_Variant =>
+Output_BaseChannel_0 (Handler, Value.Union.TextChannel_Variant);
+when DMChannel_Variant =>
+Output_DMChannel (Handler, Value.Union.DMChannel_Variant);
+end case;
+end Output_Channel;
+
+procedure Output_BaseChannel_0
+(Handler : in out VSS.JSON.Content_Handlers.JSON_Content_Handler'Class;
+Value : BaseChannel_0) is
+begin
+Handler.Start_Object;
+Handler.Key_Name ("type");Handler.Integer_Value (0);
+Handler.Key_Name ("id");
+Handler.String_Value (Value.id);
+if not Value.topic.Is_Null then
+Handler.Key_Name ("topic");
+Handler.String_Value (Value.topic);
+end if;
+Handler.End_Object;
+end Output_BaseChannel_0;
+
+end TypeScript.Types.Outputs;
+with VSS.JSON.Pull_Readers;
+
+package TypeScript.Types.Inputs is
+
+procedure Input_Scope
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Scope;
+Success : in out Boolean);
+
+procedure Input_Shape
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Shape;
+Success : in out Boolean);
+
+procedure Input_Circle
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Circle;
+Success : in out Boolean);
+
+procedure Input_Square
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Square;
+Success : in out Boolean);
+
+procedure Input_User
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out User;
+Success : in out Boolean);
+
+procedure Input_Message
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Message;
+Success : in out Boolean);
+
+procedure Input_Mixed
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Mixed;
+Success : in out Boolean);
+
+procedure Input_DMChannel
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out DMChannel;
+Success : in out Boolean);
+
+procedure Input_Channel
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Channel;
+Success : in out Boolean);
+
+procedure Input_BaseChannel_0
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out BaseChannel_0;
+Success : in out Boolean);
+
+end TypeScript.Types.Inputs;
+pragma Ada_2022;
+with Key_Lookups;
+with VSS.JSON.Pull_Readers.Buffered;
+
+package body TypeScript.Types.Inputs is
+pragma Style_Checks (Off);
+use type VSS.JSON.JSON_Number_Kind;
+use type VSS.Strings.Virtual_String;
+
+procedure Input_Any_Value
+  (Reader  : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+   Value   : out Any_Value'Class;
+   Success : in out Boolean) is
+use type VSS.JSON.Streams.JSON_Stream_Element_Kind;
+begin
+case Reader.Element_Kind is
+when VSS.JSON.Streams.Start_Array =>
+Value.Append ((Kind => VSS.JSON.Streams.Start_Array));
+Reader.Read_Next;
+while Success and Reader.Element_Kind /= VSS.JSON.Streams.End_Array loop
+Input_Any_Value (Reader, Value, Success);
+end loop;
+Value.Append ((Kind => VSS.JSON.Streams.End_Array));
+when VSS.JSON.Streams.Start_Object =>
+Value.Append ((Kind => VSS.JSON.Streams.Start_Object));
+Reader.Read_Next;
+while Success and Reader.Element_Kind = VSS.JSON.Streams.Key_Name loop
+Value.Append (Reader.Element);
+Reader.Read_Next;
+Input_Any_Value (Reader, Value, Success);
+end loop;
+Value.Append ((Kind => VSS.JSON.Streams.End_Object));
+when VSS.JSON.Streams.String_Value
+   | VSS.JSON.Streams.Number_Value
+   | VSS.JSON.Streams.Boolean_Value
+   | VSS.JSON.Streams.Null_Value
+=>
+Value.Append (Reader.Element);
+when others =>
+Success := False;
+end case;
+if Success then
+Reader.Read_Next;
+end if;
+end Input_Any_Value;
+
+package Scope_Minimal_Perfect_Hash is new Key_Lookups (["messages.read", "guilds.join"]);
+
+procedure Input_Scope
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Scope;
+Success : in out Boolean) is
+Index : constant Integer := (if Reader.Is_String_Value then
+Scope_Minimal_Perfect_Hash.Get_Index (Reader.String_Value)else -1);
+begin
+if Index > 0 then
+Value := Scope'Val (Index - 1);
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end Input_Scope;
+
+package Shape_Minimal_Perfect_Hash is new Key_Lookups (["circle", "square"]);
+
+package Channel_Minimal_Perfect_Hash is new Key_Lookups (["0", "1"]);
+
+procedure Input_Shape
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Shape;
+Success : in out Boolean) is
+use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
+
+Look_Ahead : VSS.JSON.Pull_Readers.Buffered.JSON_Buffered_Pull_Reader (Reader'Access);
+
+Variant_Key : constant VSS.Strings.Virtual_String := "shape";
+begin
+Look_Ahead.Mark;
+if Success and Look_Ahead.Is_Start_Object then
+Look_Ahead.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Look_Ahead.Is_End_Object loop
+if not Look_Ahead.Is_Key_Name then
+Success := False;
+elsif Look_Ahead.Key_Name /= Variant_Key then
+Look_Ahead.Read_Next;  --  skip the key
+Look_Ahead.Skip_Current_Value;
+Success := not Look_Ahead.Is_End_Object;
+elsif Look_Ahead.Read_Next = String_Value then
+declare
+Index : constant Natural :=
+Shape_Minimal_Perfect_Hash.Get_Index
+(Look_Ahead.String_Value);
+begin
+Look_Ahead.Reset;
+Look_Ahead.Unmark;
+
+case Index is
+when  1 =>  --  circle_Variant
+Value.Union := (Kind => circle_Variant, others => <>);
+Input_Circle (Look_Ahead, Value.Union.circle_Variant, Success);
+when  2 =>  --  square_Variant
+Value.Union := (Kind => square_Variant, others => <>);
+Input_Square (Look_Ahead, Value.Union.square_Variant, Success);
+when others =>
+Success := False;
+end case;
+
+return;
+end;
+else
+Success := False;
+end if;
+end loop;
+
+if Success then
+Look_Ahead.Read_Next;  --  skip End_Object
+Success := False;
+end if;
+end Input_Shape;
+
+package Circle_Minimal_Perfect_Hash is new Key_Lookups (["shape", "radius"]);
+
+procedure Input_Circle
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Circle;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+Circle_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  shape
+Reader.Read_Next;
+if Reader.Is_String_Value and then Reader.String_Value = "circle" then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+   when 2 =>  --  radius
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+Value.radius := Reader.Number_Value.Integer_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_Circle;
+
+package Square_Minimal_Perfect_Hash is new Key_Lookups (["shape", "side"]);
+
+procedure Input_Square
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Square;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+Square_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  shape
+Reader.Read_Next;
+if Reader.Is_String_Value and then Reader.String_Value = "square" then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+   when 2 =>  --  side
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+Value.side := Reader.Number_Value.Integer_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_Square;
+
+package User_Minimal_Perfect_Hash is new Key_Lookups (["id", "avatar", "level"]);
+
+procedure Input_User
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out User;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+User_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  id
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.id := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 2 =>  --  avatar
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.avatar := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 3 =>  --  level
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Value.level := (Is_Set => True, Value => <>);
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+Value.level.Value := Reader.Number_Value.Integer_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_User;
+
+package Message_Minimal_Perfect_Hash is new Key_Lookups (["id", "author", "channel", "shape", "layout", "scope", "count", "nonce", "mentions", "levels", "extras", "0", "application", "referenced_message"]);
+
+package Message_application_Minimal_Perfect_Hash is new Key_Lookups (["id"]);
+
+procedure Input_Message
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Message;
+Success : in out Boolean) is
+procedure Input_Message_application
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Message_application;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+Message_application_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  id
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.id := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_Message_application;
+
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+Message_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  id
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.id := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 2 =>  --  author
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Value.author := (Is_Set => True, Value => <>);
+Input_User (Reader, Value.author.Value, Success);
+end if;
+   when 3 =>  --  channel
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Input_Channel (Reader, Value.channel, Success);
+end if;
+   when 4 =>  --  shape
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Input_Shape (Reader, Value.shape, Success);
+end if;
+   when 5 =>  --  layout
+Reader.Read_Next;
+if Reader.Is_Number_Value and then Reader.Number_Value.String_Value = "1" then
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Value.layout := (Is_Set => True, Value => <>);
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+Value.layout.Value := Reader.Number_Value.Integer_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+else
+Success := False;
+end if;
+   when 6 =>  --  scope
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Value.scope := (Is_Set => True, Value => <>);
+Input_Scope (Reader, Value.scope.Value, Success);
+end if;
+   when 7 =>  --  count
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Value.count := (Is_Set => True, Value => <>);
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+Value.count.Value := Reader.Number_Value.Integer_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 8 =>  --  nonce
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Input_Any_Value (Reader, Value.nonce, Success);
+end if;
+   when 9 =>  --  mentions
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Success and Reader.Is_Start_Array then
+Reader.Read_Next;
+Value.mentions.Clear;
+while Success and not Reader.Is_End_Array loop
+declare
+Item : VSS.Strings.Virtual_String;
+begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Item := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+Value.mentions.Append (Item);
+end;
+end loop;
+if Success then
+Reader.Read_Next;  --  skip End_Array
+end if;
+else
+Success := False;
+end if;
+end if;
+   when 10 =>  --  levels
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Success and Reader.Is_Start_Array then
+Reader.Read_Next;
+Value.levels.Clear (Is_Null => False);
+while Success and not Reader.Is_End_Array loop
+declare
+Item : Integer_64;
+begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_Number_Value and then Reader.Number_Value.Kind = VSS.JSON.JSON_Integer then
+Item := Reader.Number_Value.Integer_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+Value.levels.Append (Item);
+end;
+end loop;
+if Success then
+Reader.Read_Next;  --  skip End_Array
+end if;
+else
+Success := False;
+end if;
+end if;
+   when 11 =>  --  extras
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Input_Any_Value (Reader, Value.extras, Success);
+end if;
+   when 12 =>  --  0
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.Item_0 := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 13 =>  --  application
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Value.application := (Is_Set => True, Value => <>);
+Input_Message_application (Reader, Value.application.Value, Success);
+end if;
+   when 14 =>  --  referenced_message
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Input_Message (Reader, Value.referenced_message.Element, Success);
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_Message;
+
+procedure Input_Mixed
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Mixed;
+Success : in out Boolean) is
+begin
+Input_Any_Value (Reader, Value, Success);
+end Input_Mixed;
+
+package DMChannel_Minimal_Perfect_Hash is new Key_Lookups (["type", "id", "name", "recipients"]);
+
+procedure Input_DMChannel
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out DMChannel;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+DMChannel_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  type
+Reader.Read_Next;
+if Reader.Is_Number_Value and then Reader.Number_Value.String_Value = "1" then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+   when 2 =>  --  id
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.id := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 3 =>  --  name
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+   when 4 =>  --  recipients
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Success and Reader.Is_Start_Array then
+Reader.Read_Next;
+Value.recipients.Clear (Is_Null => False);
+while Success and not Reader.Is_End_Array loop
+declare
+Item : User;
+begin
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+Input_User (Reader, Item, Success);
+end if;
+Value.recipients.Append (Item);
+end;
+end loop;
+if Success then
+Reader.Read_Next;  --  skip End_Array
+end if;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_DMChannel;
+
+procedure Input_Channel
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out Channel;
+Success : in out Boolean) is
+use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
+
+Look_Ahead : VSS.JSON.Pull_Readers.Buffered.JSON_Buffered_Pull_Reader (Reader'Access);
+
+Variant_Key : constant VSS.Strings.Virtual_String := "type";
+begin
+Look_Ahead.Mark;
+if Success and Look_Ahead.Is_Start_Object then
+Look_Ahead.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Look_Ahead.Is_End_Object loop
+if not Look_Ahead.Is_Key_Name then
+Success := False;
+elsif Look_Ahead.Key_Name /= Variant_Key then
+Look_Ahead.Read_Next;  --  skip the key
+Look_Ahead.Skip_Current_Value;
+Success := not Look_Ahead.Is_End_Object;
+elsif Look_Ahead.Read_Next = Number_Value then
+declare
+Index : constant Natural :=
+Channel_Minimal_Perfect_Hash.Get_Index
+(Look_Ahead.Number_Value.String_Value);
+begin
+Look_Ahead.Reset;
+Look_Ahead.Unmark;
+
+case Index is
+when  1 =>  --  TextChannel_Variant
+Value.Union := (Kind => TextChannel_Variant, others => <>);
+Input_BaseChannel_0 (Look_Ahead, Value.Union.TextChannel_Variant, Success);
+when  2 =>  --  DMChannel_Variant
+Value.Union := (Kind => DMChannel_Variant, others => <>);
+Input_DMChannel (Look_Ahead, Value.Union.DMChannel_Variant, Success);
+when others =>
+Success := False;
+end case;
+
+return;
+end;
+else
+Success := False;
+end if;
+end loop;
+
+if Success then
+Look_Ahead.Read_Next;  --  skip End_Object
+Success := False;
+end if;
+end Input_Channel;
+
+package BaseChannel_0_Minimal_Perfect_Hash is new Key_Lookups (["type", "id", "topic"]);
+
+procedure Input_BaseChannel_0
+(Reader : in out VSS.JSON.Pull_Readers.JSON_Pull_Reader'Class;
+Value : out BaseChannel_0;
+Success : in out Boolean) is
+begin
+if Success and Reader.Is_Start_Object then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+
+while Success and not Reader.Is_End_Object loop
+if Reader.Is_Key_Name then
+declare
+Index : constant Natural :=
+BaseChannel_0_Minimal_Perfect_Hash.Get_Index (Reader.Key_Name);
+begin
+
+case Index is
+   when 1 =>  --  type
+Reader.Read_Next;
+if Reader.Is_Number_Value and then Reader.Number_Value.String_Value = "0" then
+Reader.Read_Next;
+else
+Success := False;
+end if;
+   when 2 =>  --  id
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.id := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+   when 3 =>  --  topic
+Reader.Read_Next;
+if Reader.Is_Null_Value then
+Reader.Read_Next;
+else
+if Reader.Is_String_Value then
+Value.topic := Reader.String_Value;
+Reader.Read_Next;
+else
+Success := False;
+end if;
+end if;
+when others =>
+Reader.Read_Next;
+Reader.Skip_Current_Value;
+end case;
+end;
+else
+   Success := False;
+end if;
+end loop;
+
+if Success then
+Reader.Read_Next;  --  skip End_Object
+end if;
+end Input_BaseChannel_0;
+
+end TypeScript.Types.Inputs;

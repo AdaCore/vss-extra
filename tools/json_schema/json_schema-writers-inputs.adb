@@ -143,7 +143,9 @@ package body JSON_Schema.Writers.Inputs is
 
             Put ("package ");
             Put (Type_Name);
-            Put ("_Minimal_Perfect_Hash is new Minimal_Perfect_Hash ([");
+            Put ("_Minimal_Perfect_Hash is new ");
+            Put (Hash_Package);
+            Put (" ([");
 
             for Index in 1 .. List.Length loop
                if Index > 1 then
@@ -258,7 +260,9 @@ package body JSON_Schema.Writers.Inputs is
 
          Put ("package ");
          Put (Type_Name);
-         Put ("_Minimal_Perfect_Hash is new Minimal_Perfect_Hash ([");
+         Put ("_Minimal_Perfect_Hash is new ");
+         Put (Hash_Package);
+         Put (" ([");
 
          for Index in 1 .. Schema.Any_Of.Last_Index loop
             declare
@@ -266,7 +270,7 @@ package body JSON_Schema.Writers.Inputs is
                  Schema.Any_Of.Element (Index);
 
                Variant : constant VSS.Strings.Virtual_String :=
-                 Variant_Name (Map, Item);
+                 Variant_Value (Map, Item, Schema.X_Discriminator);
             begin
                if Index > 1 then
                   Put (", ");
@@ -315,7 +319,9 @@ package body JSON_Schema.Writers.Inputs is
       Print_Vector (Header);
       Put ("pragma Ada_2022;");
       New_Line;
-      Put ("with Minimal_Perfect_Hash;");
+      Put ("with ");
+      Put (Hash_Package);
+      Put (";");
       New_Line;
 
       if Union_Types_Count > 0 then
@@ -535,7 +541,9 @@ package body JSON_Schema.Writers.Inputs is
 
       Put ("package ");
       Put (Type_Name);
-      Put ("_Minimal_Perfect_Hash is new Minimal_Perfect_Hash ([");
+      Put ("_Minimal_Perfect_Hash is new ");
+      Put (Hash_Package);
+      Put (" ([");
 
       Writers.Each_Property
         (Map, "", Schema, Write_Quoted_Property_Name'Access);
@@ -607,7 +615,9 @@ package body JSON_Schema.Writers.Inputs is
       end Hash_For_Anonymous_Schema;
 
    begin
-      if Is_Enum (Schema) then
+      if Is_Enum (Schema) or Is_Alias (Schema) then
+         --  Enumerations are processed separately, simple aliases have no
+         --  own type.
          return;
       end if;
 
@@ -641,7 +651,10 @@ package body JSON_Schema.Writers.Inputs is
          Put (" (Reader'Access);"); New_Line;
          New_Line;
          Put ("Variant_Key : constant VSS.Strings.Virtual_String :=");
-         Put (" ""kind"";");
+         Put (" """);
+         Put (if Schema.X_Discriminator.Is_Empty then "kind"
+              else Schema.X_Discriminator);
+         Put (""";");
          New_Line;
          Put ("begin");
          New_Line;
@@ -781,9 +794,16 @@ package body JSON_Schema.Writers.Inputs is
       use type VSS.Strings.Virtual_String;
       use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
 
+      Target : constant Schema_Access := Resolve_Alias (Map, Property.Schema);
+      Alias_Constant : constant Boolean :=
+        Target /= Property.Schema and then not Target.Const.Is_Empty;
+
       procedure Write_Value
         (Field_Name  : VSS.Strings.Virtual_String;
-         Type_Name   : VSS.Strings.Virtual_String);
+         Type_Name   : VSS.Strings.Virtual_String;
+         Set_Field   : VSS.Strings.Virtual_String := "");
+      --  If Set_Field isn't empty, it's an optional field to mark as set
+      --  when the value isn't null.
 
       -----------------
       -- Write_Value --
@@ -791,8 +811,24 @@ package body JSON_Schema.Writers.Inputs is
 
       procedure Write_Value
         (Field_Name  : VSS.Strings.Virtual_String;
-         Type_Name   : VSS.Strings.Virtual_String) is
+         Type_Name   : VSS.Strings.Virtual_String;
+         Set_Field   : VSS.Strings.Virtual_String := "") is
       begin
+         if Alias_Constant then
+            if Target.Const.First_Element.Kind = Number_Value then
+               Put ("if Reader.Is_Number_Value and then ");
+               Put ("Reader.Number_Value.String_Value = """);
+               Put (Const_Image (Target));
+            else
+               pragma Assert (Target.Const.First_Element.Kind = String_Value);
+               Put ("if Reader.Is_String_Value and then ");
+               Put ("Reader.String_Value = """);
+               Put (Target.Const.First_Element.String_Value);
+            end if;
+
+            Put (""" then"); New_Line;
+         end if;
+
          --  OpenAPI-style schemas routinely use `nullable: true` properties
          --  that are still listed as required, so the value is present but
          --  can be JSON null. Tolerate null here for any type by leaving the
@@ -800,6 +836,12 @@ package body JSON_Schema.Writers.Inputs is
          Put ("if Reader.Is_Null_Value then"); New_Line;
          Put ("Reader.Read_Next;"); New_Line;
          Put ("else"); New_Line;
+
+         if not Set_Field.Is_Empty then
+            Put (Set_Field);
+            Put (" := (Is_Set => True, Value => <>);");
+            New_Line;
+         end if;
 
          if Type_Name = "Any_Object" then
             Write_Value (Field_Name, "Any_Value");
@@ -905,6 +947,11 @@ package body JSON_Schema.Writers.Inputs is
          end if;
 
          Put ("end if;"); New_Line;
+         if Alias_Constant then
+            Put ("else"); New_Line;
+            Put ("Success := False;"); New_Line;
+            Put ("end if;"); New_Line;
+         end if;
       end Write_Value;
 
       Fallback : constant VSS.Strings.Virtual_String :=
@@ -924,6 +971,16 @@ package body JSON_Schema.Writers.Inputs is
       Type_Name   : VSS.Strings.Virtual_String;
       Type_Prefix : VSS.Strings.Virtual_String;
    begin
+      if Is_Null_Only (Target) then
+         --  There is no record component, but the input must still be null.
+         Put ("if Reader.Is_Null_Value then"); New_Line;
+         Put ("Reader.Read_Next;"); New_Line;
+         Put ("else"); New_Line;
+         Put ("Success := False;"); New_Line;
+         Put ("end if;"); New_Line;
+         return;
+      end if;
+
       Get_Field_Type
         (Map, Property.Schema, True, Fallback, Enum_Package,
          Type_Name, Type_Prefix);
@@ -932,6 +989,23 @@ package body JSON_Schema.Writers.Inputs is
          --  Check constant property (single item enum)
          Put ("if Reader.Is_String_Value and then Reader.String_Value = """);
          Put (Property.Schema.Enum.Element (1));
+         Put (""" then");
+         New_Line;
+         Put ("Reader.Read_Next;");
+         New_Line;
+         Put ("else");
+         New_Line;
+         Put ("Success := False;");
+         New_Line;
+         Put ("end if;");
+         New_Line;
+      elsif not Property.Schema.Const.Is_Empty
+        and then Property.Schema.Const.First_Element.Kind = Number_Value
+      then
+         --  Check numeric constant property
+         Put ("if Reader.Is_Number_Value and then ");
+         Put ("Reader.Number_Value.String_Value = """);
+         Put (Const_Image (Property.Schema));
          Put (""" then");
          New_Line;
          Put ("Reader.Read_Next;");
@@ -971,18 +1045,19 @@ package body JSON_Schema.Writers.Inputs is
          Write_Value ("Value." & Field_Name, Type_Name);
       elsif not Required and
          (Type_Name = "Any_Object" or
+           Type_Name = "Any_Value" or
            Property.Schema.Kind.Last_Index = 7 or
-           Property.Schema.Additional_Properties /= null)
+           (Property.Schema.Additional_Properties /= null
+              and then not Property.Schema.Additional_Properties.Is_False))
       then
          Write_Value ("Value." & Field_Name, Type_Name);
-      elsif Required then
+      elsif Required or Is_Holder then
          Write_Value ("Value." & Field_Name & Suffix, Type_Name);
       else
-         Put ("Value.");
-         Put (Field_Name);
-         Put (" := (Is_Set => True, Value => <>);");
-         New_Line;
-         Write_Value ("Value." & Field_Name & ".Value", Type_Name);
+         --  Mark the field as set only if the value isn't null
+         Write_Value
+           ("Value." & Field_Name & ".Value", Type_Name,
+            Set_Field => "Value." & Field_Name);
       end if;
    end Write_Record_Component;
 
@@ -1016,14 +1091,25 @@ package body JSON_Schema.Writers.Inputs is
       Put ("if not Look_Ahead.Is_Key_Name then"); New_Line;
       Put ("Success := False;"); New_Line;
       Put ("elsif Look_Ahead.Key_Name /= Variant_Key then"); New_Line;
+      Put ("Look_Ahead.Read_Next;  --  skip the key"); New_Line;
       Put ("Look_Ahead.Skip_Current_Value;"); New_Line;
       Put ("Success := not Look_Ahead.Is_End_Object;"); New_Line;
-      Put ("elsif Look_Ahead.Read_Next = String_Value then"); New_Line;
+      if Has_Numeric_Discriminator (Map, Schema) then
+         Put ("elsif Look_Ahead.Read_Next = Number_Value then"); New_Line;
+      else
+         Put ("elsif Look_Ahead.Read_Next = String_Value then"); New_Line;
+      end if;
+
       Put ("declare"); New_Line;
       Put ("Index : constant Natural :="); New_Line;
       Put (Type_Name);
       Put ("_Minimal_Perfect_Hash.Get_Index"); New_Line;
-      Put ("(Look_Ahead.String_Value);"); New_Line;
+
+      if Has_Numeric_Discriminator (Map, Schema) then
+         Put ("(Look_Ahead.Number_Value.String_Value);"); New_Line;
+      else
+         Put ("(Look_Ahead.String_Value);"); New_Line;
+      end if;
       Put ("begin"); New_Line;
       Put ("Look_Ahead.Reset;"); New_Line;
       Put ("Look_Ahead.Unmark;"); New_Line;
@@ -1036,7 +1122,8 @@ package body JSON_Schema.Writers.Inputs is
               Schema.Any_Of.Element (Index);
 
             Variant : constant VSS.Strings.Virtual_String :=
-              Escape_Keywords (Variant_Name (Map, Item));
+              Escape_Keywords
+                (Variant_Name (Map, Item, Schema.X_Discriminator));
 
             Fallback : constant VSS.Strings.Virtual_String :=
               Ref_To_Type_Name (Name) & "_" & Variant;

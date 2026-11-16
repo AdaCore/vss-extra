@@ -406,7 +406,9 @@ package body JSON_Schema.Writers.Outputs is
            (Enclosing, Map, Enum_Package, Property, Required, Holders);
       end On_Property;
    begin
-      if Is_Enum (Schema) then
+      if Is_Enum (Schema) or Is_Alias (Schema) then
+         --  Enumerations are processed separately, simple aliases have no
+         --  own type.
          return;
       end if;
 
@@ -443,7 +445,8 @@ package body JSON_Schema.Writers.Outputs is
                  Schema.Any_Of.Element (Index);
 
                Variant : constant VSS.Strings.Virtual_String :=
-                 Escape_Keywords (Variant_Name (Map, Item));
+                 Escape_Keywords
+                   (Variant_Name (Map, Item, Schema.X_Discriminator));
 
                Fallback : constant VSS.Strings.Virtual_String :=
                  Type_Name & "_" & Variant;
@@ -536,6 +539,10 @@ package body JSON_Schema.Writers.Outputs is
       use type VSS.Strings.Virtual_String;
       use all type VSS.JSON.Streams.JSON_Stream_Element_Kind;
 
+      Target : constant Schema_Access := Resolve_Alias (Map, Property.Schema);
+      Alias_Constant : constant Boolean :=
+        Target /= Property.Schema and then not Target.Const.Is_Empty;
+
       procedure Write_Key_And_Value
         (Field_Name : VSS.Strings.Virtual_String;
          Type_Name  : VSS.Strings.Virtual_String;
@@ -573,7 +580,19 @@ package body JSON_Schema.Writers.Outputs is
          Type_Name  : VSS.Strings.Virtual_String;
          Suffix     : VSS.Strings.Virtual_String) is
       begin
-         if Type_Name.Ends_With ("_Vector") then
+         if Alias_Constant then
+            if Target.Const.First_Element.Kind = Number_Value then
+               Put ("Handler.Integer_Value (");
+               Put (Const_Image (Target));
+               Put (");"); New_Line;
+            else
+               pragma Assert (Target.Const.First_Element.Kind = String_Value);
+               Put ("Handler.String_Value (""");
+               Put (Target.Const.First_Element.String_Value);
+               Put (""");"); New_Line;
+            end if;
+
+         elsif Type_Name.Ends_With ("_Vector") then
             declare
                Item_Type   : VSS.Strings.Virtual_String;
                Type_Prefix : VSS.Strings.Virtual_String;
@@ -615,6 +634,19 @@ package body JSON_Schema.Writers.Outputs is
       Type_Name   : VSS.Strings.Virtual_String;
       Type_Prefix : VSS.Strings.Virtual_String;
    begin
+      if Is_Null_Only (Target) then
+         --  Null-only properties have no record component. Optional ones
+         --  are omitted; required ones are always emitted as null.
+         if Required then
+            Put ("Handler.Key_Name (""");
+            Put (Property.Name);
+            Put (""");"); New_Line;
+            Put ("Handler.Null_Value;"); New_Line;
+         end if;
+
+         return;
+      end if;
+
       Get_Field_Type
         (Map, Property.Schema, True, Fallback, Enum_Package,
          Type_Name, Type_Prefix);
@@ -627,6 +659,17 @@ package body JSON_Schema.Writers.Outputs is
          Put ("Handler.String_Value (""");
          Put (Property.Schema.Enum.Element (1));
          Put (""");");
+         New_Line;
+      elsif not Property.Schema.Const.Is_Empty
+        and then Property.Schema.Const.First_Element.Kind = Number_Value
+      then
+         --  Write numeric constant property
+         Put ("Handler.Key_Name (""");
+         Put (Property.Name);
+         Put (""");");
+         Put ("Handler.Integer_Value (");
+         Put (Const_Image (Property.Schema));
+         Put (");");
          New_Line;
       elsif not Property.Schema.Const.Is_Empty then
          --  Write constant property
@@ -689,8 +732,10 @@ package body JSON_Schema.Writers.Outputs is
          New_Line;
       elsif not Required and
          (Type_Name = "Any_Object" or
+           Type_Name = "Any_Value" or
            Property.Schema.Kind.Last_Index = 7 or
-           Property.Schema.Additional_Properties /= null)
+           (Property.Schema.Additional_Properties /= null
+              and then not Property.Schema.Additional_Properties.Is_False))
       then
          Put ("if not Value.");
          Put (Field_Name);
@@ -701,8 +746,38 @@ package body JSON_Schema.Writers.Outputs is
 
          Put ("end if;");
          New_Line;
+      elsif Required
+        and then Type_Name = "Virtual_String"
+        and then Resolve_Alias (Map, Property.Schema).Kind.Contains
+          (Definitions.A_Null)
+      then
+         --  Nullable string: Is_Null means `null`
+         Put ("Handler.Key_Name (""");
+         Put (Property.Name);
+         Put (""");");
+         New_Line;
+         Put ("if Value.");
+         Put (Field_Name);
+         Put (".Is_Null then");
+         New_Line;
+         Put ("Handler.Null_Value;");
+         New_Line;
+         Put ("else");
+         New_Line;
+         Write_Value (Field_Name, Type_Name);
+         Put ("end if;");
+         New_Line;
       elsif Required then
          Write_Key_And_Value (Field_Name, Type_Name, Suffix);
+      elsif Is_Holder then
+         --  An empty holder means an absent value
+         Put ("if Value.");
+         Put (Field_Name);
+         Put (".Length > 0 then");
+         New_Line;
+         Write_Key_And_Value (Field_Name, Type_Name, Suffix);
+         Put ("end if;");
+         New_Line;
       else
          Put ("if Value.");
          Put (Field_Name);
